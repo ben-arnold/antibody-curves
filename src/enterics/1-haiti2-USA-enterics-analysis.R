@@ -1,10 +1,13 @@
 
 #-------------------------------
-# haiti2-USA-enterics-SL-curves.R
+# 1-haiti2-USA-enterics-SL-curves.R
 #
-# fit ETEC and VSP-5 luminex reponse by
+# fit enterics luminex reponse by
 # age and country
 #
+# version 2 (9 oct 2015)
+# cleaned up code
+# separated out plotting script
 #
 # version 1 (23 sep 2015)
 #-------------------------------
@@ -209,86 +212,13 @@ EYx.usa.norogii   <- SLAb.tmle(Y=log10(d.usa$norogii+1),Age=d.usa$agey,id=d.usa$
 # estimate difference in means
 diff.norogii      <- SLAb.tmle(Y=log10(d.all$norogii+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
 
-
+	
 
 #-------------------------------
-# Plot the SL fits
+# save down results for later
+# plotting
 #-------------------------------
-haiti.usa.plot <- function(haiti,usa,main,letter,xlabel=FALSE) {
-	# haiti : haiti SL fit object returned from SLAb.curve()
-	# usa   : haiti SL fit object returned from SLAb.curve()
-	# main : plot title
-	# letter: letter for multi-panel plots (e.g., "A")
-	# xlabel: logical print a label for the X-axis?
-	op <- par(mar=c(4,4,4,2)+0.1)
-	ytics <- seq(0,4,by=1)
-	xtics <- seq(0,6,by=1)
-	cols1 <- brewer.pal(8,"Set1")[c(3)]
-	cols2 <- brewer.pal(11,"Spectral")[c(11)]
-	cols <- c(cols2,cols1)
-	plot(usa$age,usa$Y,type="n",
-		ylab="",yaxt="n",
-		ylim=c(0,5),
-		xlab="",xlim=range(xtics),xaxt="n",
-		bty="n",las=1
-		)
-		
-	mtext(main,at=0,adj=0,cex=1.25,line=1)
-	mtext("Luminex Response (MFI-Background)",at=0,adj=0,cex=1,line=-0.5)
-	mtext(letter,side=3,line=0.5,font=2,at=-0.65,cex=1.75)
-	if (xlabel==TRUE) mtext("Age, years",side=1,line=2.5,cex=1.5)
-	axis(2,at=0:5,labels=c(
-		# expression(10^-1),
-		expression(10^0),
-		expression(10^1),
-		expression(10^2),
-		expression(10^3),
-		expression(10^4),
-		expression(10^5)
-		), las=1,cex.axis=1.5
-	)
-	axis(1,at=xtics,cex.axis=1.5)
-	
-	
-	points(haiti$age,haiti$Y,col=alpha(cols[1],alpha=0.6), pch=16,cex=0.7)
-	points(usa$age,usa$Y,col=alpha(cols[2],alpha=0.6), pch=16,cex=0.7)
-	
-	lines(haiti$age,haiti$pY,col=cols[1],lwd=2)
-	lines(usa$age,usa$pY,col=cols[2],lwd=2)
-	
-	mtext("Haiti",side=4,line=0,adj=1,at=haiti$pY[length(haiti$pY)], col=cols[1],cex=1.25,las=2)
-	mtext("USA",side=4,line=0,adj=1,at=usa$pY[length(usa$pY)], col=cols[2],cex=1.25,las=1)
-	
-	par(op)
-	
-}
-
-pdf("~/dropbox/haiti2/enterics/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,width=10)
-
-lo <- layout(mat=matrix(1:8,nrow=4,ncol=2,byrow=T))
-
-haiti.usa.plot(haiti.cp17,usa.cp17,expression(paste(italic('Cryptosporidium parvum'), " Cp17")),"A")
-
-haiti.usa.plot(haiti.cp23,usa.cp23,expression(paste(italic('Cryptosporidium parvum'), " Cp23")),"B")
-
-haiti.usa.plot(haiti.giar,usa.giar,expression(paste(italic('Giardia intestinalis'), " VSP-5")),"C")
-
-haiti.usa.plot(haiti.leca,usa.leca,expression(paste(italic('Entamoeba histolytica'), " LecA")),"D")
-
-haiti.usa.plot(haiti.etec,usa.etec,expression(paste("ETEC heat labile toxin ",beta," subunit")),"E")
-
-haiti.usa.plot(haiti.sallpsb,usa.sallpsb,expression(paste(italic('Salmonella sp.'), " LPS Group D")),"F")
-
-haiti.usa.plot(haiti.norogi,usa.norogi,"Norovirus Group I","G",xlabel=T)
-
-haiti.usa.plot(haiti.norogii,usa.norogii,"Norovirus Group II","H",xlabel=T)
-
-dev.off()
-
-	
-	
-
-
+save.image(file="~/SLAbcurve/results/raw/haiti2-usa-enterics-analysis.RData")
 
 
 
