@@ -1,0 +1,526 @@
+
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> #-------------------------------
+> # 3-garki-village-EY-by-round
+> #
+> # Calculate age-adjusted mean
+> # IFAT antibody titres by
+> # village and survey round
+> #
+> # version 1 (24 sep 2015)
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> 
+> rm(list=ls())
+> library(RColorBrewer)
+> library(scales)
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> 
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> 
+> # add 2 control village names
+> d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
+> d$vname[d$village==552] <- "Nabanawa"
+> d$vname[d$village==553] <- "Ajura"
+> d$vname <- factor(d$vname)
+> 
+> #-------------------------------
+> # Serological survey timing:
+> # 1-2 : pre-intervention
+> # 3-5 : intervention period
+> # 6-8 : post-intervention
+> #-------------------------------
+> 
+> #-------------------------------
+> # wrapper function to call TMLE 
+> # for each village and survey round
+> #-------------------------------
+> tmle.wrap <- function(serosvy,data) {
++ 	# serosvy : integer, survey round
++ 	# data    : data frame used for estimation (must include vars extracted below)
++ 	
++ 	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
++ 	# note that the W matrix includes a row of 1s to get the SL.glmnet algorithm to run
++ 	# extract objects to make the calculations easier
++ 	# subset to non-missing data for SL fit
++ 	ifatpf <- log10(data$ifatpftitre+1)
++ 	vil <- data$village
++ 	svy <- data$serosvy
++ 	age <- data$ageyrs
++ 	id  <- data$id
++ 	fitd <- data.frame(ifatpf,vil,svy,age,id)
++ 	fitd <- fitd[complete.cases(fitd),]
++ 	
++ 	mu.fit <- tmle(Y=fitd$ifatpf[fitd$svy==serosvy],
++ 			A=NULL,
++ 			W=data.frame(fitd$age[fitd$svy==serosvy], 
++ 				 rep(1,length(fitd$age[fitd$svy==serosvy]))),
++ 			id=fitd$id[fitd$svy==serosvy],
++ 			Q.SL.library=SLlib
++ 	)
++ 	print(mu.fit)
++ 	mu <- mu.fit$estimates$EY1$psi
++ 	se <- sqrt(mu.fit$estimates$EY1$var.psi)
++ 	ci <- mu.fit$estimates$EY1$CI
++ 	list(mu=mu,se=se,lb=ci[1],ub=ci[2])
++ }
+> 
+> #-------------------------------
+> # Estimate mean IFAT P. falciparm
+> # titre by village and survey round
+> #-------------------------------
+> 
+> set.seed(5463452)
+> 
+> ## Control Villages (no measurement in round 6)
+> # Nabanawa + Ajura
+> v552 <- sapply(c(1:5,7,8),tmle.wrap,data=d[d$village==552|d$village==553,])
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+
+arm (Version 1.8-6, built: 2015-7-7)
+
+Working directory is /Users/benarnold/Dropbox/garki/src
+
+
+Attaching package: ‘arm’
+
+The following object is masked from ‘package:scales’:
+
+    rescale
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+ Population Mean
+   Parameter Estimate:  3.2516
+   Estimated Variance:  0.00091766
+              p-value:  <2e-16
+    95% Conf Interval: (3.1923, 3.311) 
+ Population Mean
+   Parameter Estimate:  3.1038
+   Estimated Variance:  0.0010076
+              p-value:  <2e-16
+    95% Conf Interval: (3.0416, 3.166) 
+ Population Mean
+   Parameter Estimate:  3.151
+   Estimated Variance:  0.0015615
+              p-value:  <2e-16
+    95% Conf Interval: (3.0736, 3.2285) 
+ Population Mean
+   Parameter Estimate:  2.8615
+   Estimated Variance:  0.0028713
+              p-value:  <2e-16
+    95% Conf Interval: (2.7564, 2.9665) 
+ Population Mean
+   Parameter Estimate:  3.2875
+   Estimated Variance:  0.0018599
+              p-value:  <2e-16
+    95% Conf Interval: (3.2029, 3.372) 
+ Population Mean
+   Parameter Estimate:  3.1707
+   Estimated Variance:  0.0016207
+              p-value:  <2e-16
+    95% Conf Interval: (3.0917, 3.2496) 
+ Population Mean
+   Parameter Estimate:  2.8858
+   Estimated Variance:  0.0031013
+              p-value:  <2e-16
+    95% Conf Interval: (2.7767, 2.995) 
+> 	# add NA column for survey round 6
+> 	v552 <- cbind(v552[,1:5],rep(NA,4),v552[,6:7])
+> 
+> 
+> 
+> ### Spraying (Propoxur) + MDA
+> 
+> # village cluster 5
+> # Kawari
+> v153 <- sapply(c(1:8),tmle.wrap,data=d[d$village==153,])
+ Population Mean
+   Parameter Estimate:  3.3713
+   Estimated Variance:  0.0027238
+              p-value:  <2e-16
+    95% Conf Interval: (3.269, 3.4736) 
+ Population Mean
+   Parameter Estimate:  3.2295
+   Estimated Variance:  0.0098103
+              p-value:  <2e-16
+    95% Conf Interval: (3.0353, 3.4236) 
+ Population Mean
+   Parameter Estimate:  2.6395
+   Estimated Variance:  0.012556
+              p-value:  <2e-16
+    95% Conf Interval: (2.4198, 2.8591) 
+ Population Mean
+   Parameter Estimate:  2.3578
+   Estimated Variance:  0.019816
+              p-value:  <2e-16
+    95% Conf Interval: (2.0819, 2.6337) 
+ Population Mean
+   Parameter Estimate:  1.9473
+   Estimated Variance:  0.018867
+              p-value:  <2e-16
+    95% Conf Interval: (1.6781, 2.2166) 
+ Population Mean
+   Parameter Estimate:  1.6937
+   Estimated Variance:  0.023115
+              p-value:  <2e-16
+    95% Conf Interval: (1.3957, 1.9917) 
+ Population Mean
+   Parameter Estimate:  2.8654
+   Estimated Variance:  0.012189
+              p-value:  <2e-16
+    95% Conf Interval: (2.649, 3.0818) 
+ Population Mean
+   Parameter Estimate:  2.7063
+   Estimated Variance:  0.013649
+              p-value:  <2e-16
+    95% Conf Interval: (2.4773, 2.9353) 
+> # Rafin Marke
+> v154 <- sapply(c(1:8),tmle.wrap,data=d[d$village==154,])
+ Population Mean
+   Parameter Estimate:  3.3026
+   Estimated Variance:  0.0031928
+              p-value:  <2e-16
+    95% Conf Interval: (3.1918, 3.4133) 
+ Population Mean
+   Parameter Estimate:  3.1682
+   Estimated Variance:  0.007674
+              p-value:  <2e-16
+    95% Conf Interval: (2.9965, 3.3399) 
+ Population Mean
+   Parameter Estimate:  2.5671
+   Estimated Variance:  0.010192
+              p-value:  <2e-16
+    95% Conf Interval: (2.3692, 2.7649) 
+ Population Mean
+   Parameter Estimate:  2.1367
+   Estimated Variance:  0.015121
+              p-value:  <2e-16
+    95% Conf Interval: (1.8957, 2.3777) 
+ Population Mean
+   Parameter Estimate:  1.6749
+   Estimated Variance:  0.012576
+              p-value:  <2e-16
+    95% Conf Interval: (1.4551, 1.8947) 
+ Population Mean
+   Parameter Estimate:  1.5396
+   Estimated Variance:  0.014817
+              p-value:  <2e-16
+    95% Conf Interval: (1.301, 1.7782) 
+ Population Mean
+   Parameter Estimate:  2.5026
+   Estimated Variance:  0.015052
+              p-value:  <2e-16
+    95% Conf Interval: (2.2621, 2.7431) 
+ Population Mean
+   Parameter Estimate:  2.2584
+   Estimated Variance:  0.016591
+              p-value:  <2e-16
+    95% Conf Interval: (2.0059, 2.5108) 
+> # Kukar Maikiva
+> v155 <- sapply(c(1:8),tmle.wrap,data=d[d$village==155,])
+ Population Mean
+   Parameter Estimate:  3.268
+   Estimated Variance:  0.0030515
+              p-value:  <2e-16
+    95% Conf Interval: (3.1598, 3.3763) 
+ Population Mean
+   Parameter Estimate:  3.1561
+   Estimated Variance:  0.0041168
+              p-value:  <2e-16
+    95% Conf Interval: (3.0303, 3.2818) 
+ Population Mean
+   Parameter Estimate:  2.6053
+   Estimated Variance:  0.0058924
+              p-value:  <2e-16
+    95% Conf Interval: (2.4549, 2.7558) 
+ Population Mean
+   Parameter Estimate:  2.1383
+   Estimated Variance:  0.0087121
+              p-value:  <2e-16
+    95% Conf Interval: (1.9554, 2.3213) 
+ Population Mean
+   Parameter Estimate:  1.8373
+   Estimated Variance:  0.008721
+              p-value:  <2e-16
+    95% Conf Interval: (1.6543, 2.0204) 
+ Population Mean
+   Parameter Estimate:  1.6189
+   Estimated Variance:  0.0092922
+              p-value:  <2e-16
+    95% Conf Interval: (1.4299, 1.8078) 
+ Population Mean
+   Parameter Estimate:  2.4602
+   Estimated Variance:  0.012038
+              p-value:  <2e-16
+    95% Conf Interval: (2.2452, 2.6753) 
+ Population Mean
+   Parameter Estimate:  2.3095
+   Estimated Variance:  0.012144
+              p-value:  <2e-16
+    95% Conf Interval: (2.0935, 2.5255) 
+> 
+> # village cluster 7
+> # Kargo Kudu
+> v213 <- sapply(c(1:8),tmle.wrap,data=d[d$village==213,])
+ Population Mean
+   Parameter Estimate:  3.3921
+   Estimated Variance:  0.0015383
+              p-value:  <2e-16
+    95% Conf Interval: (3.3152, 3.4689) 
+ Population Mean
+   Parameter Estimate:  3.2239
+   Estimated Variance:  0.0029926
+              p-value:  <2e-16
+    95% Conf Interval: (3.1167, 3.3311) 
+ Population Mean
+   Parameter Estimate:  2.8276
+   Estimated Variance:  0.014276
+              p-value:  <2e-16
+    95% Conf Interval: (2.5934, 3.0618) 
+ Population Mean
+   Parameter Estimate:  2.3229
+   Estimated Variance:  0.01733
+              p-value:  <2e-16
+    95% Conf Interval: (2.0649, 2.5809) 
+ Population Mean
+   Parameter Estimate:  1.9935
+   Estimated Variance:  0.0131
+              p-value:  <2e-16
+    95% Conf Interval: (1.7692, 2.2178) 
+ Population Mean
+   Parameter Estimate:  1.7556
+   Estimated Variance:  0.017706
+              p-value:  <2e-16
+    95% Conf Interval: (1.4948, 2.0164) 
+ Population Mean
+   Parameter Estimate:  2.5958
+   Estimated Variance:  0.012066
+              p-value:  <2e-16
+    95% Conf Interval: (2.3805, 2.8111) 
+ Population Mean
+   Parameter Estimate:  3.003
+   Estimated Variance:  0.0049562
+              p-value:  <2e-16
+    95% Conf Interval: (2.865, 3.1409) 
+> # Nasakar
+> v218 <- sapply(c(1:8),tmle.wrap,data=d[d$village==218,])
+ Population Mean
+   Parameter Estimate:  3.4111
+   Estimated Variance:  0.0014016
+              p-value:  <2e-16
+    95% Conf Interval: (3.3378, 3.4845) 
+ Population Mean
+   Parameter Estimate:  3.3222
+   Estimated Variance:  0.0020366
+              p-value:  <2e-16
+    95% Conf Interval: (3.2337, 3.4106) 
+ Population Mean
+   Parameter Estimate:  2.8131
+   Estimated Variance:  0.006151
+              p-value:  <2e-16
+    95% Conf Interval: (2.6593, 2.9668) 
+ Population Mean
+   Parameter Estimate:  2.3626
+   Estimated Variance:  0.0096487
+              p-value:  <2e-16
+    95% Conf Interval: (2.17, 2.5551) 
+ Population Mean
+   Parameter Estimate:  1.861
+   Estimated Variance:  0.012498
+              p-value:  <2e-16
+    95% Conf Interval: (1.6418, 2.0801) 
+ Population Mean
+   Parameter Estimate:  1.7384
+   Estimated Variance:  0.014177
+              p-value:  <2e-16
+    95% Conf Interval: (1.505, 1.9718) 
+ Population Mean
+   Parameter Estimate:  2.3353
+   Estimated Variance:  0.016935
+              p-value:  <2e-16
+    95% Conf Interval: (2.0803, 2.5904) 
+ Population Mean
+   Parameter Estimate:  2.5548
+   Estimated Variance:  0.017457
+              p-value:  <2e-16
+    95% Conf Interval: (2.2958, 2.8137) 
+> # Bakan Sabara
+> v220 <- sapply(c(1:8),tmle.wrap,data=d[d$village==220,])
+ Population Mean
+   Parameter Estimate:  3.396
+   Estimated Variance:  0.004126
+              p-value:  <2e-16
+    95% Conf Interval: (3.2701, 3.5219) 
+ Population Mean
+   Parameter Estimate:  3.2677
+   Estimated Variance:  0.005494
+              p-value:  <2e-16
+    95% Conf Interval: (3.1224, 3.413) 
+ Population Mean
+   Parameter Estimate:  2.8188
+   Estimated Variance:  0.01554
+              p-value:  <2e-16
+    95% Conf Interval: (2.5744, 3.0631) 
+ Population Mean
+   Parameter Estimate:  2.257
+   Estimated Variance:  0.026117
+              p-value:  <2e-16
+    95% Conf Interval: (1.9403, 2.5738) 
+ Population Mean
+   Parameter Estimate:  1.4793
+   Estimated Variance:  0.04225
+              p-value:  6.1525e-13
+    95% Conf Interval: (1.0765, 1.8822) 
+ Population Mean
+   Parameter Estimate:  1.5163
+   Estimated Variance:  0.050281
+              p-value:  1.3619e-11
+    95% Conf Interval: (1.0768, 1.9558) 
+ Population Mean
+   Parameter Estimate:  2.2727
+   Estimated Variance:  0.037388
+              p-value:  <2e-16
+    95% Conf Interval: (1.8937, 2.6517) 
+ Population Mean
+   Parameter Estimate:  2.446
+   Estimated Variance:  0.048392
+              p-value:  <2e-16
+    95% Conf Interval: (2.0149, 2.8772) 
+> 
+> 
+> 
+> #-------------------------------
+> # plot means over time
+> #-------------------------------
+> 
+> 
+> # plotting schema, repeated for each intervention village
+> EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
++ 	# x    : intervention village/survey round results, from above
++ 	# cols : colors for control and intervention points
++ 	# vname: village name for printing
++ 	# header: logical. print header text?
++ 	# footer: logical. print footer text?
++ 	
++ 	# set up an empty plot
++ 	ytics <- seq(1,4)
++ 	MidPts <- barplot(1:8,names.arg=NA,border=NA,col=NA,
++ 		ylim=range(ytics),ylab="",yaxt="n",
++ 		las=1,bty="n"
++ 	)
++ 	axis(2,at=1:4,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)
++ 		), las=1,cex.axis=1.25
++ 	)
++ 	mtext(1:8,side=1,line=1,at=MidPts,cex=0.8,col="gray40")
++ 	if(header==TRUE) mtext(c("Pre-Intervention","Intervention Phase","Post-Intervention"),side=3,line=1,at=c(mean(MidPts[1:2]),mean(MidPts[3:5]),mean(MidPts[6:8])) )
++ 	segments(x0=c(mean(MidPts[2:3]), mean(MidPts[5:6])),y0=min(ytics), y1=max(ytics), lty=2,col="gray80",lwd=2 )
++ 	
++ 	mtext(vname,side=2,line=3,adj=1,col=cols[2],las=1)
++ 	
++ 	
++ 	# control 
++ 	segments(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=2,col=alpha(cols[1],alpha=0.6))
++ 	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=0.6))
++ 
++ 	# intervention
++ 	segments(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=2,col=alpha(cols[2],alpha=0.6))
++ 	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=0.6))
++ }
+> 
+> 
+> pdf("~/dropbox/garki/figs/garki-IFATpf-by-village-svy.pdf",width=7,height=10)
+> brewcols1 <- brewer.pal(8,"Dark2")
+> brewcols2 <- brewer.pal(9,"Set1")
+> cols <- c(brewcols1[c(8,4)],brewcols2[c(1,5,3,2,4)])
+> lo <- layout(mat=matrix(1:8,nrow=8,ncol=1),heights=c(0.3,rep(1,6),0.3))
+> # header
+> op <- par(mar=c(0,10,0,0)+0.1,xpd=TRUE)
+> MidPts <- barplot(rep(1,8),names.arg=NA,border=NA,col=NA,ylab="",yaxt="n",bty="n")
+> text(c(mean(MidPts[1:2]),mean(MidPts[3:5]),mean(MidPts[6:8])),rep(0.5,3),c("Pre-Intervention","Intervention Phase","Post-Intervention"),cex=1.5)
+> mtext(expression(italic('P. falciparum')),side=2,at=0.5,adj=1,las=1,cex=0.9 )
+> mtext("IFAT antibody titre",side=2,at=0,adj=1,las=1,cex=0.9 )
+> # figures
+> op <- par(mar=c(2,10,1,0)+0.1)
+> EYplot(v154,cols=cols[c(1,2)],vname="Rafin\nMarke")
+> EYplot(v153,cols=cols[c(1,3)],vname="Kawari")
+> EYplot(v155,cols=cols[c(1,4)],vname="Kukar\nMaikiva")
+> EYplot(v213,cols=cols[c(1,5)],vname="Kargo\nKudu")
+> EYplot(v218,cols=cols[c(1,6)],vname="Nasakar")
+> EYplot(v220,cols=cols[c(1,7)],vname="Bakan\nSabara")
+> # footer
+> op <- par(mar=c(0,10,0,0)+0.1)
+> plot(1:8,rep(1,8),type="n",bty="n",xlab="",xaxt="n",ylab="",yaxt="n")
+> text(mean(1:8),1,"Survey Round",cex=1.5)
+> par(op)
+> dev.off()
+null device 
+          1 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 52.342   0.504  56.310 

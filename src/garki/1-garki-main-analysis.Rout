@@ -1,0 +1,485 @@
+
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> #-------------------------------
+> # 2-garki-main-analysis.R
+> #
+> # Calculate age-adjusted mean
+> # IFAT antibody titres by
+> # treatment group and survey round
+> #
+> # version 2 (11 oct 2015)
+> # drew on common source code for
+> # estimation
+> # migrated everything to git
+> #
+> # version 1 (26 sep 2015)
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> 
+> rm(list=ls())
+> library(RColorBrewer)
+> library(scales)
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> 
+> # source the base functions
+> source("~/SLAbcurve/src/0-SLAb-base-functions.R")
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> 
+> # add 2 control village names
+> d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
+> d$vname[d$village==552] <- "Nabanawa"
+> d$vname[d$village==553] <- "Ajura"
+> d$vname <- factor(d$vname)
+> 
+> #-------------------------------
+> # Serological survey timing:
+> # 1-2 : pre-intervention
+> # 3-5 : intervention period
+> # 6-8 : post-intervention
+> #-------------------------------
+> 
+> # subset the data by group and survey round for convenience
+> # combine control measures by phase of the study
+> d.c12  <- d[d$tr=="Control" & (d$serosvy==1|d$serosvy==2),]
+> d.c345 <- d[d$tr=="Control" & (d$serosvy==3|d$serosvy==4|d$serosvy==5),]
+> d.c78  <- d[d$tr=="Control" & (d$serosvy==7|d$serosvy==8),]
+> 
+> d.tr1 <- d[d$tr=="Intervention" & d$serosvy==1,]
+> d.tr2 <- d[d$tr=="Intervention" & d$serosvy==2,]
+> d.tr3 <- d[d$tr=="Intervention" & d$serosvy==3,]
+> d.tr4 <- d[d$tr=="Intervention" & d$serosvy==4,]
+> d.tr5 <- d[d$tr=="Intervention" & d$serosvy==5,]
+> d.tr6 <- d[d$tr=="Intervention" & d$serosvy==6,]
+> d.tr7 <- d[d$tr=="Intervention" & d$serosvy==7,]
+> d.tr8 <- d[d$tr=="Intervention" & d$serosvy==8,]
+> 
+> #-------------------------------
+> # Step 1: 
+> # Age-specific antibody response
+> # curves
+> #-------------------------------
+> 
+> set.seed(2352374)
+> 
+> # Pre-intervention period fitted curves
+> p.c12 <- SLAb.curve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id)
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+Loading required package: Rcpp
+
+arm (Version 1.8-5, built: 2015-05-13)
+
+Working directory is /Users/benarnold/SLAbcurve/src/garki
+
+
+Attaching package: ‘arm’
+
+The following object is masked from ‘package:scales’:
+
+    rescale
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk       Coef
+SL.mean_All     0.2973208 0.02459508
+SL.glm_All      0.2847284 0.00000000
+SL.bayesglm_All 0.2847283 0.00000000
+SL.loess_All    0.2345462 0.97540492
+SL.gam_All      0.2636002 0.00000000
+SL.glmnet_All   0.2846816 0.00000000
+There were 22 warnings (use warnings() to see them)
+> p.tr1 <- SLAb.curve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk      Coef
+SL.mean_All     0.2498660 0.1385032
+SL.glm_All      0.2489505 0.0000000
+SL.bayesglm_All 0.2489505 0.0000000
+SL.loess_All    0.2408397 0.8614968
+SL.gam_All      0.2453589 0.0000000
+SL.glmnet_All   0.2490015 0.0000000
+There were 22 warnings (use warnings() to see them)
+> p.tr2 <- SLAb.curve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     0.4165343 0.008715867
+SL.glm_All      0.3942458 0.000000000
+SL.bayesglm_All 0.3942457 0.000000000
+SL.loess_All    0.2960984 0.991284133
+SL.gam_All      0.3513618 0.000000000
+SL.glmnet_All   0.3942923 0.000000000
+There were 22 warnings (use warnings() to see them)
+> 
+> # Intervention phase fitted curves
+> p.c345 <- SLAb.curve(Y=log10(d.c345$ifatpftitre+1),Age=d.c345$ageyrs,id=d.c345$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     0.6626433 0.005012131
+SL.glm_All      0.6212120 0.000000000
+SL.bayesglm_All 0.6212120 0.000000000
+SL.loess_All    0.4615726 0.994987869
+SL.gam_All      0.5475541 0.000000000
+SL.glmnet_All   0.6211658 0.000000000
+There were 22 warnings (use warnings() to see them)
+> p.tr3 <- SLAb.curve(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk         Coef
+SL.mean_All     0.8386342 0.0004542147
+SL.glm_All      0.6720987 0.0203706197
+SL.bayesglm_All 0.6720986 0.0000000000
+SL.loess_All    0.4445871 0.9791751656
+SL.gam_All      0.5445306 0.0000000000
+SL.glmnet_All   0.6720951 0.0000000000
+There were 22 warnings (use warnings() to see them)
+> p.tr4 <- SLAb.curve(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     1.2334102 0.000000000
+SL.glm_All      0.9306403 0.000000000
+SL.bayesglm_All 0.9306401 0.032102986
+SL.loess_All    0.5979692 0.962105238
+SL.gam_All      0.7168210 0.005791776
+SL.glmnet_All   0.9306943 0.000000000
+There were 22 warnings (use warnings() to see them)
+> p.tr5 <- SLAb.curve(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     1.3151731 0.000000000
+SL.glm_All      0.8848534 0.000000000
+SL.bayesglm_All 0.8848533 0.001767539
+SL.loess_All    0.5271103 0.998232461
+SL.gam_All      0.6472622 0.000000000
+SL.glmnet_All   0.8847429 0.000000000
+There were 22 warnings (use warnings() to see them)
+> 
+> # post intervention period fitted curves
+> # note: no control measurement in round 6
+> p.c78 <- SLAb.curve(Y=log10(d.c78$ifatpftitre+1),Age=d.c78$ageyrs,id=d.c78$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     0.5161707 0.003915297
+SL.glm_All      0.4847853 0.000000000
+SL.bayesglm_All 0.4847852 0.000000000
+SL.loess_All    0.3556780 0.996084703
+SL.gam_All      0.4327658 0.000000000
+SL.glmnet_All   0.4847303 0.000000000
+There were 22 warnings (use warnings() to see them)
+> p.tr6 <- SLAb.curve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk Coef
+SL.mean_All     1.4463410    0
+SL.glm_All      0.9420935    0
+SL.bayesglm_All 0.9420934    0
+SL.loess_All    0.4824061    1
+SL.gam_All      0.6357136    0
+SL.glmnet_All   0.9423548    0
+There were 22 warnings (use warnings() to see them)
+> p.tr7 <- SLAb.curve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk       Coef
+SL.mean_All     1.4836413 0.00000000
+SL.glm_All      1.2186418 0.00000000
+SL.bayesglm_All 1.2186418 0.00000000
+SL.loess_All    0.8427231 0.95856889
+SL.gam_All      0.9907750 0.01101646
+SL.glmnet_All   1.2183804 0.03041465
+There were 22 warnings (use warnings() to see them)
+> p.tr8 <- SLAb.curve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     1.0863635 0.008622934
+SL.glm_All      0.9522105 0.000000000
+SL.bayesglm_All 0.9522103 0.000000000
+SL.loess_All    0.7388422 0.968753276
+SL.gam_All      0.8235118 0.004584684
+SL.glmnet_All   0.9521646 0.018039106
+There were 22 warnings (use warnings() to see them)
+> 
+> 
+> #-------------------------------
+> # Step 2: 
+> # Calculate age-adjusted means
+> # and difference in means
+> # by treatment group and 
+> # survey round
+> #-------------------------------
+> 
+> # create a numeric 0/1 treatment variable
+> d$tr01 <- ifelse(d$tr=="Control",0,1)
+> 
+> 
+> set.seed(5463452)
+> 
+> ## Control Villages 
+> # Nabanawa + Ajura
+> # (no measurement in survey round 6)
+> mu.c <- sapply(c(1:5,7:8),function(x) SLAb.tmle(
++ 	Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
++ 	Age=d$ageyrs[d$tr=="Control" & d$serosvy==x],
++ 	id=d$id[d$tr=="Control" & d$serosvy==x]
++ 	)
++ )
+ Population Mean
+   Parameter Estimate:  3.2516
+   Estimated Variance:  0.00091766
+              p-value:  <2e-16
+    95% Conf Interval: (3.1923, 3.311) 
+ Population Mean
+   Parameter Estimate:  3.1038
+   Estimated Variance:  0.0010076
+              p-value:  <2e-16
+    95% Conf Interval: (3.0416, 3.166) 
+ Population Mean
+   Parameter Estimate:  3.151
+   Estimated Variance:  0.0015615
+              p-value:  <2e-16
+    95% Conf Interval: (3.0736, 3.2285) 
+ Population Mean
+   Parameter Estimate:  2.8615
+   Estimated Variance:  0.0028713
+              p-value:  <2e-16
+    95% Conf Interval: (2.7564, 2.9665) 
+ Population Mean
+   Parameter Estimate:  3.2875
+   Estimated Variance:  0.0018599
+              p-value:  <2e-16
+    95% Conf Interval: (3.2029, 3.372) 
+ Population Mean
+   Parameter Estimate:  3.1707
+   Estimated Variance:  0.0016207
+              p-value:  <2e-16
+    95% Conf Interval: (3.0917, 3.2496) 
+ Population Mean
+   Parameter Estimate:  2.8858
+   Estimated Variance:  0.0031013
+              p-value:  <2e-16
+    95% Conf Interval: (2.7767, 2.995) 
+> 
+> ### Intervention Villages - Spraying (Propoxur) + MDA
+> mu.i <- sapply(1:8,function(x) SLAb.tmle(
++ 	Y=log10(d$ifatpftitre[d$tr=="Intervention" & d$serosvy==x]+1),
++ 	Age=d$ageyrs[d$tr=="Intervention" & d$serosvy==x],
++ 	id=d$id[d$tr=="Intervention" & d$serosvy==x]
++ 	)
++ )
+ Population Mean
+   Parameter Estimate:  3.3467
+   Estimated Variance:  0.00046242
+              p-value:  <2e-16
+    95% Conf Interval: (3.3045, 3.3888) 
+ Population Mean
+   Parameter Estimate:  3.2201
+   Estimated Variance:  0.00087259
+              p-value:  <2e-16
+    95% Conf Interval: (3.1622, 3.278) 
+ Population Mean
+   Parameter Estimate:  2.691
+   Estimated Variance:  0.0015959
+              p-value:  <2e-16
+    95% Conf Interval: (2.6127, 2.7693) 
+ Population Mean
+   Parameter Estimate:  2.2421
+   Estimated Variance:  0.0023573
+              p-value:  <2e-16
+    95% Conf Interval: (2.147, 2.3373) 
+ Population Mean
+   Parameter Estimate:  1.8234
+   Estimated Variance:  0.0023796
+              p-value:  <2e-16
+    95% Conf Interval: (1.7278, 1.919) 
+ Population Mean
+   Parameter Estimate:  1.6485
+   Estimated Variance:  0.0027372
+              p-value:  <2e-16
+    95% Conf Interval: (1.546, 1.7511) 
+ Population Mean
+   Parameter Estimate:  2.5056
+   Estimated Variance:  0.0026892
+              p-value:  <2e-16
+    95% Conf Interval: (2.4039, 2.6072) 
+ Population Mean
+   Parameter Estimate:  2.4864
+   Estimated Variance:  0.002998
+              p-value:  <2e-16
+    95% Conf Interval: (2.3791, 2.5938) 
+> 
+> 
+> #-------------------------------
+> # Estimate difference between
+> # control and intervention villages in
+> # IFAT P. falciparm
+> # titre by survey round
+> #-------------------------------
+> 
+> set.seed(79287234)
+> diff.psi <- sapply(c(1:5,7:8),function(x) SLAb.tmle(
++ 	Y=log10(d$ifatpftitre[d$serosvy==x]+1),
++ 	Age=d$ageyrs[d$serosvy==x],
++ 	id=d$id[d$serosvy==x],
++ 	X=d$tr01[d$serosvy==x],
++ 	diff=TRUE
++ 	)
++ )
+ Additive Effect
+   Parameter Estimate:  0.085587
+   Estimated Variance:  0.0012938
+              p-value:  0.017339
+    95% Conf Interval: (0.015087, 0.15609) 
+ Additive Effect
+   Parameter Estimate:  0.10227
+   Estimated Variance:  0.0015454
+              p-value:  0.0092776
+    95% Conf Interval: (0.025224, 0.17932) 
+ Additive Effect
+   Parameter Estimate:  -0.47559
+   Estimated Variance:  0.0024992
+              p-value:  <2e-16
+    95% Conf Interval: (-0.57357, -0.3776) 
+ Additive Effect
+   Parameter Estimate:  -0.62753
+   Estimated Variance:  0.0035615
+              p-value:  <2e-16
+    95% Conf Interval: (-0.7445, -0.51056) 
+ Additive Effect
+   Parameter Estimate:  -1.4221
+   Estimated Variance:  0.0030117
+              p-value:  <2e-16
+    95% Conf Interval: (-1.5297, -1.3145) 
+ Additive Effect
+   Parameter Estimate:  -0.64484
+   Estimated Variance:  0.0033447
+              p-value:  <2e-16
+    95% Conf Interval: (-0.7582, -0.53149) 
+ Additive Effect
+   Parameter Estimate:  -0.39414
+   Estimated Variance:  0.004896
+              p-value:  1.7718e-08
+    95% Conf Interval: (-0.53129, -0.257) 
+> 
+> 
+> # P-values for differences in means, with Bonferroni correction for 7 tests
+> sprintf("%1.4f",unlist(diff.psi[5,])*7)
+[1] "0.1214" "0.0649" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
+> 
+> #-------------------------------
+> # save down the results
+> #-------------------------------
+> save.image("~/SLAbcurve/results/raw/garki-main-analysis.RData")
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 68.013   0.659  69.839 

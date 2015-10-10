@@ -1,0 +1,734 @@
+
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # 4-garki-eir-comparison.R
+> #
+> # Compare IFAT curves and 
+> # age-adjusted mean values
+> # with EIR estimates from
+> # the original Garki Project
+> # (Molineaux 1980, Table 4, p 65)
+> # for the 3 villages with both
+> # serological and entomological
+> # analyses at multiple wet season
+> # time points
+> #
+> # version 1 (24 sep 2015)
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> 
+> rm(list=ls())
+> library(RColorBrewer)
+> library(scales)
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> 
+> 
+> #-------------------------------
+> # input EIR values from 
+> # Table 4 (p 65) of Molineaux 1980
+> # for villages:
+> # Ajura(553), Rafin-Marke(154), Nasakar(218)
+> #-------------------------------
+> eir <- c( 37,25,28,NA,NA,
++ 		  18, 5, 2, 4, 6,
++ 		 129, 0, 4,16,24)
+> village <- rep(c(553,154,218),c(5,5,5))
+> vname <- rep(c("Ajura","Rafin Marke","Nasakar"),c(5,5,5))
+> eirdates <- rep(c("1971-06-21 to 1971-11-07","1972-05-22 to 1972-10-22","1973-06-18 to 1973-11-04","1974-07-29 to 1974-12-15","1975-07-14 to 1975-11-30"),3)
+> wetseason <- rep(1971:1975,3)
+> deir <- data.frame(village,vname,wetseason,eirdates,eir)
+> 
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> #-------------------------------
+> # subset the dataset to
+> # the 3 villages with EIR ests
+> #-------------------------------
+> ad <- subset(d,village==553|village==154|village==218)
+> ad$vname <- factor(ad$vname)
+> ad$vname <- factor(ad$vname,levels=c("Ajura","Nasakar","Rafin Marke"))
+> ad$vname[ad$village==553] <- "Ajura"
+> 
+> #-------------------------------
+> # Identify observations in the
+> # wet seasons
+> #-------------------------------
+> ad$wetseason <- NA
+> ad$wetseason[ad$mdate>="1971-06-21" & ad$mdate<="1971-11-07" ] <- 1971
+> ad$wetseason[ad$mdate>="1972-05-22" & ad$mdate<="1972-10-22" ] <- 1972
+> ad$wetseason[ad$mdate>="1973-06-18" & ad$mdate<="1973-11-04" ] <- 1973
+> ad$wetseason[ad$mdate>="1974-07-29" & ad$mdate<="1974-12-15" ] <- 1974
+> ad$wetseason[ad$mdate>="1975-07-14" & ad$mdate<="1975-11-30" ] <- 1975
+> 
+> table(ad$vname,ad$wetseason)
+             
+              1971 1972 1973 1974 1975
+  Ajura        427  390  405  354  375
+  Nasakar      345  738  358  361  318
+  Rafin Marke  304  374  340  336  330
+> 
+> 
+> #-------------------------------
+> # IFAT-Pf
+> # SuperLearner curve fits
+> #-------------------------------
+> 
+> # wrapper function for SuperLearner
+> # to repeat the curve fitting by village and wet season ('year')
+> # returns predicted IFAT levels at age in the data
+> SL.wrap <- function(village,year,data) {
++ 	# village: string, village name
++ 	# year   : integer, year of wet season
++ 	# data   : data frame used for estimation (must include vars extracted below)
++ 	
++ 	# extract objects to make the calculations easier
++ 	# subset to non-missing data for SL fit
++ 	ifatpf <- log10(data$ifatpftitre+1)
++ 	vil <- data$vname
++ 	wet <- data$wetseason
++ 	age <- data$ageyrs
++ 	id  <- data$id
++ 	fitd <- data.frame(ifatpf,vil,wet,age,id)
++ 	fitd <- fitd[complete.cases(fitd),]
++ 	
++ 	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
++ 	# note that the X matrix includes a row of 1s to get the SL.glmnet algorithm to run
++ 	fit.SL <- SuperLearner(
++ 				Y=fitd$ifatpf[fitd$vil==village & fitd$wet==year],
++ 				X=data.frame(fitd$age[fitd$vil==village & fitd$wet==year], 
++ 				             rep(1,length(fitd$age[fitd$vil==village & fitd$wet==year]))),
++ 				SL.library=SLlib,
++ 				id=fitd$id[fitd$vil==village & fitd$wet==year]
++ 				)
++ 	print(fit.SL)
++ 	# return matrix of ages and predicted IFAT antibody levels
++ 	res <- cbind(fitd$age[fitd$vil==village & fitd$wet==year], predict(fit.SL)$pred )
++ 	res <- res[order(res[,1]),]
++ 	list(age=res[,1],y=res[,2])
++ }
+> 
+> 
+> set.seed(2343242)
+> ajura.1971.SL <- SL.wrap("Ajura",1971,ad)
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+
+arm (Version 1.8-6, built: 2015-7-7)
+
+Working directory is /Users/benarnold/Dropbox/garki/src
+
+
+Attaching package: ‘arm’
+
+The following object is masked from ‘package:scales’:
+
+    rescale
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk       Coef
+SL.mean_All     0.2291738 0.29377469
+SL.glm_All      0.2303118 0.00000000
+SL.bayesglm_All 0.2303117 0.00000000
+SL.loess_All    0.2207527 0.62251660
+SL.gam_All      0.2227182 0.08370871
+SL.glmnet_All   0.2334871 0.00000000
+There were 22 warnings (use warnings() to see them)
+> ajura.1972.SL <- SL.wrap("Ajura",1972,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk       Coef
+SL.mean_All     0.2440483 0.07435602
+SL.glm_All      0.2344976 0.00000000
+SL.bayesglm_All 0.2344972 0.00000000
+SL.loess_All    0.1954960 0.92564398
+SL.gam_All      0.2214640 0.00000000
+SL.glmnet_All   0.2346770 0.00000000
+There were 22 warnings (use warnings() to see them)
+> ajura.1973.SL <- SL.wrap("Ajura",1973,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk      Coef
+SL.mean_All     0.5540971 0.1043772
+SL.glm_All      0.5274108 0.0000000
+SL.bayesglm_All 0.5274108 0.0000000
+SL.loess_All    0.4436005 0.8956228
+SL.gam_All      0.4927795 0.0000000
+SL.glmnet_All   0.5276461 0.0000000
+There were 22 warnings (use warnings() to see them)
+> 
+> rafin.1971.SL <- SL.wrap("Rafin Marke",1971,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk      Coef
+SL.mean_All     0.3013888 0.1781844
+SL.glm_All      0.2921039 0.1887302
+SL.bayesglm_All 0.2921037 0.0000000
+SL.loess_All    0.2863775 0.6330853
+SL.gam_All      0.2868932 0.0000000
+SL.glmnet_All   0.2939626 0.0000000
+There were 22 warnings (use warnings() to see them)
+> rafin.1972.SL <- SL.wrap("Rafin Marke",1972,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk      Coef
+SL.mean_All     0.9138991 0.0252963
+SL.glm_All      0.7497010 0.0000000
+SL.bayesglm_All 0.7496999 0.0000000
+SL.loess_All    0.5212067 0.8747662
+SL.gam_All      0.5897669 0.0999375
+SL.glmnet_All   0.7478471 0.0000000
+There were 22 warnings (use warnings() to see them)
+> rafin.1973.SL <- SL.wrap("Rafin Marke",1973,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk       Coef
+SL.mean_All     1.2910856 0.00000000
+SL.glm_All      0.8535613 0.00000000
+SL.bayesglm_All 0.8535593 0.02809502
+SL.loess_All    0.5034506 0.97190498
+SL.gam_All      0.6093527 0.00000000
+SL.glmnet_All   0.8518567 0.00000000
+There were 22 warnings (use warnings() to see them)
+> rafin.1974.SL <- SL.wrap("Rafin Marke",1974,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                    Risk     Coef
+SL.mean_All     1.611617 0.000000
+SL.glm_All      1.380315 0.000000
+SL.bayesglm_All 1.380311 0.000000
+SL.loess_All    1.070384 0.745105
+SL.gam_All      1.126395 0.254895
+SL.glmnet_All   1.381653 0.000000
+There were 22 warnings (use warnings() to see them)
+> rafin.1975.SL <- SL.wrap("Rafin Marke",1975,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk       Coef
+SL.mean_All     1.3111242 0.08275755
+SL.glm_All      1.1637799 0.00000000
+SL.bayesglm_All 1.1637675 0.00000000
+SL.loess_All    0.9699192 0.68206598
+SL.gam_All      0.9820610 0.23517647
+SL.glmnet_All   1.1569955 0.00000000
+There were 22 warnings (use warnings() to see them)
+> 
+> nasak.1971.SL <- SL.wrap("Nasakar",1971,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk      Coef
+SL.mean_All     0.1530639 0.6233232
+SL.glm_All      0.1537740 0.0000000
+SL.bayesglm_All 0.1537738 0.3766768
+SL.loess_All    0.1591183 0.0000000
+SL.gam_All      0.1543829 0.0000000
+SL.glmnet_All   0.1548708 0.0000000
+There were 22 warnings (use warnings() to see them)
+> nasak.1972.SL <- SL.wrap("Nasakar",1972,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk      Coef
+SL.mean_All     0.5118187 0.0000000
+SL.glm_All      0.4461257 0.0000000
+SL.bayesglm_All 0.4461253 0.0000000
+SL.loess_All    0.3496972 0.8950309
+SL.gam_All      0.4090398 0.0000000
+SL.glmnet_All   0.4454857 0.1049691
+There were 22 warnings (use warnings() to see them)
+> nasak.1973.SL <- SL.wrap("Nasakar",1973,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk       Coef
+SL.mean_All     1.3098164 0.00000000
+SL.glm_All      0.8527976 0.00000000
+SL.bayesglm_All 0.8527958 0.00000000
+SL.loess_All    0.5368430 0.94682017
+SL.gam_All      0.6652530 0.00000000
+SL.glmnet_All   0.8523472 0.05317983
+There were 22 warnings (use warnings() to see them)
+> nasak.1974.SL <- SL.wrap("Nasakar",1974,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk      Coef
+SL.mean_All     1.6883824 0.0000000
+SL.glm_All      1.3443455 0.0000000
+SL.bayesglm_All 1.3443444 0.1152812
+SL.loess_All    0.9268347 0.8847188
+SL.gam_All      1.1157626 0.0000000
+SL.glmnet_All   1.3457080 0.0000000
+There were 22 warnings (use warnings() to see them)
+> nasak.1975.SL <- SL.wrap("Nasakar",1975,ad)
+
+Call:  
+SuperLearner(Y = fitd$ifatpf[fitd$vil == village & fitd$wet == year], X = data.frame(fitd$age[fitd$vil ==  
+    village & fitd$wet == year], rep(1, length(fitd$age[fitd$vil == village &  
+    fitd$wet == year]))), SL.library = SLlib, id = fitd$id[fitd$vil == village &  
+    fitd$wet == year]) 
+
+
+                     Risk Coef
+SL.mean_All     1.1063702    0
+SL.glm_All      0.9089508    0
+SL.bayesglm_All 0.9089445    0
+SL.loess_All    0.5790953    1
+SL.gam_All      0.7481159    0
+SL.glmnet_All   0.9083610    0
+There were 22 warnings (use warnings() to see them)
+> 
+> 
+> #-------------------------------
+> # village-level 
+> # age-antibody curves by season
+> #-------------------------------
+> cols <- brewer.pal(9,"YlGnBu")
+> ytics <- seq(0,4,by=1)
+> xtics <- seq(0,70,by=10)
+> 
+> # Ajura
+> op <- par(mar=c(4,4,3,2)+0.1)
+> plot(ajura.1971.SL$age,ajura.1971.SL$y,type="n",
++ 	ylim=c(0.5,4),ylab="",yaxt="n",
++ 	xlim=c(0,71),xlab="",xaxt="n",
++ 	bty="n",las=1
++ 	)
+> 	mtext(substitute(paste("IFAT antibody titre, ",italic('P. falciparum'))),at=-10,adj=0,font=2,col=cols[8],cex=1.5)
+> 	mtext("Age, years",side=1,line=2.5)
+> 	axis(2,at=1:4,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)
++ 		), las=1,cex.axis=1.5
++ 	)
+> 	axis(1,at=xtics,cex.axis=1.5)
+> 	lines(ajura.1971.SL$age,ajura.1971.SL$y,col=cols[8],lwd=2)
+> 	lines(ajura.1972.SL$age,ajura.1972.SL$y,col=cols[7],lwd=2)
+> 	lines(ajura.1973.SL$age,ajura.1973.SL$y,col=cols[6],lwd=2)
+> par(op)
+> 
+> # Rafin-Marke
+> op <- par(mar=c(4,4,3,2)+0.1)
+> plot(rafin.1971.SL$age,rafin.1971.SL$y,type="n",
++ 	ylim=c(0.5,4),ylab="",yaxt="n",
++ 	xlim=c(0,71),xlab="",xaxt="n",
++ 	bty="n",las=1
++ 	)
+> 	mtext(substitute(paste("IFAT antibody titre, ",italic('P. falciparum'))),at=-10,adj=0,font=2,col=cols[8],cex=1.5)
+> 	mtext("Age, years",side=1,line=2.5)
+> 	axis(2,at=1:4,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)
++ 		), las=1,cex.axis=1.5
++ 	)
+> 	axis(1,at=xtics,cex.axis=1.5)
+> 	lines(rafin.1971.SL$age,rafin.1971.SL$y,col=cols[8],lwd=2)
+> 	lines(rafin.1972.SL$age,rafin.1972.SL$y,col=cols[7],lwd=2)
+> 	lines(rafin.1973.SL$age,rafin.1973.SL$y,col=cols[6],lwd=2)
+> 	# lines(rafin.1974.SL$age,rafin.1974.SL$y,col=cols[5],lwd=2)
+> 	# lines(rafin.1975.SL$age,rafin.1975.SL$y,col=cols[4],lwd=2)
+> 
+> par(op)
+> 
+> # Nasakar
+> op <- par(mar=c(4,4,3,2)+0.1)
+> plot(nasak.1971.SL$age,nasak.1971.SL$y,type="n",
++ 	ylim=c(0.5,4),ylab="",yaxt="n",
++ 	xlim=c(0,71),xlab="",xaxt="n",
++ 	bty="n",las=1
++ 	)
+> 	mtext(substitute(paste("IFAT antibody titre, ",italic('P. falciparum'))),at=-10,adj=0,font=2,col=cols[8],cex=1.5)
+> 	mtext("Age, years",side=1,line=2.5)
+> 	axis(2,at=1:4,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)
++ 		), las=1,cex.axis=1.5
++ 	)
+> 	axis(1,at=xtics,cex.axis=1.5)
+> 	lines(nasak.1971.SL$age, nasak.1971.SL$y,col=cols[8],lwd=2)
+> 	lines(nasak.1972.SL$age, nasak.1972.SL$y,col=cols[7],lwd=2)
+> 	lines(nasak.1973.SL$age, nasak.1973.SL$y,col=cols[6],lwd=2)
+> 
+> 
+> par(op)
+> 
+> 
+> #-------------------------------
+> # TMLE estimates of age-adjusted
+> # mean antibody titres
+> #-------------------------------
+> 
+> # wrapper function to call for each village and wet season
+> tmle.wrap <- function(village,year,data) {
++ 	# village: string, village name
++ 	# year   : integer, year of wet season
++ 	# data   : data frame used for estimation (must include vars extracted below)
++ 	
++ 	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
++ 	# note that the W matrix includes a row of 1s to get the SL.glmnet algorithm to run
++ 	# extract objects to make the calculations easier
++ 	# subset to non-missing data for SL fit
++ 	ifatpf <- log10(data$ifatpftitre+1)
++ 	vil <- data$vname
++ 	wet <- data$wetseason
++ 	age <- data$ageyrs
++ 	id  <- data$id
++ 	fitd <- data.frame(ifatpf,vil,wet,age,id)
++ 	fitd <- fitd[complete.cases(fitd),]
++ 	
++ 	mu.fit <- tmle(Y=fitd$ifatpf[fitd$vil==village & fitd$wet==year],
++ 			A=NULL,
++ 			W=data.frame(fitd$age[fitd$vil==village & fitd$wet==year], 
++ 				 rep(1,length(fitd$age[fitd$vil==village & fitd$wet==year]))),
++ 			id=fitd$id[fitd$vil==village & fitd$wet==year],
++ 			Q.SL.library=SLlib
++ 	)
++ 	print(mu.fit)
++ 	mu <- mu.fit$estimates$EY1$psi
++ 	se <- sqrt(mu.fit$estimates$EY1$var.psi)
++ 	ci <- mu.fit$estimates$EY1$CI
++ 	p  <- mu.fit$estimates$EY1$pvalue
++ 	list(mu=mu,se=se,ci=ci,p=p)
++ }
+> 
+> set.seed(5463452)
+> ajura.1971.tmle <- tmle.wrap("Ajura",1971,ad)
+ Population Mean
+   Parameter Estimate:  3.4214
+   Estimated Variance:  0.0019832
+              p-value:  <2e-16
+    95% Conf Interval: (3.3341, 3.5087) 
+> ajura.1972.tmle <- tmle.wrap("Ajura",1972,ad)
+ Population Mean
+   Parameter Estimate:  3.2896
+   Estimated Variance:  0.0021101
+              p-value:  <2e-16
+    95% Conf Interval: (3.1995, 3.3796) 
+> ajura.1973.tmle <- tmle.wrap("Ajura",1973,ad)
+ Population Mean
+   Parameter Estimate:  3.3859
+   Estimated Variance:  0.0043371
+              p-value:  <2e-16
+    95% Conf Interval: (3.2568, 3.515) 
+> ajura.tmle <- list(ajura.1971.tmle,ajura.1972.tmle,ajura.1973.tmle)
+> 
+> rafin.1971.tmle <- tmle.wrap("Rafin Marke",1971,ad)
+ Population Mean
+   Parameter Estimate:  3.3026
+   Estimated Variance:  0.0031928
+              p-value:  <2e-16
+    95% Conf Interval: (3.1918, 3.4133) 
+> rafin.1972.tmle <- tmle.wrap("Rafin Marke",1972,ad)
+ Population Mean
+   Parameter Estimate:  2.6727
+   Estimated Variance:  0.010161
+              p-value:  <2e-16
+    95% Conf Interval: (2.4751, 2.8703) 
+> rafin.1973.tmle <- tmle.wrap("Rafin Marke",1973,ad)
+ Population Mean
+   Parameter Estimate:  1.6749
+   Estimated Variance:  0.012576
+              p-value:  <2e-16
+    95% Conf Interval: (1.4551, 1.8947) 
+> rafin.1974.tmle <- tmle.wrap("Rafin Marke",1974,ad)
+ Population Mean
+   Parameter Estimate:  2.5026
+   Estimated Variance:  0.015052
+              p-value:  <2e-16
+    95% Conf Interval: (2.2621, 2.7431) 
+> rafin.1975.tmle <- tmle.wrap("Rafin Marke",1975,ad)
+ Population Mean
+   Parameter Estimate:  2.2584
+   Estimated Variance:  0.016591
+              p-value:  <2e-16
+    95% Conf Interval: (2.0059, 2.5108) 
+> rafin.tmle <- list(rafin.1971.tmle,rafin.1972.tmle,rafin.1973.tmle,rafin.1974.tmle,rafin.1975.tmle)
+> 
+> 
+> nasak.1971.tmle <- tmle.wrap("Nasakar",1971,ad)
+ Population Mean
+   Parameter Estimate:  3.4111
+   Estimated Variance:  0.0014016
+              p-value:  <2e-16
+    95% Conf Interval: (3.3378, 3.4845) 
+> nasak.1972.tmle <- tmle.wrap("Nasakar",1972,ad)
+ Population Mean
+   Parameter Estimate:  3.0592
+   Estimated Variance:  0.0035201
+              p-value:  <2e-16
+    95% Conf Interval: (2.9429, 3.1755) 
+> nasak.1973.tmle <- tmle.wrap("Nasakar",1973,ad)
+ Population Mean
+   Parameter Estimate:  1.861
+   Estimated Variance:  0.012498
+              p-value:  <2e-16
+    95% Conf Interval: (1.6418, 2.0801) 
+> nasak.1974.tmle <- tmle.wrap("Nasakar",1974,ad)
+ Population Mean
+   Parameter Estimate:  2.3353
+   Estimated Variance:  0.016935
+              p-value:  <2e-16
+    95% Conf Interval: (2.0803, 2.5904) 
+> nasak.1975.tmle <- tmle.wrap("Nasakar",1975,ad)
+ Population Mean
+   Parameter Estimate:  2.5548
+   Estimated Variance:  0.017457
+              p-value:  <2e-16
+    95% Conf Interval: (2.2958, 2.8137) 
+> nasak.tmle <- list(nasak.1971.tmle,nasak.1972.tmle,nasak.1973.tmle,nasak.1974.tmle,nasak.1975.tmle)
+> 
+> 
+> #-------------------------------
+> # summarize the means + 95% CIs
+> #-------------------------------
+> ajura.mus <- t(sapply(ajura.tmle,function(x) c(x$mu,x$ci)) )
+> rafin.mus <- t(sapply(rafin.tmle,function(x) c(x$mu,x$ci)) )
+> nasak.mus <- t(sapply(nasak.tmle,function(x) c(x$mu,x$ci)) )
+> rownames(ajura.mus) <- 1971:1973
+> rownames(rafin.mus) <- rownames(nasak.mus) <- 1971:1975
+> colnames(ajura.mus) <- colnames(rafin.mus) <- colnames(nasak.mus) <- c("mu","lb","ub")
+> all.mus <- rbind(ajura.mus,rep(NA,3),rep(NA,3),rafin.mus,nasak.mus)
+> 
+> dmus <- data.frame(
++ 		vname=rep(c("Ajura","Rafin Marke","Nasakar"),c(5,5,5)),
++ 		wetseason=rep(1971:1975,3),
++ 		all.mus
++ )
+Warning message:
+In data.row.names(row.names, rowsi, i) :
+  some row.names duplicated: 5,6,7,8,11,12,13,14,15 --> row.names NOT used
+> 
+> #-------------------------------
+> # merge the means to the EIR data
+> #-------------------------------
+> md <- merge(deir,dmus,by=c("vname","wetseason"))
+> md <- subset(md,!is.na(eir))
+> 
+> # calculate log_10 eir.  add 1 to eir=0
+> md$log10eir <- log10(md$eir)
+> md$log10eir[md$eir==0] <- log10(1)
+> 
+> #-------------------------------
+> # calculate spearman's rank 
+> # correlation test statistic
+> #-------------------------------
+> 
+> sp.rho <- cor.test(md$log10eir,md$mu,method="spearman")
+Warning message:
+In cor.test.default(md$log10eir, md$mu, method = "spearman") :
+  Cannot compute exact p-value with ties
+> sp.rho
+
+	Spearman's rank correlation rho
+
+data:  md$log10eir and md$mu
+S = 92.627, p-value = 0.003441
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.7455303 
+
+> rho.text <- substitute(paste("Spearman's ",rho," = ",rho.txt ),list(rho.txt=sprintf("%1.2f",sp.rho$estimate)))
+> 
+> #-------------------------------
+> # plot the values
+> #-------------------------------
+> 
+> pdf("~/dropbox/garki/figs/garki-IFATPf-EIR.pdf",width=5,height=5)
+> op <- par(mar=c(5,4,1,2)+0.1)
+> cols <- c(brewer.pal(8,"Dark2")[c(8,4)],brewer.pal(8,"Set1")[2])
+> ytics <- seq(1,4,by=1)
+> xtics <- seq(0,3,by=1)
+> plot(1,1,type="n",bty="n",
++ 	xaxt="n",xlab="",xlim=c(0,3),
++ 	yaxt="n",ylab="",ylim=range(ytics),
++ 	las=1
++ 	)
+> 	axis(1,at=xtics,labels=c(1,10,100,1000))
+> 	axis(2,at=ytics,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)),
++ 		las=1
++ 	)
+> 	mtext("Age-adjusted Geometric Mean",side=2,line=3)
+> 	mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=2)
+> 	mtext("Entomological Innoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=3.5)
+> 	text(3,1,rho.text,adj=1,cex=0.8)
+> 	
+> 	# Ajura
+> 	points(md$log10eir[md$vname=="Ajura"],md$mu[md$vname=="Ajura"], pch=16,cex=1.5,col=alpha(cols[1],alpha=0.6))
+> 
+> 	# Rafin Marke
+> 	points(md$log10eir[md$vname=="Rafin Marke"],md$mu[md$vname=="Rafin Marke"], pch=16, cex=1.5,col=alpha(cols[2],alpha=0.6))
+> 
+> 	# Nasakar
+> 	points(md$log10eir[md$vname=="Nasakar"],md$mu[md$vname=="Nasakar"], pch=16,cex=1.5,col=alpha(cols[3],alpha=0.6))
+> 
+> 	# circle pre-intervention measures
+> 	points(md$log10eir[md$wetseason==1971],md$mu[md$wetseason==1971],cex=1.5)
+> 	
+> 	
+> 	# label the villages
+> 	ajura.x <- md$log10eir[md$vname=="Ajura" & md$wetseason==1971]
+> 	ajura.y <- md$mu[md$vname=="Ajura" & md$wetseason==1971]
+> 	segments(x0=ajura.x,y0=ajura.y+0.1,y1=ajura.y+0.3,col="gray40")
+> 	text(ajura.x,ajura.y+0.3,"Ajura (control)",col=cols[1],pos=3,cex=0.7)
+> 	
+> 	rafin.x <- md$log10eir[md$vname=="Rafin Marke" & md$wetseason==1971]
+> 	rafin.y <- md$mu[md$vname=="Rafin Marke" & md$wetseason==1971]
+> 	segments(x0=rafin.x-0.07,x1=rafin.x-0.3,y0=rafin.y+0.07,y1=rafin.y+0.25,col="gray40")
+> 	text(rafin.x-0.3,rafin.y+0.3,"Rafin Marke",col=cols[2],pos=2,cex=0.7)
+> 	
+> 	nasak.x <- md$log10eir[md$vname=="Nasakar" & md$wetseason==1971]
+> 	nasak.y <- md$mu[md$vname=="Nasakar" & md$wetseason==1971]
+> 	segments(x0= nasak.x+0.07,x1= nasak.x+0.3,y0= nasak.y +0.07,y1= nasak.y +0.25,col="gray40") 
+> 	text(nasak.x+0.3, nasak.y +0.3,"Nasakar",col=cols[3],pos=4,cex=0.7)
+> 	
+> par(op)
+> dev.off()
+pdf 
+  2 
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 28.580   0.361  29.228 
