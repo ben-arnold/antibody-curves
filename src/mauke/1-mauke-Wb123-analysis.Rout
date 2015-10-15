@@ -1,0 +1,283 @@
+
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> 
+> #-------------------------------------------
+> # 1-mauke-Wb123-analysis.R
+> # Ben Arnold
+> #
+> # SuperLearner fits of age-specific antibody
+> # response on Mauke island before and after
+> # MDA, and TMLE estimates of geometric mean
+> # (area under the curve) of antibody responses
+> #
+> #
+> # version 1 (15 oct 2015)
+> #-------------------------------------------
+> 
+> #-------------------------------------------
+> # input files:
+> #   mauke1974.dta
+> #   mauke1992.dta
+> #
+> # output files:
+> #   mauke-Wb123-analysis.RData
+> #-------------------------------------------
+> 
+> 
+> 
+> #-------------------------------------------
+> # preamble
+> #-------------------------------------------
+> 
+> rm(list=ls())
+> library(foreign)
+> library(tmle)
+Loading required package: SuperLearner
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(SuperLearner)
+> 
+> # source the base functions for
+> # SL fits of age-antibody curves
+> # and TMLE estimates of mean differences
+> source("~/SLAbcurve/src/0-SLAb-base-functions.R")
+> 
+> #-------------------------------------------
+> # load the Mauke data from 1974(1975) and 1992
+> #-------------------------------------------
+> 
+> d75 <- read.dta("~/dropbox/mauke/data/final/mauke1974.dta")
+> d92 <- read.dta("~/dropbox/mauke/data/final/mauke1992.dta")
+> 
+> # drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
+> a75 <- subset(d75,age>0)
+> a92 <- d92
+> 
+> # add 0.5 years to age to remove bias (on average) due to rounding to year
+> a75$ager <- a75$age+0.5
+> a92$ager <- a92$age+0.5
+> 
+> # create age categories for stratified analyses
+> # a75$agecat <- cut(a75$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
+> # a92$agecat <- cut(a92$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
+> a75$agecat <- cut(a75$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
+> a92$agecat <- cut(a92$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
+> 
+> 
+> # create a standard ID variable before appending
+> a75$id <- as.integer(a75$id74)
+> a92$id <- ifelse(is.na(a92$id74),a92$id92,a92$id74)
+> 
+> # identify the pre- vs. post-MDA measurements
+> a75$mda <- 0
+> a92$mda <- 1
+> 
+> # append data with common variables
+> common.vars <- c("id","ager","agecat","wb123","mda")
+> a7592 <- rbind(subset(a75,select=common.vars),subset(a92,select=common.vars))
+> 
+> #--------------------------------------
+> # All Ages
+> #--------------------------------------
+> set.seed(0237234)
+> 
+> # SuperLearner fits of antibody levels
+> mauke75 <- SLAb.curve(Y=log10(a75$wb123),Age=a75$ager,id=a75$id)
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+Loading required package: Rcpp
+
+arm (Version 1.8-5, built: 2015-05-13)
+
+Working directory is /Users/benarnold/SLAbcurve/src/mauke
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk        Coef
+SL.mean_All     0.7410882 0.026840202
+SL.glm_All      0.6805251 0.000000000
+SL.bayesglm_All 0.6805247 0.005732582
+SL.loess_All    0.6241101 0.885157563
+SL.gam_All      0.6344843 0.082269653
+SL.glmnet_All   0.6806237 0.000000000
+There were 22 warnings (use warnings() to see them)
+> mauke92 <- SLAb.curve(Y=log10(a92$wb123),Age=a92$ager,id=a92$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk      Coef
+SL.mean_All     1.0757828 0.0000000
+SL.glm_All      0.9377853 0.0000000
+SL.bayesglm_All 0.9377852 0.0000000
+SL.loess_All    0.8982069 0.7113741
+SL.gam_All      0.9032277 0.2886259
+SL.glmnet_All   0.9377835 0.0000000
+There were 22 warnings (use warnings() to see them)
+> 
+> # estimate group means
+> EYx.mauke75 <- SLAb.tmle(Y=log10(a75$wb123),Age=a75$ager,id=a75$id)
+ Population Mean
+   Parameter Estimate:  4.9219
+   Estimated Variance:  0.0020232
+              p-value:  <2e-16
+    95% Conf Interval: (4.8338, 5.0101) 
+> EYx.mauke92 <- SLAb.tmle(Y=log10(a92$wb123),Age=a92$ager,id=a92$id)
+ Population Mean
+   Parameter Estimate:  4.2452
+   Estimated Variance:  0.0019316
+              p-value:  <2e-16
+    95% Conf Interval: (4.1591, 4.3314) 
+> 
+> # estimate difference in means
+> diff.mauke  <- SLAb.tmle(Y=log10(a7592$wb123),Age=a7592$ager,id=a7592$id,X=a7592$mda,diff=TRUE)
+ Additive Effect
+   Parameter Estimate:  -0.67933
+   Estimated Variance:  0.0037654
+              p-value:  <2e-16
+    95% Conf Interval: (-0.7996, -0.55906) 
+> 
+> 
+> #--------------------------------------
+> # Estimate means and differences between
+> # time points in
+> # 2 year age bands from ages 1-10
+> #--------------------------------------
+> # agegrps <-c("1-2","3-4","5-6","7-8","9-10") 
+> agegrps <-c("1-5","6-10","11-15","16-20") 
+> EYx.mauke75kids <- sapply(agegrps, function(x) 
++ 	SLAb.tmle(Y=log10(a75$wb123[a75$agecat==x]),Age=a75$ager[a75$agecat==x],id=a75$id[a75$agecat==x]) 
++ 	)
+ Population Mean
+   Parameter Estimate:  4.2653
+   Estimated Variance:  0.027909
+              p-value:  <2e-16
+    95% Conf Interval: (3.9379, 4.5927) 
+ Population Mean
+   Parameter Estimate:  4.5088
+   Estimated Variance:  0.027812
+              p-value:  <2e-16
+    95% Conf Interval: (4.1819, 4.8356) 
+ Population Mean
+   Parameter Estimate:  4.8427
+   Estimated Variance:  0.016968
+              p-value:  <2e-16
+    95% Conf Interval: (4.5874, 5.098) 
+ Population Mean
+   Parameter Estimate:  5.0706
+   Estimated Variance:  0.011094
+              p-value:  <2e-16
+    95% Conf Interval: (4.8642, 5.2771) 
+> EYx.mauke92kids <- sapply(agegrps, function(x) 
++ 	SLAb.tmle(Y=log10(a92$wb123[a92$agecat==x]),Age=a92$ager[a92$agecat==x],id=a92$id[a92$agecat==x]) 
++ 	)
+ Population Mean
+   Parameter Estimate:  3.2263
+   Estimated Variance:  0.011864
+              p-value:  <2e-16
+    95% Conf Interval: (3.0128, 3.4397) 
+ Population Mean
+   Parameter Estimate:  3.8842
+   Estimated Variance:  0.01973
+              p-value:  <2e-16
+    95% Conf Interval: (3.6089, 4.1595) 
+ Population Mean
+   Parameter Estimate:  3.9843
+   Estimated Variance:  0.010646
+              p-value:  <2e-16
+    95% Conf Interval: (3.782, 4.1865) 
+ Population Mean
+   Parameter Estimate:  4.1951
+   Estimated Variance:  0.012367
+              p-value:  <2e-16
+    95% Conf Interval: (3.9772, 4.4131) 
+> diff.maukekids <- sapply(agegrps, function(x) 
++ 	SLAb.tmle(Y=log10(a7592$wb123[a7592$agecat==x]), Age=a7592$ager[a7592$agecat==x], id=a7592$id[a7592$agecat==x], X=a7592$mda[a7592$agecat==x], diff=TRUE) 
++ 	)
+ Additive Effect
+   Parameter Estimate:  -1.0499
+   Estimated Variance:  0.043737
+              p-value:  5.1548e-07
+    95% Conf Interval: (-1.4598, -0.64004) 
+ Additive Effect
+   Parameter Estimate:  -0.63309
+   Estimated Variance:  0.045654
+              p-value:  0.0030469
+    95% Conf Interval: (-1.0519, -0.2143) 
+ Additive Effect
+   Parameter Estimate:  -0.84801
+   Estimated Variance:  0.026245
+              p-value:  1.6545e-07
+    95% Conf Interval: (-1.1655, -0.53048) 
+ Additive Effect
+   Parameter Estimate:  -0.87637
+   Estimated Variance:  0.023049
+              p-value:  7.8113e-09
+    95% Conf Interval: (-1.1739, -0.57881) 
+> 
+> 
+> 
+> #--------------------------------------
+> # store results for later summary
+> # and plotting
+> #--------------------------------------
+> save.image("~/SLAbcurve/results/raw/mauke-Wb123-analysis.RData")
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 24.798   0.355  28.850 
