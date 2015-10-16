@@ -18,7 +18,7 @@
 #   mauke-Wb123-analysis.RData
 #
 # output files:
-#   xxx
+#   mauke-Wb123-analysis.pdf
 #-------------------------------------------
 
 
@@ -35,7 +35,7 @@ library(beeswarm)
 # load the Mauke analysis results
 #-------------------------------------------
 
-load("~/SLAbcurve/results/raw/mauke-Wb123-analysis.RData")
+load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
 
 
 #-------------------------------------------
@@ -44,10 +44,13 @@ load("~/SLAbcurve/results/raw/mauke-Wb123-analysis.RData")
 
 
 
-pdf("~/SLAbcurve/results/figs/mauke-Wb123-analysis.pdf",width=12,height=6)
-cols1 <- brewer.pal(8,"Set1")[c(3)]
-cols2 <- brewer.pal(11,"Spectral")[c(11)]
-cols <- c(cols2,cols1)
+pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf",width=14,height=6)
+# cols1 <- brewer.pal(8,"Set1")[c(3)]
+# cols2 <- brewer.pal(11,"Spectral")[c(11)]
+# cols <- c(cols2,cols1)
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cols <- cbPalette[c(6,7)]
 
 lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE),widths=c(1,1))
 
@@ -79,9 +82,8 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
 	
 	# Axis labels
-	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.5)
+	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
 	mtext("Age, years",side=1,line=3,cex=1.5)
-	mtext(,side=3,line=0)
 	mtext("A",line=1,at=-10,adj=0,font=2,cex=2)
 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") across all ages")),line=1,cex=1.5)
 	
@@ -117,11 +119,11 @@ par(op)
 
 # Panel B age category beeswarm plot and E(Y_x)
 op <- par(mar=c(5,5,3,0)+0.1)
-set.seed(34534) # set seed for exact reprodution of beeswarm display
+set.seed(34532) # set seed for exact reprodution of beeswarm display
 midpts <- beeswarm(log10(wb123)~mda+agecat,data=a7592,
 	log=FALSE,
 	labels=NA,
-	col=alpha(cols[1:2],alpha=0.6),
+	col=alpha(cols[1:2],alpha=0.5),
 	pch=16,
 	ylab="",yaxt="n",ylim=range(ytics),
 	xlab="",
@@ -137,7 +139,7 @@ midpts <- beeswarm(log10(wb123)~mda+agecat,data=a7592,
 	)
 	
 	# X labels and line segments
-	mtext(levels(a7592$agecat),side=1,line=1,at=c(1.5,3.5,5.5,7.5))
+	mtext(levels(a7592$agecat),side=1,line=1,at=c(1.5,3.5,5.5,7.5),cex=1.5)
 	segments(x0=c(2.5,4.5,6.5),y0=min(ytics),y1=max(ytics),col="gray60",lwd=1.5)
 	mtext("Age Category, Years",side=1,line=3,cex=1.5)
 	
@@ -157,7 +159,7 @@ midpts <- beeswarm(log10(wb123)~mda+agecat,data=a7592,
 	# points(c(2,4,6,8),unlist(EYx.mauke92kids[1,]),pch=21,cex=1.75,bg="white",col="gray40",lwd=2)
 	
 	arrows(x0=c(1.5,3.5,5.5,7.5), y0=unlist(EYx.mauke75kids[3,]), y1=unlist(EYx.mauke75kids[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
-	points(c(1.5,3.5,5.5,7.5),unlist(EYx.mauke75kids[1,]),pch=21,cex=1.75,bg="white",col=cols[1],lwd=2)
+	points(c(1.5,3.5,5.5,7.5),unlist(EYx.mauke75kids[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
 	
 	arrows(x0=c(1.5,3.5,5.5,7.5), y0=unlist(EYx.mauke92kids[3,]), y1=unlist(EYx.mauke92kids[4,]), col=cols[2],lwd=2,length=0.05,angle=90,code=3)
 	points(c(1.5,3.5,5.5,7.5),unlist(EYx.mauke92kids[1,]),pch=21,cex=1.75,bg="white",col=cols[2],lwd=2)

@@ -20,7 +20,7 @@ library(scales)
 #--------------------------------------
 # load the enterics analysis output
 #--------------------------------------
-load("~/SLAbcurve/results/raw/haiti2-usa-enterics-analysis.RData")
+load("~/SLAbcurves/results/raw/haiti2-usa-enterics-analysis.RData")
 
 
 #-------------------------------
@@ -41,9 +41,13 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	# plotting parameters and empty plot
 	op <- par(mar=c(5,6,4,0)+0.1)
 	xtics <- seq(0,6,by=1)
-	cols1 <- brewer.pal(8,"Set1")[c(3)]
-	cols2 <- brewer.pal(11,"Spectral")[c(11)]
-	cols <- c(cols1,cols2)
+	# cols1 <- brewer.pal(8,"Set1")[c(3)]
+	# cols2 <- brewer.pal(11,"Spectral")[c(11)]
+	# cols <- c(cols1,cols2)
+	cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+	cols <- cbPalette[c(7,6)]
+	
+	
 	plot(SLfit0$Age, SLfit0$Y,type="n",
 		ylab="",yaxt="n",
 		ylim=c(0,5),
@@ -78,8 +82,8 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	lines(SLfit1$Age,SLfit1$pY,col=cols[2],lwd=2)
 	
 	# country labels
-	mtext("USA",side=4,line=0.5,adj=1,at=SLfit0$pY[length(SLfit0$pY)], col=cols[1],cex=1.25,las=1)
-	mtext("Haiti",side=4,line=0.5,adj=1,at=SLfit1$pY[length(SLfit1$pY)], col=cols[2],cex=1.25,las=2)
+	mtext("USA",side=4,line=1,adj=1,at=SLfit0$pY[length(SLfit0$pY)], col=cols[1],cex=1.25,las=1)
+	mtext("Haiti",side=4,line=1,adj=1,at=SLfit1$pY[length(SLfit1$pY)], col=cols[2],cex=1.25,las=2)
 	par(op)
 	
 }
@@ -94,9 +98,11 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 	
 	# plot parameters and empty plot
 	op <- par(mar=c(5,0,4,0)+0.1)
-	cols1 <- brewer.pal(8,"Set1")[c(3)]
-	cols2 <- brewer.pal(11,"Spectral")[c(11)]
-	cols <- c(cols1,cols2)
+	# cols1 <- brewer.pal(8,"Set1")[c(3)]
+	# cols2 <- brewer.pal(11,"Spectral")[c(11)]
+	# cols <- c(cols1,cols2)
+	cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+	cols <- cbPalette[c(7,6)]
 	plot(1,1,type="n",
 		xlim=c(0,1),xaxt="n",xlab="",
 		ylim=c(0,5),ylab="",yaxt="n",
@@ -118,11 +124,11 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
 	
 	# plot data
-	segments(x0=0.5,y0=EY0$lb, y1=EY0$ub,lwd=1,col=cols[1])
+	arrows(x0=0.5,y0=EY0$lb, y1=EY0$ub,lwd=1,col=cols[1],length=0.05,angle=90,code=3)
 	points(0.5,EY0$psi, pch=21,cex=1.75, lwd=1,bg="white",col=cols[1])
 	
-	segments(x0=0.5,y0=EY1$lb, y1=EY1$ub,lwd=1,col=cols[2])
-	points(0.5,EY1$psi, pch=21,cex=1.75, lwd=1,bg="white",col=cols[2])
+	arrows(x0=0.5,y0=EY1$lb, y1=EY1$ub,lwd=1,col=cols[2],length=0.05,angle=90,code=3)
+	points(0.5,EY1$psi, pch=16,cex=1.75, lwd=1,bg="white",col=cols[2])
 	
 	# if(Ediff$p<0.01) text(0.5,0.1,"*",cex=2)
 	
@@ -130,7 +136,7 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 
 
 
-pdf("~/SLAbcurve/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,width=10)
+pdf("~/SLAbcurves/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,width=10)
 lo <- layout(mat=matrix(1:16,nrow=4,ncol=4,byrow=TRUE),widths=c(1,0.2,1,0.2))
 # lo <- layout(mat=matrix(1:2,nrow=1,ncol=2),widths=c(1,0.2))
 
