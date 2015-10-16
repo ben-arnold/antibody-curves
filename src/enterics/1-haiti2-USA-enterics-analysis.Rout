@@ -565,3 +565,74 @@ There were 22 warnings (use warnings() to see them)
 > set.seed(34534)
 > # fit age specific antibody curves
 > haiti.norogii <- SLAb.curve(Y=log10(d.hai$norogii+1),Age=d.hai$agey,id=d.hai$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk       Coef
+SL.mean_All     0.7034632 0.01452404
+SL.glm_All      0.5696821 0.00000000
+SL.bayesglm_All 0.5696819 0.00000000
+SL.loess_All    0.5041395 0.98547596
+SL.gam_All      0.5182467 0.00000000
+SL.glmnet_All   0.5696536 0.00000000
+There were 22 warnings (use warnings() to see them)
+> usa.norogii   <- SLAb.curve(Y=log10(d.usa$norogii+1),Age=d.usa$agey,id=d.usa$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                     Risk       Coef
+SL.mean_All     0.6722624 0.06545543
+SL.glm_All      0.6247324 0.00000000
+SL.bayesglm_All 0.6247249 0.00000000
+SL.loess_All    0.6224669 0.00000000
+SL.gam_All      0.5983277 0.93454457
+SL.glmnet_All   0.6243490 0.00000000
+There were 22 warnings (use warnings() to see them)
+> 
+> # estimate group means
+> EYx.haiti.norogii <- SLAb.tmle(Y=log10(d.hai$norogii+1),Age=d.hai$agey,id=d.hai$id)
+ Population Mean
+   Parameter Estimate:  2.8579
+   Estimated Variance:  0.0030155
+              p-value:  <2e-16
+    95% Conf Interval: (2.7502, 2.9655) 
+> EYx.usa.norogii   <- SLAb.tmle(Y=log10(d.usa$norogii+1),Age=d.usa$agey,id=d.usa$id)
+ Population Mean
+   Parameter Estimate:  2.3394
+   Estimated Variance:  0.0077445
+              p-value:  <2e-16
+    95% Conf Interval: (2.1669, 2.5119) 
+> 
+> # estimate difference in means
+> diff.norogii      <- SLAb.tmle(Y=log10(d.all$norogii+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
+ Additive Effect
+   Parameter Estimate:  0.57586
+   Estimated Variance:  0.055422
+              p-value:  0.014441
+    95% Conf Interval: (0.11444, 1.0373) 
+> 
+> 	
+> 
+> #-------------------------------
+> # save down results for later
+> # plotting
+> #-------------------------------
+> save.image(file="~/SLAbcurve/results/raw/haiti2-usa-enterics-analysis.RData")
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 70.697   0.684  72.230 
