@@ -50,7 +50,7 @@ pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf",width=14,height=6)
 # cols <- c(cols2,cols1)
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cols <- cbPalette[c(6,7)]
+cols <- cbPalette[c(7,6)]
 
 lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE),widths=c(1,1))
 
@@ -85,7 +85,7 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
 	mtext("Age, years",side=1,line=3,cex=1.5)
 	mtext("A",line=1,at=-10,adj=0,font=2,cex=2)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") across all ages")),line=1,cex=1.5)
+	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
 	
 	# Group labels
 	mtext("Pre-MDA",side=4,line=0.5,adj=0,at=5.1,col=cols[1],cex=1.25,las=1)
@@ -145,7 +145,7 @@ midpts <- beeswarm(log10(wb123)~mda+agecat,data=a7592,
 	
 	# Y label
 	mtext("B",line=1,at=-0.5,adj=0,font=2,cex=2)
-	mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by age")),line=1,cex=1.5)
+	mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
 	# mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=1)
 
 	# add in geometric means

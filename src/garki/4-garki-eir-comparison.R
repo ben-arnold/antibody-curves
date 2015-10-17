@@ -12,6 +12,10 @@
 # analyses at multiple wet season
 # time points
 #
+# version 2 (16 oct 2015)
+# updated script to rely on SLAb-curve.R and SLAb-tmle.R
+# base functions
+#
 # version 1 (24 sep 2015)
 #-------------------------------
 
@@ -26,6 +30,14 @@ library(RColorBrewer)
 library(scales)
 library(SuperLearner)
 library(tmle)
+
+
+# source the base functions for
+# SL fits of age-antibody curves
+# and TMLE estimates of mean differences
+source("~/SLAbcurves/src/SLAb-curve.R")
+source("~/SLAbcurves/src/SLAb-tmle.R")
+
 
 
 #-------------------------------
@@ -79,176 +91,84 @@ table(ad$vname,ad$wetseason)
 # SuperLearner curve fits
 #-------------------------------
 
-# wrapper function for SuperLearner
-# to repeat the curve fitting by village and wet season ('year')
-# returns predicted IFAT levels at age in the data
-SL.wrap <- function(village,year,data) {
-	# village: string, village name
-	# year   : integer, year of wet season
-	# data   : data frame used for estimation (must include vars extracted below)
-	
-	# extract objects to make the calculations easier
-	# subset to non-missing data for SL fit
-	ifatpf <- log10(data$ifatpftitre+1)
-	vil <- data$vname
-	wet <- data$wetseason
-	age <- data$ageyrs
-	id  <- data$id
-	fitd <- data.frame(ifatpf,vil,wet,age,id)
-	fitd <- fitd[complete.cases(fitd),]
-	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
-	# note that the X matrix includes a row of 1s to get the SL.glmnet algorithm to run
-	fit.SL <- SuperLearner(
-				Y=fitd$ifatpf[fitd$vil==village & fitd$wet==year],
-				X=data.frame(fitd$age[fitd$vil==village & fitd$wet==year], 
-				             rep(1,length(fitd$age[fitd$vil==village & fitd$wet==year]))),
-				SL.library=SLlib,
-				id=fitd$id[fitd$vil==village & fitd$wet==year]
-				)
-	print(fit.SL)
-	# return matrix of ages and predicted IFAT antibody levels
-	res <- cbind(fitd$age[fitd$vil==village & fitd$wet==year], predict(fit.SL)$pred )
-	res <- res[order(res[,1]),]
-	list(age=res[,1],y=res[,2])
-}
-
-
 set.seed(2343242)
-ajura.1971.SL <- SL.wrap("Ajura",1971,ad)
-ajura.1972.SL <- SL.wrap("Ajura",1972,ad)
-ajura.1973.SL <- SL.wrap("Ajura",1973,ad)
-
-rafin.1971.SL <- SL.wrap("Rafin Marke",1971,ad)
-rafin.1972.SL <- SL.wrap("Rafin Marke",1972,ad)
-rafin.1973.SL <- SL.wrap("Rafin Marke",1973,ad)
-rafin.1974.SL <- SL.wrap("Rafin Marke",1974,ad)
-rafin.1975.SL <- SL.wrap("Rafin Marke",1975,ad)
-
-nasak.1971.SL <- SL.wrap("Nasakar",1971,ad)
-nasak.1972.SL <- SL.wrap("Nasakar",1972,ad)
-nasak.1973.SL <- SL.wrap("Nasakar",1973,ad)
-nasak.1974.SL <- SL.wrap("Nasakar",1974,ad)
-nasak.1975.SL <- SL.wrap("Nasakar",1975,ad)
-
-
-#-------------------------------
-# village-level 
-# age-antibody curves by season
-#-------------------------------
-cols <- brewer.pal(9,"YlGnBu")
-ytics <- seq(0,4,by=1)
-xtics <- seq(0,70,by=10)
-
-# Ajura
-op <- par(mar=c(4,4,3,2)+0.1)
-plot(ajura.1971.SL$age,ajura.1971.SL$y,type="n",
-	ylim=c(0.5,4),ylab="",yaxt="n",
-	xlim=c(0,71),xlab="",xaxt="n",
-	bty="n",las=1
+ajura.1971.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1971]+1),
+		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1971],
+		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971]
 	)
-	mtext(substitute(paste("IFAT antibody titre, ",italic('P. falciparum'))),at=-10,adj=0,font=2,col=cols[8],cex=1.5)
-	mtext("Age, years",side=1,line=2.5)
-	axis(2,at=1:4,labels=c(
-		expression(10^1),
-		expression(10^2),
-		expression(10^3),
-		expression(10^4)
-		), las=1,cex.axis=1.5
+ajura.1972.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1972]+1),
+		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1972],
+		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1972]
 	)
-	axis(1,at=xtics,cex.axis=1.5)
-	lines(ajura.1971.SL$age,ajura.1971.SL$y,col=cols[8],lwd=2)
-	lines(ajura.1972.SL$age,ajura.1972.SL$y,col=cols[7],lwd=2)
-	lines(ajura.1973.SL$age,ajura.1973.SL$y,col=cols[6],lwd=2)
-par(op)
+ajura.1973.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1973]+1),
+		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1973],
+		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1973]
+	)	
 
-# Rafin-Marke
-op <- par(mar=c(4,4,3,2)+0.1)
-plot(rafin.1971.SL$age,rafin.1971.SL$y,type="n",
-	ylim=c(0.5,4),ylab="",yaxt="n",
-	xlim=c(0,71),xlab="",xaxt="n",
-	bty="n",las=1
+rafin.1971.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1971]+1),
+		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1971],
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1971]
 	)
-	mtext(substitute(paste("IFAT antibody titre, ",italic('P. falciparum'))),at=-10,adj=0,font=2,col=cols[8],cex=1.5)
-	mtext("Age, years",side=1,line=2.5)
-	axis(2,at=1:4,labels=c(
-		expression(10^1),
-		expression(10^2),
-		expression(10^3),
-		expression(10^4)
-		), las=1,cex.axis=1.5
+rafin.1972.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1972]+1),
+		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1972],
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1972]
 	)
-	axis(1,at=xtics,cex.axis=1.5)
-	lines(rafin.1971.SL$age,rafin.1971.SL$y,col=cols[8],lwd=2)
-	lines(rafin.1972.SL$age,rafin.1972.SL$y,col=cols[7],lwd=2)
-	lines(rafin.1973.SL$age,rafin.1973.SL$y,col=cols[6],lwd=2)
-	# lines(rafin.1974.SL$age,rafin.1974.SL$y,col=cols[5],lwd=2)
-	# lines(rafin.1975.SL$age,rafin.1975.SL$y,col=cols[4],lwd=2)
-
-par(op)
-
-# Nasakar
-op <- par(mar=c(4,4,3,2)+0.1)
-plot(nasak.1971.SL$age,nasak.1971.SL$y,type="n",
-	ylim=c(0.5,4),ylab="",yaxt="n",
-	xlim=c(0,71),xlab="",xaxt="n",
-	bty="n",las=1
+rafin.1973.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1973]+1),
+		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1973],
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1973]
 	)
-	mtext(substitute(paste("IFAT antibody titre, ",italic('P. falciparum'))),at=-10,adj=0,font=2,col=cols[8],cex=1.5)
-	mtext("Age, years",side=1,line=2.5)
-	axis(2,at=1:4,labels=c(
-		expression(10^1),
-		expression(10^2),
-		expression(10^3),
-		expression(10^4)
-		), las=1,cex.axis=1.5
+rafin.1974.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1974]+1),
+		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1974],
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1974]
 	)
-	axis(1,at=xtics,cex.axis=1.5)
-	lines(nasak.1971.SL$age, nasak.1971.SL$y,col=cols[8],lwd=2)
-	lines(nasak.1972.SL$age, nasak.1972.SL$y,col=cols[7],lwd=2)
-	lines(nasak.1973.SL$age, nasak.1973.SL$y,col=cols[6],lwd=2)
+rafin.1975.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1975]+1),
+		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1975],
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1975]
+	)
 
-
-par(op)
-
+nasak.1971.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1971]+1),
+		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1971],
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1971]
+	)
+nasak.1972.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1972]+1),
+		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1972],
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1972]
+	)
+nasak.1973.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1973]+1),
+		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1973],
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1973]
+	)
+nasak.1974.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1974]+1),
+		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1974],
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1974]
+	)
+nasak.1975.SL <- SLAb.curve(
+		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1975]+1),
+		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1975],
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1975]
+	)
 
 #-------------------------------
 # TMLE estimates of age-adjusted
 # mean antibody titres
 #-------------------------------
 
-# wrapper function to call for each village and wet season
-tmle.wrap <- function(village,year,data) {
-	# village: string, village name
-	# year   : integer, year of wet season
-	# data   : data frame used for estimation (must include vars extracted below)
-	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
-	# note that the W matrix includes a row of 1s to get the SL.glmnet algorithm to run
-	# extract objects to make the calculations easier
-	# subset to non-missing data for SL fit
-	ifatpf <- log10(data$ifatpftitre+1)
-	vil <- data$vname
-	wet <- data$wetseason
-	age <- data$ageyrs
-	id  <- data$id
-	fitd <- data.frame(ifatpf,vil,wet,age,id)
-	fitd <- fitd[complete.cases(fitd),]
-	
-	mu.fit <- tmle(Y=fitd$ifatpf[fitd$vil==village & fitd$wet==year],
-			A=NULL,
-			W=data.frame(fitd$age[fitd$vil==village & fitd$wet==year], 
-				 rep(1,length(fitd$age[fitd$vil==village & fitd$wet==year]))),
-			id=fitd$id[fitd$vil==village & fitd$wet==year],
-			Q.SL.library=SLlib
-	)
-	print(mu.fit)
-	mu <- mu.fit$estimates$EY1$psi
-	se <- sqrt(mu.fit$estimates$EY1$var.psi)
-	ci <- mu.fit$estimates$EY1$CI
-	p  <- mu.fit$estimates$EY1$pvalue
-	list(mu=mu,se=se,ci=ci,p=p)
-}
+### LEFT OFF HERE
+### NEED TO MODIFY CODE BELOW TO USE SLAb.tmle()
+### AND THEN MOVE THE PLOTTING CODE TO A SEPARATE SCRIPT
+
 
 set.seed(5463452)
 ajura.1971.tmle <- tmle.wrap("Ajura",1971,ad)

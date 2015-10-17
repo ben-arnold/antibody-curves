@@ -45,7 +45,7 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	# cols2 <- brewer.pal(11,"Spectral")[c(11)]
 	# cols <- c(cols1,cols2)
 	cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-	cols <- cbPalette[c(7,6)]
+	cols <- cbPalette[c(6,7)]
 	
 	
 	plot(SLfit0$Age, SLfit0$Y,type="n",
@@ -56,13 +56,13 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 		)
 	
 	# header
-	mtext(letter,side=3,line=1,font=2,at=-0.7,cex=1.75)
+	mtext(letter,side=3,line=1.25,font=2,at=-0.7,cex=1.75)
 	mtext(main,cex=1.25,line=1.5)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=-0.5)
 	
 	# axes
 	if (xlabel==TRUE) mtext("Age, years",side=1,line=3,cex=1.5)
-	if (ylabel==TRUE) mtext("Luminex Response (MFI-Background)",side=2,line=3.25,cex=1.25)
+	if (ylabel==TRUE) mtext("Luminex Response (MFI-Background)",side=2,line=3.5,cex=1.25)
 	axis(1,at=xtics,cex.axis=1.5)
 	axis(2,at=0:5,labels=c(
 		# expression(10^-1),
@@ -102,7 +102,7 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 	# cols2 <- brewer.pal(11,"Spectral")[c(11)]
 	# cols <- c(cols1,cols2)
 	cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-	cols <- cbPalette[c(7,6)]
+	cols <- cbPalette[c(6,7)]
 	plot(1,1,type="n",
 		xlim=c(0,1),xaxt="n",xlab="",
 		ylim=c(0,5),ylab="",yaxt="n",
@@ -121,7 +121,7 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 		# ), las=1,cex.axis=1.5
 	# )
 	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=1,line=1)
-	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
+	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=-0.5)
 	
 	# plot data
 	arrows(x0=0.5,y0=EY0$lb, y1=EY0$ub,lwd=1,col=cols[1],length=0.05,angle=90,code=3)
