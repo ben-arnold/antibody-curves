@@ -11,6 +11,9 @@
 # estimation
 # migrated everything to git
 #
+# version 2 (19 oct 2015)
+# update pointer to base functions
+#
 # version 1 (26 sep 2015)
 #-------------------------------
 
@@ -23,8 +26,11 @@ rm(list=ls())
 library(SuperLearner)
 library(tmle)
 
-# source the base functions
-source("~/SLAbcurve/src/0-SLAb-base-functions.R")
+# source the base functions for
+# SL fits of age-antibody curves
+# and TMLE estimates of mean differences
+source("~/SLAbcurves/src/SLAb-curve.R")
+source("~/SLAbcurves/src/SLAb-tmle.R")
 
 #-------------------------------
 # load the serology dataset
@@ -146,7 +152,7 @@ sprintf("%1.4f",unlist(diff.psi[5,])*7)
 #-------------------------------
 # save down the results
 #-------------------------------
-save.image("~/SLAbcurve/results/raw/garki-main-analysis.RData")
+save.image("~/SLAbcurves/results/raw/garki-main-analysis.RData")
 
 
 

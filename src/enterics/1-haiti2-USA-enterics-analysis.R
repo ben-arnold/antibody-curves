@@ -9,6 +9,9 @@
 # cleaned up code
 # separated out plotting script
 #
+# version 2 (19 oct 2015)
+# updated pointer to base functions
+#
 # version 1 (23 sep 2015)
 #-------------------------------
 
@@ -36,7 +39,9 @@ library(scales)
 # source the base functions for
 # SL fits of age-antibody curves
 # and TMLE estimates of mean differences
-source("~/SLAbcurve/src/0-SLAb-base-functions.R")
+source("~/SLAbcurves/src/SLAb-curve.R")
+source("~/SLAbcurves/src/SLAb-tmle.R")
+
 
 
 #-------------------------------
@@ -218,7 +223,7 @@ diff.norogii      <- SLAb.tmle(Y=log10(d.all$norogii+1),Age=d.all$agey,id=d.all$
 # save down results for later
 # plotting
 #-------------------------------
-save.image(file="~/SLAbcurve/results/raw/haiti2-usa-enterics-analysis.RData")
+save.image(file="~/SLAbcurves/results/raw/haiti2-usa-enterics-analysis.RData")
 
 
 

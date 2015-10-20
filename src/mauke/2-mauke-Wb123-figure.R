@@ -8,7 +8,7 @@
 # Mauke and beeswarm plot of age-stratified
 # means
 #
-# version 1 (26 mar 2015)
+# version 1 (19 oct 2015)
 # 
 #
 #-------------------------------------------
@@ -41,13 +41,10 @@ load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
 #-------------------------------------------
 # plot
 #-------------------------------------------
-
-
+# cross-tab of groups for sample sizes
+table(a7592$agecat,a7592$mda)
 
 pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf",width=14,height=6)
-# cols1 <- brewer.pal(8,"Set1")[c(3)]
-# cols2 <- brewer.pal(11,"Spectral")[c(11)]
-# cols <- c(cols2,cols1)
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cols <- cbPalette[c(7,6)]
@@ -88,8 +85,9 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
 	
 	# Group labels
-	mtext("Pre-MDA",side=4,line=0.5,adj=0,at=5.1,col=cols[1],cex=1.25,las=1)
-	mtext("Post-MDA",side=4,line=0.5,adj=0,at=4.7,col=cols[2],cex=1.25,las=1)
+	mtext("1975",side=4,line=0.5,adj=0,at=5.1,col=cols[1],cex=1.25,las=1)
+	mtext("1992",side=4,line=0.5,adj=0,at=4.75,col=cols[2],cex=1.25,las=1)
+	mtext("(5y Post-MDA)",side=4,line=0.5,adj=0,at=4.5,col=cols[2],cex=1,las=1)
 	
 par(op)
 
@@ -114,8 +112,6 @@ par(op)
 
 
 # dev.off()
-
-
 
 # Panel B age category beeswarm plot and E(Y_x)
 op <- par(mar=c(5,5,3,0)+0.1)
@@ -146,7 +142,7 @@ midpts <- beeswarm(log10(wb123)~mda+agecat,data=a7592,
 	# Y label
 	mtext("B",line=1,at=-0.5,adj=0,font=2,cex=2)
 	mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
-	# mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=1)
+	mtext(c("1975","1992"),at=c(1,2),col=cols[1:2],side=3,line=-0.5)
 
 	# add in geometric means
 	
@@ -163,10 +159,7 @@ midpts <- beeswarm(log10(wb123)~mda+agecat,data=a7592,
 	
 	arrows(x0=c(1.5,3.5,5.5,7.5), y0=unlist(EYx.mauke92kids[3,]), y1=unlist(EYx.mauke92kids[4,]), col=cols[2],lwd=2,length=0.05,angle=90,code=3)
 	points(c(1.5,3.5,5.5,7.5),unlist(EYx.mauke92kids[1,]),pch=21,cex=1.75,bg="white",col=cols[2],lwd=2)
-
 	
-	# add pvalues
-	# mtext(paste("p =",sprintf("%1.3f",w.p)),side=1,line=-0.5,col="gray20",at=c(1.5,3.5,5.5,7.5,9.5),cex=0.8)
 
 par(op)
 dev.off()

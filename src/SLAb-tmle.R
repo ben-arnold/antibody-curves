@@ -30,7 +30,7 @@ SLAb.tmle <- function(Y,Age,X=NULL,W=NULL,id,diff=FALSE) {
 	# diff : logical. calculate the difference between treatment groups?
 	#           if FALSE (default) it returns the mean
 	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
+	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet","SL.randomForest")
 	
 	# if X is null, create a row of 1s
 	if (is.null(X)) {

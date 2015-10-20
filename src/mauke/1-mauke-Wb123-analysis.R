@@ -36,7 +36,8 @@ library(SuperLearner)
 # source the base functions for
 # SL fits of age-antibody curves
 # and TMLE estimates of mean differences
-source("~/SLAbcurve/src/0-SLAb-base-functions.R")
+source("~/SLAbcurves/src/SLAb-curve.R")
+source("~/SLAbcurves/src/SLAb-tmle.R")
 
 #-------------------------------------------
 # load the Mauke data from 1974(1975) and 1992
@@ -54,11 +55,13 @@ a75$ager <- a75$age+0.5
 a92$ager <- a92$age+0.5
 
 # create age categories for stratified analyses
-# a75$agecat <- cut(a75$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
-# a92$agecat <- cut(a92$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
+# 5 year age categories (1-20 y)
 a75$agecat <- cut(a75$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
 a92$agecat <- cut(a92$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
 
+# 2 year age categories (1-10 y)
+a75$agecat2 <- cut(a75$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
+a92$agecat2 <- cut(a92$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
 
 # create a standard ID variable before appending
 a75$id <- as.integer(a75$id74)
@@ -69,7 +72,7 @@ a75$mda <- 0
 a92$mda <- 1
 
 # append data with common variables
-common.vars <- c("id","ager","agecat","wb123","mda")
+common.vars <- c("id","ager","agecat","agecat2","wb123","mda")
 a7592 <- rbind(subset(a75,select=common.vars),subset(a92,select=common.vars))
 
 #--------------------------------------
@@ -92,7 +95,7 @@ diff.mauke  <- SLAb.tmle(Y=log10(a7592$wb123),Age=a7592$ager,id=a7592$id,X=a7592
 #--------------------------------------
 # Estimate means and differences between
 # time points in
-# 2 year age bands from ages 1-10
+# 5 year age bands from ages 1-20
 #--------------------------------------
 # agegrps <-c("1-2","3-4","5-6","7-8","9-10") 
 agegrps <-c("1-5","6-10","11-15","16-20") 
@@ -107,12 +110,28 @@ diff.maukekids <- sapply(agegrps, function(x)
 	)
 
 
+#--------------------------------------
+# Estimate means and differences between
+# time points in
+# 2 year age bands from ages 1-10
+#-------------------------------------- 
+agegrps2 <-c("1-2","3-4","5-6","7-8","9-10")
+EYx.mauke75kids2y <- sapply(agegrps2, function(x) 
+	SLAb.tmle(Y=log10(a75$wb123[a75$agecat2==x]),Age=a75$ager[a75$agecat2==x],id=a75$id[a75$agecat2==x]) 
+	)
+EYx.mauke92kids2y <- sapply(agegrps2, function(x) 
+	SLAb.tmle(Y=log10(a92$wb123[a92$agecat2==x]),Age=a92$ager[a92$agecat2==x],id=a92$id[a92$agecat2==x]) 
+	)
+diff.maukekids2y <- sapply(agegrps2, function(x) 
+	SLAb.tmle(Y=log10(a7592$wb123[a7592$agecat2==x]), Age=a7592$ager[a7592$agecat2==x], id=a7592$id[a7592$agecat2==x], X=a7592$mda[a7592$agecat2==x], diff=TRUE) 
+	)
+
 
 #--------------------------------------
 # store results for later summary
 # and plotting
 #--------------------------------------
-save.image("~/SLAbcurve/results/raw/mauke-Wb123-analysis.RData")
+save.image("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
 
 
 

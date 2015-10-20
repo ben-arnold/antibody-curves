@@ -1,5 +1,5 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -17,6 +17,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > 
 > #-------------------------------
 > # 1-haiti2-USA-enterics-SL-curves.R
@@ -27,6 +29,9 @@ Type 'q()' to quit R.
 > # version 2 (9 oct 2015)
 > # cleaned up code
 > # separated out plotting script
+> #
+> # version 2 (19 oct 2015)
+> # updated pointer to base functions
 > #
 > # version 1 (23 sep 2015)
 > #-------------------------------
@@ -72,7 +77,9 @@ The following object is masked from ‘package:SuperLearner’:
 > # source the base functions for
 > # SL fits of age-antibody curves
 > # and TMLE estimates of mean differences
-> source("~/SLAbcurve/src/0-SLAb-base-functions.R")
+> source("~/SLAbcurves/src/SLAb-curve.R")
+> source("~/SLAbcurves/src/SLAb-tmle.R")
+> 
 > 
 > 
 > #-------------------------------
@@ -127,11 +134,10 @@ Loading required package: arm
 Loading required package: MASS
 Loading required package: Matrix
 Loading required package: lme4
-Loading required package: Rcpp
 
-arm (Version 1.8-5, built: 2015-05-13)
+arm (Version 1.8-6, built: 2015-7-7)
 
-Working directory is /Users/benarnold/SLAbcurve/src/enterics
+Working directory is /Users/benarnold/SLAbcurves/src/enterics
 
 
 Attaching package: ‘arm’
@@ -148,19 +154,23 @@ Loaded gam 1.12
 Loading required package: glmnet
 Loaded glmnet 2.0-2
 
+Loading required package: randomForest
+randomForest 4.6-10
+Type rfNews() to see new features/changes/bug fixes.
 
 Call:  
 SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     1.0600899 0.0286594
-SL.glm_All      0.9670260 0.0000000
-SL.bayesglm_All 0.9670257 0.0000000
-SL.loess_All    0.9432274 0.6504125
-SL.gam_All      0.9450963 0.3209281
-SL.glmnet_All   0.9670368 0.0000000
+                         Risk      Coef
+SL.mean_All         1.0600899 0.0000000
+SL.glm_All          0.9670260 0.0000000
+SL.bayesglm_All     0.9670257 0.0000000
+SL.loess_All        0.9432274 0.6139828
+SL.gam_All          0.9450963 0.1698758
+SL.glmnet_All       0.9669965 0.0000000
+SL.randomForest_All 0.9646408 0.2161415
 There were 22 warnings (use warnings() to see them)
 > usa.cp17   <- SLAb.curve(Y=log10(d.usa$cp17+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -169,13 +179,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.4399197 0.6333027
-SL.glm_All      0.4452749 0.0000000
-SL.bayesglm_All 0.4452686 0.0000000
-SL.loess_All    0.4511141 0.3666973
-SL.gam_All      0.4440379 0.0000000
-SL.glmnet_All   0.4480991 0.0000000
+                         Risk        Coef
+SL.mean_All         0.4350753 0.764003767
+SL.glm_All          0.4397088 0.000000000
+SL.bayesglm_All     0.4397044 0.000000000
+SL.loess_All        0.4568212 0.226188967
+SL.gam_All          0.4377379 0.009807266
+SL.glmnet_All       0.4459671 0.000000000
+SL.randomForest_All 0.4361297 0.000000000
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -195,10 +206,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.cp17      <- SLAb.tmle(Y=log10(d.all$cp17+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  1.7288
-   Estimated Variance:  0.040788
+   Parameter Estimate:  1.7176
+   Estimated Variance:  0.038518
               p-value:  <2e-16
-    95% Conf Interval: (1.333, 2.1247) 
+    95% Conf Interval: (1.3329, 2.1023) 
 > 
 > 
 > #-------------------------------
@@ -214,13 +225,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     1.0356739 0.0000000
-SL.glm_All      0.9224318 0.0000000
-SL.bayesglm_All 0.9224316 0.0000000
-SL.loess_All    0.8679451 0.7820293
-SL.gam_All      0.8742865 0.2179707
-SL.glmnet_All   0.9224346 0.0000000
+                         Risk       Coef
+SL.mean_All         1.0356739 0.00000000
+SL.glm_All          0.9224318 0.00000000
+SL.bayesglm_All     0.9224316 0.00000000
+SL.loess_All        0.8679451 0.77913636
+SL.gam_All          0.8742865 0.14083786
+SL.glmnet_All       0.9224200 0.00000000
+SL.randomForest_All 0.9066925 0.08002578
 There were 22 warnings (use warnings() to see them)
 > usa.cp23   <- SLAb.curve(Y=log10(d.usa$cp23+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -229,13 +241,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.6675367 0.6461559
-SL.glm_All      0.6835472 0.0000000
-SL.bayesglm_All 0.6835373 0.0000000
-SL.loess_All    0.6832540 0.3538441
-SL.gam_All      0.6844542 0.0000000
-SL.glmnet_All   0.6675367 0.0000000
+                         Risk      Coef
+SL.mean_All         0.6680714 0.8937245
+SL.glm_All          0.6829802 0.0000000
+SL.bayesglm_All     0.6829702 0.0000000
+SL.loess_All        0.7264743 0.1062755
+SL.gam_All          0.6857103 0.0000000
+SL.glmnet_All       0.6744880 0.0000000
+SL.randomForest_All 0.6709897 0.0000000
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -255,10 +268,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.cp23      <- SLAb.tmle(Y=log10(d.all$cp23+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  1.8242
-   Estimated Variance:  0.063973
-              p-value:  5.4944e-13
-    95% Conf Interval: (1.3285, 2.32) 
+   Parameter Estimate:  1.8166
+   Estimated Variance:  0.059139
+              p-value:  8.0208e-14
+    95% Conf Interval: (1.3399, 2.2932) 
 > 
 > 
 > #-------------------------------
@@ -274,13 +287,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk        Coef
-SL.mean_All     1.0728475 0.007319151
-SL.glm_All      1.0159270 0.000000000
-SL.bayesglm_All 1.0159270 0.000000000
-SL.loess_All    0.7876212 0.992680849
-SL.gam_All      0.8353531 0.000000000
-SL.glmnet_All   1.0159141 0.000000000
+                         Risk      Coef
+SL.mean_All         1.0728475 0.0000000
+SL.glm_All          1.0159270 0.0000000
+SL.bayesglm_All     1.0159270 0.0000000
+SL.loess_All        0.7876212 0.8485981
+SL.gam_All          0.8353531 0.0000000
+SL.glmnet_All       1.0159281 0.0000000
+SL.randomForest_All 0.8506507 0.1514019
 There were 22 warnings (use warnings() to see them)
 > usa.giar   <- SLAb.curve(Y=log10(d.usa$vsp5+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -289,13 +303,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.6746956 0.1356274
-SL.glm_All      0.6656907 0.0000000
-SL.bayesglm_All 0.6656852 0.0000000
-SL.loess_All    0.6745417 0.2180324
-SL.gam_All      0.6475078 0.6463402
-SL.glmnet_All   0.6662309 0.0000000
+                         Risk Coef
+SL.mean_All         0.6682749    0
+SL.glm_All          0.6547985    0
+SL.bayesglm_All     0.6547957    0
+SL.loess_All        0.6719287    0
+SL.gam_All          0.6382203    0
+SL.glmnet_All       0.6535822    0
+SL.randomForest_All 0.6183667    1
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -315,10 +330,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.giar      <- SLAb.tmle(Y=log10(d.all$vsp5+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  1.8886
-   Estimated Variance:  0.05386
-              p-value:  4.0311e-16
-    95% Conf Interval: (1.4337, 2.3434) 
+   Parameter Estimate:  1.8813
+   Estimated Variance:  0.05292
+              p-value:  2.8838e-16
+    95% Conf Interval: (1.4304, 2.3322) 
 > 
 > 
 > #-------------------------------
@@ -334,13 +349,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     1.1371549 0.0000000
-SL.glm_All      0.8565658 0.0000000
-SL.bayesglm_All 0.8565656 0.0000000
-SL.loess_All    0.8195560 0.7472537
-SL.gam_All      0.8220066 0.2527463
-SL.glmnet_All   0.8565446 0.0000000
+                         Risk      Coef
+SL.mean_All         1.1371549 0.0000000
+SL.glm_All          0.8565658 0.0000000
+SL.bayesglm_All     0.8565656 0.0000000
+SL.loess_All        0.8195560 0.7484835
+SL.gam_All          0.8220066 0.2364113
+SL.glmnet_All       0.8565446 0.0000000
+SL.randomForest_All 0.9090144 0.0151052
 There were 22 warnings (use warnings() to see them)
 > usa.leca   <- SLAb.curve(Y=log10(d.usa$leca+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -349,13 +365,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.2219087 0.2476711
-SL.glm_All      0.2203206 0.0000000
-SL.bayesglm_All 0.2203179 0.0000000
-SL.loess_All    0.2139923 0.5649900
-SL.gam_All      0.2141740 0.1873389
-SL.glmnet_All   0.2209162 0.0000000
+                         Risk Coef
+SL.mean_All         0.2212394    0
+SL.glm_All          0.2149368    0
+SL.bayesglm_All     0.2149358    0
+SL.loess_All        0.2150189    0
+SL.gam_All          0.2080600    0
+SL.glmnet_All       0.2157184    0
+SL.randomForest_All 0.2033308    1
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -375,10 +392,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.leca      <- SLAb.tmle(Y=log10(d.all$leca+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  1.439
-   Estimated Variance:  0.036421
-              p-value:  4.6861e-14
-    95% Conf Interval: (1.065, 1.8131) 
+   Parameter Estimate:  1.424
+   Estimated Variance:  0.028977
+              p-value:  <2e-16
+    95% Conf Interval: (1.0903, 1.7576) 
 > 
 > 
 > #-------------------------------
@@ -394,13 +411,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk Coef
-SL.mean_All     0.1474308    0
-SL.glm_All      0.1355640    0
-SL.bayesglm_All 0.1355639    0
-SL.loess_All    0.1024271    1
-SL.gam_All      0.1161771    0
-SL.glmnet_All   0.1355599    0
+                         Risk      Coef
+SL.mean_All         0.1474308 0.0000000
+SL.glm_All          0.1355640 0.0000000
+SL.bayesglm_All     0.1355639 0.0000000
+SL.loess_All        0.1024271 0.5717577
+SL.gam_All          0.1161771 0.0000000
+SL.glmnet_All       0.1355564 0.0000000
+SL.randomForest_All 0.1044718 0.4282423
 There were 22 warnings (use warnings() to see them)
 > usa.etec   <- SLAb.curve(Y=log10(d.usa$etec+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -409,13 +427,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.4874494 0.3835261
-SL.glm_All      0.4832625 0.0000000
-SL.bayesglm_All 0.4832554 0.6164739
-SL.loess_All    0.5147934 0.0000000
-SL.gam_All      0.4932286 0.0000000
-SL.glmnet_All   0.4979656 0.0000000
+                         Risk      Coef
+SL.mean_All         0.4870028 0.0000000
+SL.glm_All          0.4802627 0.4481576
+SL.bayesglm_All     0.4802572 0.0000000
+SL.loess_All        0.4943604 0.0000000
+SL.gam_All          0.4840951 0.0000000
+SL.glmnet_All       0.4876347 0.0000000
+SL.randomForest_All 0.4783257 0.5518424
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -435,10 +454,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.etec      <- SLAb.tmle(Y=log10(d.all$etec+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  2.3224
-   Estimated Variance:  0.047086
+   Parameter Estimate:  2.3086
+   Estimated Variance:  0.045316
               p-value:  <2e-16
-    95% Conf Interval: (1.8971, 2.7477) 
+    95% Conf Interval: (1.8914, 2.7259) 
 > 
 > 
 > #-------------------------------
@@ -454,13 +473,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.9632403 0.0000000
-SL.glm_All      0.8509937 0.0000000
-SL.bayesglm_All 0.8509936 0.0000000
-SL.loess_All    0.8375043 0.1499239
-SL.gam_All      0.8355008 0.8500761
-SL.glmnet_All   0.8509834 0.0000000
+                         Risk      Coef
+SL.mean_All         0.9632403 0.0000000
+SL.glm_All          0.8509937 0.0000000
+SL.bayesglm_All     0.8509936 0.0000000
+SL.loess_All        0.8375043 0.1590295
+SL.gam_All          0.8355008 0.7101678
+SL.glmnet_All       0.8509815 0.0000000
+SL.randomForest_All 0.8630364 0.1308026
 There were 22 warnings (use warnings() to see them)
 > usa.salb   <- SLAb.curve(Y=log10(d.usa$salb+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -469,13 +489,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk Coef
-SL.mean_All     0.8058969    0
-SL.glm_All      0.7261464    0
-SL.bayesglm_All 0.7261405    0
-SL.loess_All    0.7403026    0
-SL.gam_All      0.6988197    1
-SL.glmnet_All   0.7266167    0
+                         Risk      Coef
+SL.mean_All         0.8037594 0.0000000
+SL.glm_All          0.7223094 0.0000000
+SL.bayesglm_All     0.7223038 0.0000000
+SL.loess_All        0.7395958 0.0000000
+SL.gam_All          0.6965015 0.8701625
+SL.glmnet_All       0.7222798 0.0000000
+SL.randomForest_All 0.7197292 0.1298375
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -495,10 +516,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.salb      <- SLAb.tmle(Y=log10(d.all$salb+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  1.1379
-   Estimated Variance:  0.055856
-              p-value:  1.4753e-06
-    95% Conf Interval: (0.67464, 1.6011) 
+   Parameter Estimate:  1.1272
+   Estimated Variance:  0.055265
+              p-value:  1.6284e-06
+    95% Conf Interval: (0.66642, 1.588) 
 > 
 > #-------------------------------
 > # noro Group I
@@ -512,13 +533,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                    Risk       Coef
-SL.mean_All     1.364566 0.00000000
-SL.glm_All      1.073585 0.02849971
-SL.bayesglm_All 1.073585 0.00000000
-SL.loess_All    1.057523 0.97150029
-SL.gam_All      1.063808 0.00000000
-SL.glmnet_All   1.073627 0.00000000
+                        Risk       Coef
+SL.mean_All         1.364566 0.00000000
+SL.glm_All          1.073585 0.03007064
+SL.bayesglm_All     1.073585 0.00000000
+SL.loess_All        1.057523 0.94961232
+SL.gam_All          1.063808 0.00000000
+SL.glmnet_All       1.073627 0.00000000
+SL.randomForest_All 1.133229 0.02031704
 There were 22 warnings (use warnings() to see them)
 > usa.norogi   <- SLAb.curve(Y=log10(d.usa$norogi+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -527,13 +549,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                    Risk       Coef
-SL.mean_All     1.663397 0.05218471
-SL.glm_All      1.522613 0.00000000
-SL.bayesglm_All 1.522593 0.00000000
-SL.loess_All    1.467386 0.29523100
-SL.gam_All      1.430837 0.65258428
-SL.glmnet_All   1.520838 0.00000000
+                        Risk       Coef
+SL.mean_All         1.687718 0.07791509
+SL.glm_All          1.518333 0.12959608
+SL.bayesglm_All     1.518319 0.00000000
+SL.loess_All        1.538517 0.21926533
+SL.gam_All          1.474630 0.57322350
+SL.glmnet_All       1.517701 0.00000000
+SL.randomForest_All 1.513311 0.00000000
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -553,10 +576,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.norogi      <- SLAb.tmle(Y=log10(d.all$norogi+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  0.94139
-   Estimated Variance:  0.12274
-              p-value:  0.0072092
-    95% Conf Interval: (0.25471, 1.6281) 
+   Parameter Estimate:  0.92368
+   Estimated Variance:  0.12069
+              p-value:  0.0078407
+    95% Conf Interval: (0.24278, 1.6046) 
 > 
 > 
 > #-------------------------------
@@ -571,13 +594,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk       Coef
-SL.mean_All     0.7034632 0.01452404
-SL.glm_All      0.5696821 0.00000000
-SL.bayesglm_All 0.5696819 0.00000000
-SL.loess_All    0.5041395 0.98547596
-SL.gam_All      0.5182467 0.00000000
-SL.glmnet_All   0.5696536 0.00000000
+                         Risk       Coef
+SL.mean_All         0.7034632 0.01452404
+SL.glm_All          0.5696821 0.00000000
+SL.bayesglm_All     0.5696819 0.00000000
+SL.loess_All        0.5041395 0.98547596
+SL.gam_All          0.5182467 0.00000000
+SL.glmnet_All       0.5696536 0.00000000
+SL.randomForest_All 0.5687194 0.00000000
 There were 22 warnings (use warnings() to see them)
 > usa.norogii   <- SLAb.curve(Y=log10(d.usa$norogii+1),Age=d.usa$agey,id=d.usa$id)
 
@@ -586,13 +610,14 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk       Coef
-SL.mean_All     0.6722624 0.06545543
-SL.glm_All      0.6247324 0.00000000
-SL.bayesglm_All 0.6247249 0.00000000
-SL.loess_All    0.6224669 0.00000000
-SL.gam_All      0.5983277 0.93454457
-SL.glmnet_All   0.6243490 0.00000000
+                         Risk       Coef
+SL.mean_All         0.6797104 0.04555965
+SL.glm_All          0.6240472 0.00000000
+SL.bayesglm_All     0.6240410 0.00000000
+SL.loess_All        0.6373931 0.00000000
+SL.gam_All          0.6054072 0.95444035
+SL.glmnet_All       0.6236526 0.00000000
+SL.randomForest_All 0.6363207 0.00000000
 There were 22 warnings (use warnings() to see them)
 > 
 > # estimate group means
@@ -612,10 +637,10 @@ There were 22 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.norogii      <- SLAb.tmle(Y=log10(d.all$norogii+1),Age=d.all$agey,id=d.all$id,X=d.all$haiti,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  0.57586
-   Estimated Variance:  0.055422
-              p-value:  0.014441
-    95% Conf Interval: (0.11444, 1.0373) 
+   Parameter Estimate:  0.57037
+   Estimated Variance:  0.054513
+              p-value:  0.014569
+    95% Conf Interval: (0.11275, 1.028) 
 > 
 > 	
 > 
@@ -623,7 +648,7 @@ There were 22 warnings (use warnings() to see them)
 > # save down results for later
 > # plotting
 > #-------------------------------
-> save.image(file="~/SLAbcurve/results/raw/haiti2-usa-enterics-analysis.RData")
+> save.image(file="~/SLAbcurves/results/raw/haiti2-usa-enterics-analysis.RData")
 > 
 > 
 > 
@@ -635,4 +660,4 @@ There were 22 warnings (use warnings() to see them)
 > 
 > proc.time()
    user  system elapsed 
- 70.697   0.684  72.230 
+103.311   4.055 108.181 

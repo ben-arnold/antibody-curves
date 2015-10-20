@@ -31,7 +31,7 @@ SLAb.curve <-function(Y,Age,id) {
 	
 	require(SuperLearner)
 	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
+	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet","SL.randomForest")
 	# note that the W matrix includes a row of 1s to 
 	#   get the SL.glmnet algorithm to run w/o additional covariates
 	# this will make the SL.glm module throw warnings 

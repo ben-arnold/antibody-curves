@@ -1,0 +1,105 @@
+
+
+#-------------------------------------------
+# 3-mauke-Wb123-supp-figure
+# Ben Arnold
+#
+# Mauke beeswarm plot of age-stratified
+# means in 2 year age bands
+#
+# version 1 (19 oct 2015)
+# 
+#
+#-------------------------------------------
+
+#-------------------------------------------
+# input files:
+#   mauke-Wb123-analysis.RData
+#
+# output files:
+#   mauke-Wb123-analysis-2y-beeswarm.pdf
+#-------------------------------------------
+
+
+
+#-------------------------------------------
+# preamble
+#-------------------------------------------
+rm(list=ls())
+library(RColorBrewer)
+library(scales)
+library(beeswarm)
+
+#-------------------------------------------
+# load the Mauke analysis results
+#-------------------------------------------
+
+load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
+
+
+#-------------------------------------------
+# plot E(Y_x) in 2 year age bands
+# for a supplemental figure
+#-------------------------------------------
+
+# cross-tab of groups for sample sizes
+table(a7592$agecat2,a7592$mda)
+
+pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis-2y-beeswarm.pdf",width=7,height=6)
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cols <- cbPalette[c(7,6)]
+
+op <- par(mar=c(5,5,3,1)+0.1)
+ytics <- 2:6
+set.seed(23423) # set seed for exact reprodution of beeswarm display
+midpts <- beeswarm(log10(wb123)~mda+agecat2,data=a7592,
+	log=FALSE,
+	labels=NA,
+	col=alpha(cols[1:2],alpha=0.5),
+	pch=16,
+	ylab="",yaxt="n",ylim=range(ytics),
+	xlab="",
+	bty="n"
+	)
+	axis(side=2,at=ytics,labels=c(
+		expression(10^2),
+		expression(10^3),
+		expression(10^4),
+		expression(10^5),
+		expression(10^6)
+		), las=1,cex.axis=1.5
+	)
+	
+	# X labels and line segments
+	mtext(levels(a7592$agecat2),side=1,line=1.5,at=c(1.5,3.5,5.5,7.5,9.5),cex=1.5)
+	segments(x0=c(2.5,4.5,6.5,8.5),y0=min(ytics),y1=max(ytics),col="gray60",lwd=1.5)
+	mtext("Age Category, Years",side=1,line=3.5,cex=1.5)
+	
+	# Y label
+	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
+	
+	# header
+	# mtext("A",line=1,at=-0.5,adj=0,font=2,cex=2)
+	mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
+	mtext(c("1975","1992"),at=c(1,2),col=cols[c(1,2)],side=3,line=0.5)
+	mtext("(post-MDA)",at=2,col=cols[2],side=3,line=-0.5,cex=0.75)
+
+	# add in geometric means	
+	arrows(x0=c(1.5,3.5,5.5,7.5,9.5), y0=unlist(EYx.mauke75kids2y[3,]), y1=unlist(EYx.mauke75kids2y[4,]), col=cols[1],lwd=2,length=0.07,angle=90,code=3)
+	points(c(1.5,3.5,5.5,7.5,9.5),unlist(EYx.mauke75kids2y[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+	
+	arrows(x0=c(1.5,3.5,5.5,7.5,9.5), y0=unlist(EYx.mauke92kids2y[3,]), y1=unlist(EYx.mauke92kids2y[4,]), col=cols[2],lwd=2,length=0.07,angle=90,code=3)
+	points(c(1.5,3.5,5.5,7.5,9.5),unlist(EYx.mauke92kids2y[1,]),pch=21,cex=1.75,bg="white",col=cols[2],lwd=2)
+
+	
+	# add Bonferroni-corrected p-values (multiplied by 5 for 5 tests)
+	ptext <- ifelse(unlist(diff.maukekids2y[5,])*5<0.001,"p < 0.001",paste("p =",sprintf("%1.3f",unlist(diff.maukekids2y[5,])*5)))
+	mtext(ptext,side=1,line=0,col="gray20",at=c(1.5,3.5,5.5,7.5,9.5),cex=0.8)
+
+par(op)
+dev.off()
+
+
+
+
