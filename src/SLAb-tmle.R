@@ -11,6 +11,23 @@
 #-------------------------------
 
 
+#---------------------------------
+# functions from 
+# https://github.com/ecpolley/SuperLearnerExtra/tree/master/SL
+# to create new SL GAM
+# algorithms with different parameters
+# (higher degrees of 3) 
+#---------------------------------
+create.SL.gam <- function(deg.gam = c(3, 4)) {
+  for(mm in seq(length(deg.gam))){
+    eval(parse(text = paste('SL.gam.', deg.gam[mm], '<- function(..., deg.gam = ', deg.gam[mm], ') SL.gam(..., deg.gam = deg.gam)', sep = '')), envir = .GlobalEnv)
+  }
+  invisible(TRUE)
+}
+
+create.SL.gam()
+
+
 #-------------------------------
 # wrapper function to call TMLE 
 # for antibody response data
@@ -20,17 +37,16 @@
 # if diff=FALSE, estimates psi = E(Y_x)
 # if diff=TRUE, estimates  psi = E[ E(Y_1) - E(Y_0) ]
 #-------------------------------
-SLAb.tmle <- function(Y,Age,X=NULL,W=NULL,id,diff=FALSE) {
+SLAb.tmle <- function(Y,Age,X=NULL,W=NULL,id,SLlib=c("SL.mean","SL.glm", "SL.bayesglm","SL.loess","SL.gam","SL.gam.3","SL.glmnet"),diff=FALSE) {
 	# Y    : outcome
 	# Age  : age
 	# X    : comparison group (must be binary, 0/1, for tmle()). 
 	#        can be null if diff=FALSE
 	# W    : matrix of covariates (optional)
 	# id   : ID variable, unique for each individual (to identify repeated obs)
+	# SLlib: SuperLearner algorithm library (if different from the default, above)
 	# diff : logical. calculate the difference between treatment groups?
 	#           if FALSE (default) it returns the mean
-	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet","SL.randomForest")
 	
 	# if X is null, create a row of 1s
 	if (is.null(X)) {

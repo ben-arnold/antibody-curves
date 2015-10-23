@@ -10,6 +10,21 @@
 #
 #-------------------------------
 
+#---------------------------------
+# functions from 
+# https://github.com/ecpolley/SuperLearnerExtra/tree/master/SL
+# to create new SL GAM
+# algorithms with different parameters
+# (higher degrees of 3) 
+#---------------------------------
+create.SL.gam <- function(deg.gam = c(3, 4)) {
+  for(mm in seq(length(deg.gam))){
+    eval(parse(text = paste('SL.gam.', deg.gam[mm], '<- function(..., deg.gam = ', deg.gam[mm], ') SL.gam(..., deg.gam = deg.gam)', sep = '')), envir = .GlobalEnv)
+  }
+  invisible(TRUE)
+}
+
+create.SL.gam()
 
 #-------------------------------
 # Wrapper function:
@@ -18,7 +33,7 @@
 # E(Y_x,a) = E(Y | X=x, A=a)
 #-------------------------------
 
-SLAb.curve <-function(Y,Age,id) {
+SLAb.curve <-function(Y,Age,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm","SL.loess", "SL.gam","SL.gam.3","SL.glmnet")) {
 	# wrapper function for the SuperLearner algorithm, subset to a specific
 	# dataset or subgroup (X=x) of interest
 	#
@@ -26,12 +41,13 @@ SLAb.curve <-function(Y,Age,id) {
 	# Y   : outcome_i (log10 antibody)
 	# Age : age_i
 	# id  : ID variable for individuals in the dataset (for repeated observations)
-	#
-	# output: data frame with Y, Age, id, and pY (SL predictions)
+	# SLlib : SuperLearner algorithm library (if different from the default, above)
+	# 
+	# the function returns a data frame with Y, Age, id, and pY (SL predictions)
 	
 	require(SuperLearner)
 	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet","SL.randomForest")
+	
 	# note that the W matrix includes a row of 1s to 
 	#   get the SL.glmnet algorithm to run w/o additional covariates
 	# this will make the SL.glm module throw warnings 
