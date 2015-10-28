@@ -22,7 +22,7 @@
 #   milwaukee2011.csv
 #
 # output files:
-#   haiti2-USA-enterics-SL-curves.pdf
+#   haiti2-usa-enterics-analysis.RData
 #-------------------------------
 
 #-------------------------------
@@ -41,6 +41,7 @@ library(scales)
 # and TMLE estimates of mean differences
 source("~/SLAbcurves/src/SLAb-curve.R")
 source("~/SLAbcurves/src/SLAb-tmle.R")
+source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 
 
