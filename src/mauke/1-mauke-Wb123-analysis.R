@@ -98,7 +98,6 @@ diff.mauke  <- SLAb.tmle(Y=log10(a7592$wb123),Age=a7592$ager,id=a7592$id,X=a7592
 # time points in
 # 5 year age bands from ages 1-20
 #--------------------------------------
-# agegrps <-c("1-2","3-4","5-6","7-8","9-10") 
 agegrps <-c("1-5","6-10","11-15","16-20") 
 EYx.mauke75kids <- sapply(agegrps, function(x) 
 	SLAb.tmle(Y=log10(a75$wb123[a75$agecat==x]),Age=a75$ager[a75$agecat==x],id=a75$id[a75$agecat==x]) 
