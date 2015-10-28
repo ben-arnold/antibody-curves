@@ -38,6 +38,7 @@ library(SuperLearner)
 # and TMLE estimates of mean differences
 source("~/SLAbcurves/src/SLAb-curve.R")
 source("~/SLAbcurves/src/SLAb-tmle.R")
+source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 #-------------------------------------------
 # load the Mauke data from 1974(1975) and 1992
