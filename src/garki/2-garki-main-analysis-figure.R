@@ -126,10 +126,10 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	lines(p.tr5$Age,p.tr5$pY,col=i.cols[5])
 	
 	text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
-	text(70,2.6,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[1])
-	text(14,3.12,"3",cex=0.75,col=i.cols[3])
-	text(17.5,2.95,"4",cex=0.75,col=i.cols[4])
-	text(21,2.7,"5",cex=0.75,col=i.cols[5],adj=0)
+	text(70,2.5,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[1])
+	text(11,3.0,"3",cex=0.75,col=i.cols[3])
+	text(14,2.85,"4",cex=0.75,col=i.cols[4])
+	text(19,2.6,"5",cex=0.75,col=i.cols[5],adj=0)
 	
 # Active intervention  mean estimates
 op <- par(mar=c(4,0,7,4)+0.1)
@@ -183,10 +183,10 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 	lines(p.tr8$Age,p.tr8$pY,col=i.cols[8])
 	
 	text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
-	text(70,2.6,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[1])
+	text(70,2.5,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[1])
 	text(20,2.7,"6",cex=0.75,col=i.cols[6])
 	text(12,3.1,"7",cex=0.75,col=i.cols[7])
-	text(15,3,"8",cex=0.75,col=i.cols[8],adj=0)
+	text(15,2.9,"8",cex=0.75,col=i.cols[8],adj=0)
 
 # Post-intervention  mean estimates
 op <- par(mar=c(4,0,7,4)+0.1)

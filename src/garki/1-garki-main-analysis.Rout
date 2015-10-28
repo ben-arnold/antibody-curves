@@ -69,6 +69,7 @@ The following object is masked from ‘package:SuperLearner’:
 > # and TMLE estimates of mean differences
 > source("~/SLAbcurves/src/SLAb-curve.R")
 > source("~/SLAbcurves/src/SLAb-tmle.R")
+> source("~/SLAbcurves/src/SLAb-cvRF.R")
 > 
 > #-------------------------------
 > # load the serology dataset
@@ -116,6 +117,9 @@ The following object is masked from ‘package:SuperLearner’:
 > 
 > # Pre-intervention period fitted curves
 > p.c12 <- SLAb.curve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id)
+Loading required package: randomForest
+randomForest 4.6-12
+Type rfNews() to see new features/changes/bug fixes.
 Loading required package: arm
 Loading required package: MASS
 Loading required package: Matrix
@@ -140,14 +144,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk       Coef
-SL.mean_All     0.2973208 0.02459508
-SL.glm_All      0.2847284 0.00000000
-SL.bayesglm_All 0.2847283 0.00000000
-SL.loess_All    0.2345462 0.97540492
-SL.gam_All      0.2636002 0.00000000
-SL.gam.3_All    0.2516824 0.00000000
-SL.glmnet_All   0.2846816 0.00000000
+                              Risk     Coef
+SL.mean_All              0.2978141 0.000000
+SL.glm_All               0.2842381 0.000000
+SL.bayesglm_All          0.2842381 0.000000
+SL.loess_All             0.2318962 0.875182
+SL.gam_All               0.2630435 0.000000
+SL.gam.3_All             0.2507294 0.000000
+SL.glmnet_All            0.2842105 0.000000
+SL.randomForest.ns25_All 0.2482685 0.124818
 There were 33 warnings (use warnings() to see them)
 > p.tr1 <- SLAb.curve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id)
 
@@ -156,14 +161,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk      Coef
-SL.mean_All     0.2498660 0.1385032
-SL.glm_All      0.2489505 0.0000000
-SL.bayesglm_All 0.2489505 0.0000000
-SL.loess_All    0.2408397 0.8614968
-SL.gam_All      0.2453589 0.0000000
-SL.gam.3_All    0.2434927 0.0000000
-SL.glmnet_All   0.2490015 0.0000000
+                              Risk      Coef
+SL.mean_All              0.2502153 0.1239357
+SL.glm_All               0.2488674 0.0000000
+SL.bayesglm_All          0.2488673 0.0000000
+SL.loess_All             0.2420271 0.7701927
+SL.gam_All               0.2454747 0.0000000
+SL.gam.3_All             0.2439962 0.0000000
+SL.glmnet_All            0.2488606 0.0000000
+SL.randomForest.ns35_All 0.2433822 0.1058716
 There were 33 warnings (use warnings() to see them)
 > p.tr2 <- SLAb.curve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id)
 
@@ -172,14 +178,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk        Coef
-SL.mean_All     0.4165343 0.008715867
-SL.glm_All      0.3942458 0.000000000
-SL.bayesglm_All 0.3942457 0.000000000
-SL.loess_All    0.2960984 0.991284133
-SL.gam_All      0.3513618 0.000000000
-SL.gam.3_All    0.3264706 0.000000000
-SL.glmnet_All   0.3942923 0.000000000
+                              Risk      Coef
+SL.mean_All              0.4167728 0.0000000
+SL.glm_All               0.3943801 0.0000000
+SL.bayesglm_All          0.3943800 0.0000000
+SL.loess_All             0.2986833 0.7914462
+SL.gam_All               0.3522498 0.0000000
+SL.gam.3_All             0.3283913 0.0000000
+SL.glmnet_All            0.3944576 0.0000000
+SL.randomForest.ns30_All 0.3225122 0.2085538
 There were 33 warnings (use warnings() to see them)
 > 
 > # Intervention phase fitted curves
@@ -190,14 +197,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk        Coef
-SL.mean_All     0.6626433 0.005012131
-SL.glm_All      0.6212120 0.000000000
-SL.bayesglm_All 0.6212120 0.000000000
-SL.loess_All    0.4615726 0.994987869
-SL.gam_All      0.5475541 0.000000000
-SL.gam.3_All    0.5109783 0.000000000
-SL.glmnet_All   0.6211658 0.000000000
+                              Risk      Coef
+SL.mean_All              0.6574936 0.0000000
+SL.glm_All               0.6171027 0.0000000
+SL.bayesglm_All          0.6171026 0.0000000
+SL.loess_All             0.4602784 0.6911972
+SL.gam_All               0.5449136 0.0000000
+SL.gam.3_All             0.5092408 0.0000000
+SL.glmnet_All            0.6170733 0.0000000
+SL.randomForest.ns15_All 0.4856384 0.3088028
 There were 33 warnings (use warnings() to see them)
 > p.tr3 <- SLAb.curve(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id)
 
@@ -206,14 +214,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk         Coef
-SL.mean_All     0.8386342 0.0004542147
-SL.glm_All      0.6720987 0.0203706197
-SL.bayesglm_All 0.6720986 0.0000000000
-SL.loess_All    0.4445871 0.9791751656
-SL.gam_All      0.5445306 0.0000000000
-SL.gam.3_All    0.4914001 0.0000000000
-SL.glmnet_All   0.6720951 0.0000000000
+                              Risk      Coef
+SL.mean_All              0.8405860 0.0000000
+SL.glm_All               0.6731793 0.0000000
+SL.bayesglm_All          0.6731792 0.0000000
+SL.loess_All             0.4508781 0.7759159
+SL.gam_All               0.5467532 0.0000000
+SL.gam.3_All             0.4941561 0.0000000
+SL.glmnet_All            0.6732689 0.0000000
+SL.randomForest.ns15_All 0.5212250 0.2240841
 There were 33 warnings (use warnings() to see them)
 > p.tr4 <- SLAb.curve(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id)
 
@@ -222,14 +231,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk       Coef
-SL.mean_All     1.2334102 0.00000000
-SL.glm_All      0.9306403 0.00000000
-SL.bayesglm_All 0.9306401 0.02791677
-SL.loess_All    0.5979692 0.94690873
-SL.gam_All      0.7168210 0.00000000
-SL.gam.3_All    0.6391045 0.02517450
-SL.glmnet_All   0.9306943 0.00000000
+                              Risk      Coef
+SL.mean_All              1.2324809 0.0000000
+SL.glm_All               0.9280539 0.0000000
+SL.bayesglm_All          0.9280538 0.0000000
+SL.loess_All             0.5894637 0.7558143
+SL.gam_All               0.7145003 0.0000000
+SL.gam.3_All             0.6349192 0.0000000
+SL.glmnet_All            0.9279418 0.0000000
+SL.randomForest.ns30_All 0.7056561 0.2441857
 There were 33 warnings (use warnings() to see them)
 > p.tr5 <- SLAb.curve(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id)
 
@@ -238,14 +248,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk        Coef
-SL.mean_All     1.3151731 0.000000000
-SL.glm_All      0.8848534 0.000000000
-SL.bayesglm_All 0.8848533 0.001767539
-SL.loess_All    0.5271103 0.998232461
-SL.gam_All      0.6472622 0.000000000
-SL.gam.3_All    0.5735472 0.000000000
-SL.glmnet_All   0.8847429 0.000000000
+                              Risk      Coef
+SL.mean_All              1.3122630 0.0000000
+SL.glm_All               0.8819786 0.0000000
+SL.bayesglm_All          0.8819786 0.0000000
+SL.loess_All             0.5241792 0.8658147
+SL.gam_All               0.6452970 0.0000000
+SL.gam.3_All             0.5716995 0.0000000
+SL.glmnet_All            0.8819378 0.0000000
+SL.randomForest.ns15_All 0.7000204 0.1341853
 There were 33 warnings (use warnings() to see them)
 > 
 > # post intervention period fitted curves
@@ -257,14 +268,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk        Coef
-SL.mean_All     0.5161707 0.003915297
-SL.glm_All      0.4847853 0.000000000
-SL.bayesglm_All 0.4847852 0.000000000
-SL.loess_All    0.3556780 0.996084703
-SL.gam_All      0.4327658 0.000000000
-SL.gam.3_All    0.4080666 0.000000000
-SL.glmnet_All   0.4847303 0.000000000
+                              Risk       Coef
+SL.mean_All              0.5157798 0.00000000
+SL.glm_All               0.4839900 0.00000000
+SL.bayesglm_All          0.4839900 0.00000000
+SL.loess_All             0.3558133 0.94522419
+SL.gam_All               0.4318337 0.00000000
+SL.gam.3_All             0.4073771 0.00000000
+SL.glmnet_All            0.4838457 0.00000000
+SL.randomForest.ns25_All 0.3961393 0.05477581
 There were 33 warnings (use warnings() to see them)
 > p.tr6 <- SLAb.curve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id)
 
@@ -273,14 +285,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk Coef
-SL.mean_All     1.4463410    0
-SL.glm_All      0.9420935    0
-SL.bayesglm_All 0.9420934    0
-SL.loess_All    0.4824061    1
-SL.gam_All      0.6357136    0
-SL.gam.3_All    0.5407210    0
-SL.glmnet_All   0.9423548    0
+                              Risk       Coef
+SL.mean_All              1.4414395 0.00000000
+SL.glm_All               0.9336630 0.00000000
+SL.bayesglm_All          0.9336629 0.00000000
+SL.loess_All             0.4760533 0.91187978
+SL.gam_All               0.6336506 0.00000000
+SL.gam.3_All             0.5380278 0.00000000
+SL.glmnet_All            0.9335084 0.00000000
+SL.randomForest.ns15_All 0.7019469 0.08812022
 There were 33 warnings (use warnings() to see them)
 > p.tr7 <- SLAb.curve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id)
 
@@ -289,14 +302,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk       Coef
-SL.mean_All     1.4836413 0.00000000
-SL.glm_All      1.2186418 0.00000000
-SL.bayesglm_All 1.2186418 0.00000000
-SL.loess_All    0.8427231 0.95128812
-SL.gam_All      0.9907750 0.00000000
-SL.gam.3_All    0.9042817 0.01762033
-SL.glmnet_All   1.2183804 0.03109155
+                              Risk        Coef
+SL.mean_All              1.4822914 0.000000000
+SL.glm_All               1.2234453 0.000000000
+SL.bayesglm_All          1.2234451 0.000000000
+SL.loess_All             0.8424117 0.904712290
+SL.gam_All               0.9913538 0.000000000
+SL.gam.3_All             0.9037755 0.002535543
+SL.glmnet_All            1.2231909 0.000000000
+SL.randomForest.ns15_All 1.0042698 0.092752167
 There were 33 warnings (use warnings() to see them)
 > p.tr8 <- SLAb.curve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id)
 
@@ -305,14 +319,15 @@ SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.librar
     id = fitd$id) 
 
 
-                     Risk        Coef
-SL.mean_All     1.0863635 0.008622934
-SL.glm_All      0.9522105 0.000000000
-SL.bayesglm_All 0.9522103 0.000000000
-SL.loess_All    0.7388422 0.968753276
-SL.gam_All      0.8235118 0.004584684
-SL.gam.3_All    0.7769012 0.000000000
-SL.glmnet_All   0.9521646 0.018039106
+                              Risk     Coef
+SL.mean_All              1.0927350 0.000000
+SL.glm_All               0.9625744 0.000000
+SL.bayesglm_All          0.9625740 0.000000
+SL.loess_All             0.7504636 0.749061
+SL.gam_All               0.8341089 0.000000
+SL.gam.3_All             0.7878165 0.000000
+SL.glmnet_All            0.9621002 0.000000
+SL.randomForest.ns40_All 0.8069173 0.250939
 There were 33 warnings (use warnings() to see them)
 > 
 > 
@@ -339,9 +354,6 @@ There were 33 warnings (use warnings() to see them)
 + 	id=d$id[d$tr=="Control" & d$serosvy==x]
 + 	)
 + )
-Loading required package: randomForest
-randomForest 4.6-12
-Type rfNews() to see new features/changes/bug fixes.
  Population Mean
    Parameter Estimate:  3.2516
    Estimated Variance:  0.00091766
@@ -444,45 +456,45 @@ Type rfNews() to see new features/changes/bug fixes.
 + 	)
 + )
  Additive Effect
-   Parameter Estimate:  0.079878
-   Estimated Variance:  0.0011891
-              p-value:  0.020534
-    95% Conf Interval: (0.012291, 0.14747) 
+   Parameter Estimate:  0.081334
+   Estimated Variance:  0.0012347
+              p-value:  0.020632
+    95% Conf Interval: (0.012462, 0.15021) 
  Additive Effect
-   Parameter Estimate:  0.10213
-   Estimated Variance:  0.0011702
-              p-value:  0.0028304
-    95% Conf Interval: (0.035083, 0.16918) 
+   Parameter Estimate:  0.10317
+   Estimated Variance:  0.0011819
+              p-value:  0.0026926
+    95% Conf Interval: (0.035783, 0.17055) 
  Additive Effect
-   Parameter Estimate:  -0.4423
-   Estimated Variance:  0.0020095
+   Parameter Estimate:  -0.44862
+   Estimated Variance:  0.0020376
               p-value:  <2e-16
-    95% Conf Interval: (-0.53016, -0.35444) 
+    95% Conf Interval: (-0.5371, -0.36015) 
  Additive Effect
-   Parameter Estimate:  -0.59234
-   Estimated Variance:  0.0026211
+   Parameter Estimate:  -0.58993
+   Estimated Variance:  0.0026956
               p-value:  <2e-16
-    95% Conf Interval: (-0.69268, -0.49199) 
+    95% Conf Interval: (-0.6917, -0.48817) 
  Additive Effect
-   Parameter Estimate:  -1.3991
-   Estimated Variance:  0.0026303
+   Parameter Estimate:  -1.3934
+   Estimated Variance:  0.0025709
               p-value:  <2e-16
-    95% Conf Interval: (-1.4996, -1.2985) 
+    95% Conf Interval: (-1.4928, -1.294) 
  Additive Effect
-   Parameter Estimate:  -0.63218
-   Estimated Variance:  0.0029538
+   Parameter Estimate:  -0.63152
+   Estimated Variance:  0.0029162
               p-value:  <2e-16
-    95% Conf Interval: (-0.73871, -0.52566) 
+    95% Conf Interval: (-0.73736, -0.52567) 
  Additive Effect
-   Parameter Estimate:  -0.38594
-   Estimated Variance:  0.0040097
-              p-value:  1.0959e-09
-    95% Conf Interval: (-0.51005, -0.26182) 
+   Parameter Estimate:  -0.3863
+   Estimated Variance:  0.0041153
+              p-value:  1.7258e-09
+    95% Conf Interval: (-0.51203, -0.26056) 
 > 
 > 
 > # P-values for differences in means, with Bonferroni correction for 7 tests
 > sprintf("%1.4f",unlist(diff.psi[5,])*7)
-[1] "0.1437" "0.0198" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
+[1] "0.1444" "0.0188" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
 > 
 > #-------------------------------
 > # save down the results
@@ -494,4 +506,4 @@ Type rfNews() to see new features/changes/bug fixes.
 > 
 > proc.time()
    user  system elapsed 
-108.952   3.716 115.131 
+299.463   4.955 306.777 

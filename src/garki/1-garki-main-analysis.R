@@ -31,6 +31,7 @@ library(tmle)
 # and TMLE estimates of mean differences
 source("~/SLAbcurves/src/SLAb-curve.R")
 source("~/SLAbcurves/src/SLAb-tmle.R")
+source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 #-------------------------------
 # load the serology dataset
