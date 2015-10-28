@@ -37,7 +37,7 @@ create.SL.gam()
 # if diff=FALSE, estimates psi = E(Y_x)
 # if diff=TRUE, estimates  psi = E[ E(Y_1) - E(Y_0) ]
 #-------------------------------
-SLAb.tmle <- function(Y,Age,X=NULL,W=NULL,id,SLlib=c("SL.mean","SL.glm", "SL.bayesglm","SL.loess","SL.gam","SL.gam.3","SL.glmnet"),diff=FALSE) {
+SLAb.tmle <- function(Y,Age,X=NULL,W=NULL,id,SLlib=c("SL.mean","SL.glm", "SL.bayesglm","SL.loess","SL.gam","SL.gam.3","SL.glmnet","SL.randomForest"),diff=FALSE) {
 	# Y    : outcome
 	# Age  : age
 	# X    : comparison group (must be binary, 0/1, for tmle()). 
@@ -61,6 +61,15 @@ SLAb.tmle <- function(Y,Age,X=NULL,W=NULL,id,SLlib=c("SL.mean","SL.glm", "SL.bay
 	# subset to non-missing data for TMLE fit
 	fitd <- data.frame(Y,X,Age,W,id)
 	fitd <- fitd[complete.cases(fitd),]
+  
+	# If randomForest is included in the library, 
+	# select optimal node size (tree depth) using cross-validated risk
+	# and then update the ensemble library to include the optimal node size
+	if (grep("SL.randomForest",SLlib)>0) {
+	  cvRF <- SLAb.cvRF(Y=fitd$Y,X=data.frame(fitd$Age,fitd$W),id=fitd$id,SLlib=SLlib)
+	  SLlib <- cvRF$SLlib
+	}
+  
 	# estimate either the difference (A=fitd$X) or the adjusted mean (A=NULL)
 	if (diff==TRUE) {
 		tmle.fit <- tmle(Y=fitd$Y,

@@ -29,22 +29,26 @@
 #---------------------------------------
 
 
-SLAb.cvRF <- function(Y,X,id,SLlib) {
+SLAb.cvRF <- function(Y,X,id,SLlib,print=FALSE) {
   # arguments
   # Y     : outcome
   # X     : matrix of features that predict Y
   # id    : id variable to identify independent observations for V-splits
   # SLlib : SuperLearner library
+  # print : logical. print messages? (default is no)
   #
-  # returns an updated SuperLearner library
+  # returns a list with updated SuperLearner library, the optimal node size, and cvRisks
 
-  cat("\nThe ensemble library includes SL.randomForest.")
-  cat("\nThe default R implementation of randomForest tends to overfit the data")
-  cat("\nby growing trees that are too deep.")
-  cat("\nWe can prevent overfitting by properly tuning the node size.")
-  cat("\nSelecting the optimal node size (tree depth)")
-  cat("\nfrom 5,10,15,...,40 using V-fold cross-validation.")
-  cat("\nThis could take a few minutes, depending on the size of your dataset...\n")
+  if(print==TRUE) {
+    cat("\nThe ensemble library includes SL.randomForest.")
+    cat("\nThe default R implementation of randomForest tends to overfit the data")
+    cat("\n  by growing trees that are too deep.")
+    cat("\nPrevent overfitting by properly tuning the node size.")
+    cat("\nSelecting the optimal node size (tree depth)")
+    cat("\n  from 5,10,15,...,40 using V-fold cross-validation.")
+    cat("\nThis could take a few minutes, depending on the size of your dataset...\n")
+  }
+  
   nodesizes <- seq(5,40,by=5)
   create.SL.randomForest <- function(tune = list(nodesize = nodesizes)) {
     for(mm in seq(length(tune$nodesize))) { 
@@ -68,10 +72,12 @@ SLAb.cvRF <- function(Y,X,id,SLlib) {
   # update the library
   SLlib2 <- gsub("SL.randomForest",paste("SL.randomForest.ns",ns.opt,sep=""),SLlib)
   
-  cat("\n-----------------------------------")
-  cat("\nThe optimal node size is: ",ns.opt,"\n")
-  print(cvr.tab)
-  cat("-----------------------------------\n")
+  if(print==TRUE) {
+    cat("\n-----------------------------------")
+    cat("\nOptimal node size: ",ns.opt,"\n")
+    print(cvr.tab)
+    cat("-----------------------------------\n")
+  }
   
   # return results
   return(list(SLlib=SLlib2,ns.opt=ns.opt,cvRisks=cvr.tab))
