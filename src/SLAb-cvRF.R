@@ -45,11 +45,11 @@ SLAb.cvRF <- function(Y,X,id,SLlib,print=FALSE) {
     cat("\n  by growing trees that are too deep.")
     cat("\nPrevent overfitting by properly tuning the node size.")
     cat("\nSelecting the optimal node size (tree depth)")
-    cat("\n  from 5,10,15,...,40 using V-fold cross-validation.")
+    cat("\n  from 15,20,...,40 using V-fold cross-validation.")
     cat("\nThis could take a few minutes, depending on the size of your dataset...\n")
   }
   
-  nodesizes <- seq(5,40,by=5)
+  nodesizes <- seq(15,40,by=5)
   create.SL.randomForest <- function(tune = list(nodesize = nodesizes)) {
     for(mm in seq(length(tune$nodesize))) { 
       eval(parse(file = "", text = paste("SL.randomForest.ns", tune$nodesize[mm], "<- function(...,nodesize = ", tune$nodesize[mm], ") SL.randomForest(..., nodesize = nodesize)", sep = "")), envir = .GlobalEnv)
