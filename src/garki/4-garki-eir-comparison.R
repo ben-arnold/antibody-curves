@@ -37,6 +37,7 @@ library(tmle)
 # and TMLE estimates of mean differences
 source("~/SLAbcurves/src/SLAb-curve.R")
 source("~/SLAbcurves/src/SLAb-tmle.R")
+source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 
 
@@ -162,47 +163,37 @@ nasak.1975.SL <- SLAb.curve(
 
 #-------------------------------
 # TMLE estimates of age-adjusted
-# mean antibody titres
+# mean antibody titres in each
+# year (wet season only)
 #-------------------------------
 
-### LEFT OFF HERE
-### NEED TO MODIFY CODE BELOW TO USE SLAb.tmle()
-### AND THEN MOVE THE PLOTTING CODE TO A SEPARATE SCRIPT
-
-
 set.seed(5463452)
-ajura.1971.tmle <- tmle.wrap("Ajura",1971,ad)
-ajura.1972.tmle <- tmle.wrap("Ajura",1972,ad)
-ajura.1973.tmle <- tmle.wrap("Ajura",1973,ad)
-ajura.tmle <- list(ajura.1971.tmle,ajura.1972.tmle,ajura.1973.tmle)
+ajura.tmle <- sapply(c(1971,1972,1973),function(x) SLAb.tmle(
+  Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==x]+1),
+  Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x],
+  id=ad$id[ad$vname=="Ajura" & ad$wetseason==x])
+  )
 
-rafin.1971.tmle <- tmle.wrap("Rafin Marke",1971,ad)
-rafin.1972.tmle <- tmle.wrap("Rafin Marke",1972,ad)
-rafin.1973.tmle <- tmle.wrap("Rafin Marke",1973,ad)
-rafin.1974.tmle <- tmle.wrap("Rafin Marke",1974,ad)
-rafin.1975.tmle <- tmle.wrap("Rafin Marke",1975,ad)
-rafin.tmle <- list(rafin.1971.tmle,rafin.1972.tmle,rafin.1973.tmle,rafin.1974.tmle,rafin.1975.tmle)
+rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) SLAb.tmle(
+  Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==x]+1),
+  Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x],
+  id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==x])
+)
 
-
-nasak.1971.tmle <- tmle.wrap("Nasakar",1971,ad)
-nasak.1972.tmle <- tmle.wrap("Nasakar",1972,ad)
-nasak.1973.tmle <- tmle.wrap("Nasakar",1973,ad)
-nasak.1974.tmle <- tmle.wrap("Nasakar",1974,ad)
-nasak.1975.tmle <- tmle.wrap("Nasakar",1975,ad)
-nasak.tmle <- list(nasak.1971.tmle,nasak.1972.tmle,nasak.1973.tmle,nasak.1974.tmle,nasak.1975.tmle)
-
+nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) SLAb.tmle(
+  Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==x]+1),
+  Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x],
+  id=ad$id[ad$vname=="Nasakar" & ad$wetseason==x])
+)
 
 #-------------------------------
 # summarize the means + 95% CIs
 #-------------------------------
-ajura.mus <- t(sapply(ajura.tmle,function(x) c(x$mu,x$ci)) )
-rafin.mus <- t(sapply(rafin.tmle,function(x) c(x$mu,x$ci)) )
-nasak.mus <- t(sapply(nasak.tmle,function(x) c(x$mu,x$ci)) )
-rownames(ajura.mus) <- 1971:1973
-rownames(rafin.mus) <- rownames(nasak.mus) <- 1971:1975
+ajura.mus <- matrix(unlist(ajura.tmle[c(1,3,4),]),nrow=3,ncol=3,byrow=T)
+rafin.mus <- matrix(unlist(rafin.tmle[c(1,3,4),]),nrow=5,ncol=3,byrow=T)
+nasak.mus <- matrix(unlist(nasak.tmle[c(1,3,4),]),nrow=5,ncol=3,byrow=T)
 colnames(ajura.mus) <- colnames(rafin.mus) <- colnames(nasak.mus) <- c("mu","lb","ub")
 all.mus <- rbind(ajura.mus,rep(NA,3),rep(NA,3),rafin.mus,nasak.mus)
-
 dmus <- data.frame(
 		vname=rep(c("Ajura","Rafin Marke","Nasakar"),c(5,5,5)),
 		wetseason=rep(1971:1975,3),
@@ -232,7 +223,7 @@ rho.text <- substitute(paste("Spearman's ",rho," = ",rho.txt ),list(rho.txt=spri
 # plot the values
 #-------------------------------
 
-pdf("~/dropbox/garki/figs/garki-IFATPf-EIR.pdf",width=5,height=5)
+pdf("~/SLAbcurves/results/figs/garki-IFATPf-EIR.pdf",width=5,height=5)
 op <- par(mar=c(5,4,1,2)+0.1)
 cols <- c(brewer.pal(8,"Dark2")[c(8,4)],brewer.pal(8,"Set1")[2])
 ytics <- seq(1,4,by=1)
