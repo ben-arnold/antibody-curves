@@ -49,6 +49,7 @@
 \begin{center}
 {\Large Main Text Figures}
 \end{center}
+\vspace{50pt}
 
 %-------------------------------------------------------------------------------------------
 % Figure 1 - Mauke results
@@ -57,7 +58,7 @@
 \begin{center}
 \includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf}
 \begin{minipage}{\textwidth}
-\caption{Age-specific antibody response curves illustrating a shift in transmission intensity of \textit{Wuchereria bancrofti} due to mass drug administration (MDA) on Mauke Island.  Antibody response to the Wb123 antigen for \textit{W. bancrofti} measured in blood specimens with a luciferase immunoprecipitation system assay from residents in 1975 (N=362) before MDA and again in 1992 (N=553), five years following a single, island-wide MDA with diethylcarbamazine. \textbf{A.} The figure includes mean antibody levels $E(Y_{x,a})$ by group ($x$) and age ($a$) for ages 0-70 years; individual antibody responses (points) are shown along with summary curves fit with an ensemble machine learning algorithm (Online Methods). \textbf{B.} Beeswarm plots show individual antibody responses by survey (pre- vs. post-MDA) and age category; circles with error bars illustrate group-specific geometric mean antibody levels $E(Y_{x})$ and their 95\% confidence intervals, stratified by age category (all differences significant at $P\leq0.01$ after Bonferroni correction).  }
+\caption{Age-specific antibody response curves illustrating a shift in transmission intensity of \textit{Wuchereria bancrofti} due to mass drug administration (MDA) on Mauke Island.  Antibody response to the Wb123 antigen for \textit{W. bancrofti} measured in blood specimens with a luciferase immunoprecipitation system assay from residents in 1975 (N=362) before MDA and again in 1992 (N=553), five years following a single, island-wide MDA with diethylcarbamazine. \textbf{A.} The figure includes mean antibody levels $E(Y_{x,a})$ by survey year ($x$) and age ($a$) for ages 0-70 years; individual antibody responses (points) are shown along with summary curves fit with an ensemble machine learning algorithm (Online Methods). \textbf{B.} Age-adjusted geometric mean antibody response $E(Y_{x})$ and 95\% confidence intervals before (1975) and five years after (1992) MDA, stratified by 5 year age category (all differences significant at $P\leq0.01$ after Bonferroni correction).  }
 \label{fig:mauke}
 \end{minipage}
 \end{center}
@@ -93,7 +94,7 @@
 \end{figure}
 
 \clearpage
-Figure 3: Differences in enteric pathogen transmission between children in Leogane, Haiti (N=511) and the United States (USA) (N=86) measured by age-specific antibody response curves. Antibody response measured as median fluorescence intensity (MFI) minus background in multiplex bead assays on the Luminex platform. In each panel, individual antibody responses (points) are shown along with age-specific summary curves, $E(Y_{x,a})$, by country ($x$) and age($a$), fit with an ensemble machine learning algorithm (Online Methods). Each panel also includes the geometric mean by country, $E(Y_{x})$, with error bars indicating 95\% confidence intervals (all differences significant at $P\leq0.01$ after Bonferroni correction).
+Figure 3: Differences in enteric pathogen transmission between children in Leogane, Haiti (N=511) and the United States (USA) (N=86) measured by age-specific antibody response curves. Antibody response measured as median fluorescence intensity (MFI) minus background in multiplex bead assays on the Luminex platform. In each panel, individual antibody responses (points) are shown along with age-specific summary curves, $E(Y_{x,a})$, by country ($x$) and age ($a$), fit with an ensemble machine learning algorithm (Online Methods). Each panel also includes the geometric mean by country, $E(Y_{x})$, with error bars indicating 95\% confidence intervals (all differences significant at $P\leq0.01$ after Bonferroni correction).
 \textbf{A.} \textit{Cryptosporidium parvum} recombinant 17-kDa antigen;
 \textbf{B.} \textit{Cryptosporidium parvum} recombinant 27-kDa antigen;
 \textbf{C.} \textit{Giardia intestinalis} variant-specific surface protein-5 (VSP-5);
@@ -110,5 +111,76 @@ Figure 3: Differences in enteric pathogen transmission between children in Leoga
 \begin{center}
 {\Large Supporting Information Figures}
 \end{center}
+\vspace{50pt}
+
+% set Table and Figure Numbering to have an "S" prefix
+%\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{figure}{0} 
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+
+
+%-------------------------------------------------------------------------------------------
+% Figure S1 - Mauke results
+%-------------------------------------------------------------------------------------------
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{/users/benarnold/SLAbcurves/results/figs/mauke-Wb123-analysis-2y-beeswarm.pdf}
+\begin{minipage}{0.75\textwidth}
+\caption{Age-adjusted geometric mean antibody response $E(Y_{x})$ and 95\% confidence intervals to the Wb123 antigen for \textit{WWuchereria bancrofti} in 1975 and in 1992. The 1992 survey was five years after a single, island-wide mass drug administration (MDA) with diethylcarbamazine. The means are stratified by 2 year age band. The number of observations per stratum (N obs) is listed and $P$-values are Bonferroni-corrected tests of differences between means in each stratum.}
+\label{fig:maukeS1}
+\end{minipage}
+\end{center}
+\end{figure}
+
+%-------------------------------------------------------------------------------------------
+% Figure S2 - Logan results
+%-------------------------------------------------------------------------------------------
+\clearpage
+\begin{figure}[htbp]
+\begin{center}
+%\includegraphics[width=0.5\textwidth]{/users/benarnold/Dropbox/caira/results/figs/CaIra-Wb123-Bm14-Bm33-antibody-curves-SL.pdf}
+\begin{minipage}{0.75\textwidth}
+\caption{Placeholder for Ca Ira Haiti results }
+\label{fig:cairaS2}
+\end{minipage}
+\end{center}
+\end{figure}
+
+%-------------------------------------------------------------------------------------------
+% Figure S3 - EIR results
+%-------------------------------------------------------------------------------------------
+\clearpage
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{/users/benarnold/SLAbcurves/results/figs/garki-IFATPf-EIR.pdf}
+\begin{minipage}{\textwidth}
+\caption{Village-level, age-adjusted geometric mean \textit{Plasmodium falciparum} immunofluorescence antibody test (IFAT) titres, $E(Y_x)$, versus wet season entomological innoculation rate (EIR) in the three study villages with both entomological and serological measurements in the Garki project, Nigeria. Ajura was a control village (no treatment) while Rafine Marke and Nasakar received a combination of insecticide spraying and mass drug administration of surfanene-pyrimethamine in 1972-1973. The intervention villages also received targeted distribution of chloroquine to children <10 and self-reporting fever cases in the 1974-75 post-intervention period. The circled and labeled points are from the 1971 wet season (pre-intervention) and other points represent wet seasons for 1972-73 (Ajura) or 1972-75 (Rafine Marke and Nasakar).  The EIR estimates were previously published in Table 4 of Molineaux et al. 1980. The EIR represents the number of sporozoite positive bites per person over each wet season, and was estimated by multiplying the man-biting rate by the sporozoite positive rate in night-bite collections. Night-bite collections were conducted every 2 weeks using 2 indoor and 2 outdoor stations per village, with 2 human bait collectors in each station throughout the night. A single data point outside the figure range is not shown (Nasakar 1972, EIR value = 0, $E(Y_x) = 10^{3.0591}$), but was included in the Spearman rank correlation estimate.  }
+\label{fig:garkiEIR}
+\end{minipage}
+\end{center}
+\end{figure}
+
+%-------------------------------------------------------------------------------------------
+% Figure S4 - Garki village level E(Y_x) results
+%-------------------------------------------------------------------------------------------
+\clearpage
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{/users/benarnold/Dropbox/garki/figs/garki-IFATpf-by-village-svy.pdf}
+\begin{minipage}{\textwidth}
+\caption{Caption on the following page.}
+\label{fig:garkiVillageEy}
+\end{minipage}
+\end{center}
+\end{figure}
+\clearpage
+Figure S4: Village-level, age-adjusted geometric mean \textit{Plasmodium falciparum} immunofluorescence antibody test (IFAT)  titres, $E(Y_x)$, by survey round in the Garki project, Nigeria. Intervention village means are presented by survey round. In each data series, the combined mean of two control villages with serological monitoring, Ajura and Nabanawa, are repeated  as dark grey points. Error bars show 95\% confidence intervals.  Surveys 1-2 took place before intervention, 3-5 during the active intervention phase, and 6-8 after the intervention.  Control villages were not measured in survey round 6.
+
+
+
+
+
+
 
 \end{document}
