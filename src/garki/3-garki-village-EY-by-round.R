@@ -21,6 +21,14 @@ library(scales)
 library(SuperLearner)
 library(tmle)
 
+# source the base functions for
+# SL fits of age-antibody curves
+# and TMLE estimates of mean differences
+source("~/SLAbcurves/src/SLAb-curve.R")
+source("~/SLAbcurves/src/SLAb-tmle.R")
+source("~/SLAbcurves/src/SLAb-cvRF.R")
+
+
 
 #-------------------------------
 # load the serology dataset
@@ -36,6 +44,12 @@ d$vname[d$village==552] <- "Nabanawa"
 d$vname[d$village==553] <- "Ajura"
 d$vname <- factor(d$vname)
 
+
+#-------------------------------
+# Estimate mean IFAT P. falciparm
+# titre by village and survey round
+#-------------------------------
+
 #-------------------------------
 # Serological survey timing:
 # 1-2 : pre-intervention
@@ -43,52 +57,19 @@ d$vname <- factor(d$vname)
 # 6-8 : post-intervention
 #-------------------------------
 
-#-------------------------------
-# wrapper function to call TMLE 
-# for each village and survey round
-#-------------------------------
-tmle.wrap <- function(serosvy,data) {
-	# serosvy : integer, survey round
-	# data    : data frame used for estimation (must include vars extracted below)
-	
-	SLlib <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.glmnet")
-	# note that the W matrix includes a row of 1s to get the SL.glmnet algorithm to run
-	# extract objects to make the calculations easier
-	# subset to non-missing data for SL fit
-	ifatpf <- log10(data$ifatpftitre+1)
-	vil <- data$village
-	svy <- data$serosvy
-	age <- data$ageyrs
-	id  <- data$id
-	fitd <- data.frame(ifatpf,vil,svy,age,id)
-	fitd <- fitd[complete.cases(fitd),]
-	
-	mu.fit <- tmle(Y=fitd$ifatpf[fitd$svy==serosvy],
-			A=NULL,
-			W=data.frame(fitd$age[fitd$svy==serosvy], 
-				 rep(1,length(fitd$age[fitd$svy==serosvy]))),
-			id=fitd$id[fitd$svy==serosvy],
-			Q.SL.library=SLlib
-	)
-	print(mu.fit)
-	mu <- mu.fit$estimates$EY1$psi
-	se <- sqrt(mu.fit$estimates$EY1$var.psi)
-	ci <- mu.fit$estimates$EY1$CI
-	list(mu=mu,se=se,lb=ci[1],ub=ci[2])
-}
-
-#-------------------------------
-# Estimate mean IFAT P. falciparm
-# titre by village and survey round
-#-------------------------------
-
 set.seed(5463452)
 
 ## Control Villages (no measurement in round 6)
 # Nabanawa + Ajura
-v552 <- sapply(c(1:5,7,8),tmle.wrap,data=d[d$village==552|d$village==553,])
+
+v552 <-  sapply(c(1:5,7:8),function(x) SLAb.tmle(
+  Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
+  Age=d$ageyrs[d$tr=="Control" & d$serosvy==x],
+  id=d$id[d$tr=="Control" & d$serosvy==x]
+  )
+)
 	# add NA column for survey round 6
-	v552 <- cbind(v552[,1:5],rep(NA,4),v552[,6:7])
+	v552 <- cbind(v552[,1:5],rep(NA,5),v552[,6:7])
 
 
 
@@ -96,19 +77,49 @@ v552 <- sapply(c(1:5,7,8),tmle.wrap,data=d[d$village==552|d$village==553,])
 
 # village cluster 5
 # Kawari
-v153 <- sapply(c(1:8),tmle.wrap,data=d[d$village==153,])
+v153 <- sapply(c(1:8),function(x) SLAb.tmle(
+    Y=log10(d$ifatpftitre[d$village==153 & d$serosvy==x]+1),
+    Age=d$ageyrs[d$village==153 & d$serosvy==x],
+    id=d$id[d$village==153 & d$serosvy==x]
+    )
+  )
 # Rafin Marke
-v154 <- sapply(c(1:8),tmle.wrap,data=d[d$village==154,])
+v154 <- sapply(c(1:8),function(x) SLAb.tmle(
+  Y=log10(d$ifatpftitre[d$village==154 & d$serosvy==x]+1),
+  Age=d$ageyrs[d$village==154 & d$serosvy==x],
+  id=d$id[d$village==154 & d$serosvy==x]
+  )
+)
 # Kukar Maikiva
-v155 <- sapply(c(1:8),tmle.wrap,data=d[d$village==155,])
+v155 <- sapply(c(1:8),function(x) SLAb.tmle(
+  Y=log10(d$ifatpftitre[d$village==155 & d$serosvy==x]+1),
+  Age=d$ageyrs[d$village==155 & d$serosvy==x],
+  id=d$id[d$village==155 & d$serosvy==x]
+  )
+)
 
 # village cluster 7
 # Kargo Kudu
-v213 <- sapply(c(1:8),tmle.wrap,data=d[d$village==213,])
+v213 <- sapply(c(1:8),function(x) SLAb.tmle(
+  Y=log10(d$ifatpftitre[d$village==213 & d$serosvy==x]+1),
+  Age=d$ageyrs[d$village==213 & d$serosvy==x],
+  id=d$id[d$village==213 & d$serosvy==x]
+  )
+)
 # Nasakar
-v218 <- sapply(c(1:8),tmle.wrap,data=d[d$village==218,])
+v218 <- sapply(c(1:8),function(x) SLAb.tmle(
+  Y=log10(d$ifatpftitre[d$village==218 & d$serosvy==x]+1),
+  Age=d$ageyrs[d$village==218 & d$serosvy==x],
+  id=d$id[d$village==218 & d$serosvy==x]
+  )
+)
 # Bakan Sabara
-v220 <- sapply(c(1:8),tmle.wrap,data=d[d$village==220,])
+v220 <- sapply(c(1:8),function(x) SLAb.tmle(
+  Y=log10(d$ifatpftitre[d$village==220 & d$serosvy==x]+1),
+  Age=d$ageyrs[d$village==220 & d$serosvy==x],
+  id=d$id[d$village==220 & d$serosvy==x]
+  )
+)
 
 
 
@@ -146,19 +157,17 @@ EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
 	
 	
 	# control 
-	segments(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=2,col=alpha(cols[1],alpha=0.6))
-	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=0.6))
+	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=2,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
+	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=1))
 
 	# intervention
-	segments(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=2,col=alpha(cols[2],alpha=0.6))
-	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=0.6))
+	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=2,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
+	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=1))
 }
 
 
-pdf("~/dropbox/garki/figs/garki-IFATpf-by-village-svy.pdf",width=7,height=10)
-brewcols1 <- brewer.pal(8,"Dark2")
-brewcols2 <- brewer.pal(9,"Set1")
-cols <- c(brewcols1[c(8,4)],brewcols2[c(1,5,3,2,4)])
+pdf("~/SLAbcurves/results/figs/garki-IFATpf-by-village-svy.pdf",width=7,height=10)
+cols <- c(brewer.pal(8,"Dark2")[8],rainbow(6,v=0.75)) 
 lo <- layout(mat=matrix(1:8,nrow=8,ncol=1),heights=c(0.3,rep(1,6),0.3))
 # header
 op <- par(mar=c(0,10,0,0)+0.1,xpd=TRUE)
@@ -181,5 +190,10 @@ text(mean(1:8),1,"Survey Round",cex=1.5)
 par(op)
 dev.off()
 
+#-------------------------------
+# save the output
+#-------------------------------
+rm(d)
+save.image("~/SLAbcurves/results/raw/garki-village-EY-by-round.RData")
 
 
