@@ -17,6 +17,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > 
 > #------------------------------------
 > # 1-CaIra-LF-analysis.R
@@ -61,8 +63,6 @@ The following object is masked from ‘package:SuperLearner’:
 
     SL.glm.interaction
 
-> library(RColorBrewer)
-> library(scales)
 > 
 > 
 > # source the base functions for
@@ -122,13 +122,6 @@ Loading required package: lme4
 arm (Version 1.8-6, built: 2015-7-7)
 
 Working directory is /Users/benarnold/SLAbcurves/src/caira
-
-
-Attaching package: ‘arm’
-
-The following object is masked from ‘package:scales’:
-
-    rescale
 
 Loading required package: gam
 Loading required package: splines
@@ -252,7 +245,14 @@ There were 33 warnings (use warnings() to see them)
 > # overlap: 4.5 - 11.5 years
 > #-------------------------------
 > 
+> # subset the data to areas of age overlap
 > ad <- subset(d,age>=4.5 & age<=11.5)
+> # summarize the number of observations in
+> # each measurement round
+> table(ad$mda)
+
+  0   1 
+ 73 102 
 > 
 > set.seed(24734)
 > mu.wb123 <- sapply(c(1,3),function(x) SLAb.tmle(
@@ -356,4 +356,4 @@ There were 33 warnings (use warnings() to see them)
 > 
 > proc.time()
    user  system elapsed 
- 34.908   0.375  35.503 
+ 32.105   0.313  32.621 
