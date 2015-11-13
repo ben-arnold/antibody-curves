@@ -157,11 +157,11 @@ EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
 	
 	
 	# control 
-	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=2,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
+	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=1,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
 	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=1))
 
 	# intervention
-	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=2,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
+	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=1,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
 	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=1))
 }
 

@@ -502,11 +502,11 @@ There were 50 or more warnings (use warnings() to see the first 50)
 + 	
 + 	
 + 	# control 
-+ 	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=2,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
++ 	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=1,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
 + 	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=1))
 + 
 + 	# intervention
-+ 	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=2,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
++ 	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=1,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
 + 	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=1))
 + }
 > 
@@ -547,4 +547,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-112.867   1.274 116.040 
+111.551   1.071 113.580 
