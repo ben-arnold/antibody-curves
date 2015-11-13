@@ -1,0 +1,359 @@
+
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> #------------------------------------
+> # 1-CaIra-LF-analysis.R
+> #
+> # LF transmission changes in Ca Ira
+> # looking at the age-specific
+> # antibody curves
+> #
+> # version 1 (12 Nov 2015)
+> #
+> #------------------------------------
+> 
+> #------------------------------------
+> # input files
+> #	  CaIra.csv
+> #
+> # output files
+> #   caira-LF-analysis.RData
+> #------------------------------------
+> 
+> #------------------------------------
+> # preamble
+> #------------------------------------
+> 
+> rm(list=ls())
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(RColorBrewer)
+> library(scales)
+> 
+> 
+> # source the base functions for
+> # SL fits of age-antibody curves
+> # and TMLE estimates of mean differences
+> source("~/SLAbcurves/src/SLAb-curve.R")
+> source("~/SLAbcurves/src/SLAb-tmle.R")
+> source("~/SLAbcurves/src/SLAb-cvRF.R")
+> 
+> 
+> 
+> #------------------------------------
+> # load data
+> #------------------------------------
+> 
+> d <- read.csv("~/dropbox/caira/data/final/caira.csv")
+> d$id <- as.character(d$id)
+> d$personid <- as.character(d$personid)
+> d$sampledate <- as.Date(d$sampledate,format="%m/%d/%Y")
+> 
+> # Wb123 recode 2 negative values to be positive
+> d$wb123 <- ifelse(d$wb123<0,-d$wb123,d$wb123)
+> 
+> # Bm14. recode 4 negative values to be positive
+> d$bm14 <- ifelse(d$bm14<0,-d$bm14,d$bm14)
+> 
+> # exclude children who are <1 year old
+> # to remove potential for maternal antibodies
+> d <- subset(d,age>=1)
+> 
+> # add a half year to remove bias from rounded age measurement
+> d$age <- d$age+0.5
+> 
+> # note: round 2 was partial round (not much data), so for differences
+> # compute round 3 versus round 1
+> d <- subset(d,round!=2)
+> d$mda <- ifelse(d$round==3,1,0)
+> 
+> 
+> #-------------------------------
+> # Step 1: 
+> # Age-specific antibody response
+> # curves to the Wb123, Bm14, and
+> # Bm33 antigens for each round 
+> # (note: round 2 was partial round)
+> #------------------------------------
+> set.seed(1742)
+> wb123.fit1 <- SLAb.curve(Y=log10(d$wb123[d$round==1]),Age=d$age[d$round==1],id=d$id[d$round==1])
+Loading required package: randomForest
+randomForest 4.6-10
+Type rfNews() to see new features/changes/bug fixes.
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+
+arm (Version 1.8-6, built: 2015-7-7)
+
+Working directory is /Users/benarnold/SLAbcurves/src/caira
+
+
+Attaching package: ‘arm’
+
+The following object is masked from ‘package:scales’:
+
+    rescale
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk        Coef
+SL.mean_All              1.503657 0.000000000
+SL.glm_All               1.212117 0.144458525
+SL.bayesglm_All          1.212113 0.000000000
+SL.loess_All             1.198201 0.000000000
+SL.gam_All               1.175666 0.001546314
+SL.gam.3_All             1.176692 0.636277496
+SL.glmnet_All            1.214387 0.000000000
+SL.randomForest.ns20_All 1.230193 0.217717665
+There were 33 warnings (use warnings() to see them)
+> wb123.fit3 <- SLAb.curve(Y=log10(d$wb123[d$round==3]),Age=d$age[d$round==3],id=d$id[d$round==3])
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.1764713 0.00000000
+SL.glm_All               0.9527583 0.49658461
+SL.bayesglm_All          0.9527601 0.00000000
+SL.loess_All             0.9676861 0.00000000
+SL.gam_All               0.9527601 0.47526504
+SL.gam.3_All             0.9634067 0.00000000
+SL.glmnet_All            0.9528718 0.00000000
+SL.randomForest.ns35_All 1.0153611 0.02815035
+There were 33 warnings (use warnings() to see them)
+> 
+> bm14.fit1 <- SLAb.curve(Y=log10(d$bm14[d$round==1]),Age=d$age[d$round==1],id=d$id[d$round==1])
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk       Coef
+SL.mean_All              1.866701 0.00000000
+SL.glm_All               1.537959 0.69165358
+SL.bayesglm_All          1.537954 0.00000000
+SL.loess_All             1.582848 0.00000000
+SL.gam_All               1.541023 0.12842612
+SL.gam.3_All             1.547901 0.08969027
+SL.glmnet_All            1.538981 0.00000000
+SL.randomForest.ns15_All 1.630122 0.09023004
+There were 33 warnings (use warnings() to see them)
+> bm14.fit3 <- SLAb.curve(Y=log10(d$bm14[d$round==3]),Age=d$age[d$round==3],id=d$id[d$round==3])
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk       Coef
+SL.mean_All              1.200141 0.02351255
+SL.glm_All               1.031483 0.00000000
+SL.bayesglm_All          1.031480 0.00000000
+SL.loess_All             1.057858 0.00000000
+SL.gam_All               1.036099 0.00000000
+SL.gam.3_All             1.042052 0.00000000
+SL.glmnet_All            1.031340 0.97648745
+SL.randomForest.ns15_All 1.087022 0.00000000
+There were 33 warnings (use warnings() to see them)
+> 
+> bm33.fit1 <- SLAb.curve(Y=log10(d$bm33[d$round==1]),Age=d$age[d$round==1],id=d$id[d$round==1])
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk       Coef
+SL.mean_All              1.346231 0.00000000
+SL.glm_All               1.131281 0.00000000
+SL.bayesglm_All          1.131280 0.00000000
+SL.loess_All             1.148927 0.00000000
+SL.gam_All               1.107302 0.89965477
+SL.gam.3_All             1.114355 0.01104123
+SL.glmnet_All            1.131109 0.00000000
+SL.randomForest.ns40_All 1.164581 0.08930399
+There were 33 warnings (use warnings() to see them)
+> bm33.fit3 <- SLAb.curve(Y=log10(d$bm33[d$round==3]),Age=d$age[d$round==3],id=d$id[d$round==3])
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.7365874 0.0000000
+SL.glm_All               0.6707792 0.6667552
+SL.bayesglm_All          0.6707776 0.0000000
+SL.loess_All             0.6853153 0.1156091
+SL.gam_All               0.6751780 0.0000000
+SL.gam.3_All             0.6778030 0.0000000
+SL.glmnet_All            0.6707554 0.0000000
+SL.randomForest.ns35_All 0.6836987 0.2176357
+There were 33 warnings (use warnings() to see them)
+> 
+> 
+> #-------------------------------
+> # Step 2: 
+> # Calculate age-adjusted means
+> # and difference in means
+> # for Wb123, Bm14, Bm33
+> # only compare for ages that
+> # overlap: 4.5 - 11.5 years
+> #-------------------------------
+> 
+> ad <- subset(d,age>=4.5 & age<=11.5)
+> 
+> set.seed(24734)
+> mu.wb123 <- sapply(c(1,3),function(x) SLAb.tmle(
++   Y=log10(ad$wb123[ad$round==x]),
++   Age=ad$age[ad$round==x],
++   id=ad$id[ad$round==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.1765
+   Estimated Variance:  0.015463
+              p-value:  <2e-16
+    95% Conf Interval: (2.9328, 3.4203) 
+ Population Mean
+   Parameter Estimate:  2.36
+   Estimated Variance:  0.011542
+              p-value:  <2e-16
+    95% Conf Interval: (2.1494, 2.5706) 
+> 
+> diff.wb123 <- SLAb.tmle(
++   Y=log10(ad$wb123),
++   Age=ad$age,
++   id=ad$id,
++   X=ad$mda,
++   diff=TRUE
++   )
+ Additive Effect
+   Parameter Estimate:  -0.79284
+   Estimated Variance:  0.011877
+              p-value:  3.4603e-13
+    95% Conf Interval: (-1.0064, -0.57924) 
+> 
+> mu.bm14 <- sapply(c(1,3),function(x) SLAb.tmle(
++   Y=log10(ad$bm14[ad$round==x]),
++   Age=ad$age[ad$round==x],
++   id=ad$id[ad$round==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  2.8004
+   Estimated Variance:  0.022419
+              p-value:  <2e-16
+    95% Conf Interval: (2.5069, 3.0939) 
+ Population Mean
+   Parameter Estimate:  2.0365
+   Estimated Variance:  0.011376
+              p-value:  <2e-16
+    95% Conf Interval: (1.8274, 2.2455) 
+> 
+> diff.bm14 <- SLAb.tmle(
++   Y=log10(ad$bm14),
++   Age=ad$age,
++   id=ad$id,
++   X=ad$mda,
++   diff=TRUE
++ )
+ Additive Effect
+   Parameter Estimate:  -0.76814
+   Estimated Variance:  0.017385
+              p-value:  5.6855e-09
+    95% Conf Interval: (-1.0266, -0.50971) 
+> 
+> mu.bm33 <- sapply(c(1,3),function(x) SLAb.tmle(
++   Y=log10(ad$bm33[ad$round==x]),
++   Age=ad$age[ad$round==x],
++   id=ad$id[ad$round==x]
++ )
++ )
+ Population Mean
+   Parameter Estimate:  3.349
+   Estimated Variance:  0.010818
+              p-value:  <2e-16
+    95% Conf Interval: (3.1451, 3.5528) 
+ Population Mean
+   Parameter Estimate:  2.5349
+   Estimated Variance:  0.0068734
+              p-value:  <2e-16
+    95% Conf Interval: (2.3724, 2.6974) 
+> 
+> diff.bm33 <- SLAb.tmle(
++   Y=log10(ad$bm33),
++   Age=ad$age,
++   id=ad$id,
++   X=ad$mda,
++   diff=TRUE
++ )
+ Additive Effect
+   Parameter Estimate:  -0.81413
+   Estimated Variance:  0.014541
+              p-value:  1.4649e-11
+    95% Conf Interval: (-1.0505, -0.57778) 
+> 
+> #-------------------------------
+> # save down the results
+> #-------------------------------
+> save.image("~/SLAbcurves/results/raw/caira-LF-analysis.RData")
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 34.908   0.375  35.503 
