@@ -1,0 +1,106 @@
+#-------------------------------
+# 2-miton-msp1-figure.R
+#
+# Plot the age-specific antibody
+# curve for MSP1_19 in Miton, Haiti
+# 
+#
+# version 1 (21 nov 2015)
+#-------------------------------
+
+#-------------------------------
+# input files:
+#  miton-msp1-analysis.RData
+#
+# output files:
+#  miton-msp1-analysis.pdf
+#-------------------------------
+
+#-------------------------------
+# preamble
+#-------------------------------
+
+rm(list=ls())
+library(RColorBrewer)
+library(scales)
+
+#-------------------------------------------
+# load the Miton results
+#-------------------------------------------
+load("~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
+
+#-------------------------------------------
+# plot curve and means
+#-------------------------------------------
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cols <- cbPalette[c(7,6)]
+
+pdf("~/SLAbcurves/results/figs/miton-msp1-analysis.pdf",width=12,height=6)
+
+lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE),widths=c(1,0.75))
+
+op <- par(mar=c(5,5,3,4)+0.1)
+ytics <- 0:5
+xtics <- seq(0,70,by=10)
+plot(msp1.EYxa$Age,msp1.EYxa$Y,type="n",
+     xlab="",xaxt="n",xlim=c(0,70),
+     ylab="",yaxt="n",ylim=range(ytics),
+     main="",
+     las=1,bty="n"
+)
+axis(1,at=seq(0,70,by=10),cex.axis=1.5)
+axis(2,at=ytics,labels=c(
+  expression(10^0),
+  expression(10^1),
+  expression(10^2),
+  expression(10^3),
+  expression(10^4),
+  expression(10^5)
+  ), las=1,cex.axis=1.5
+)
+set.seed(243) # jitter age slightly for better display
+points(jitter(msp1.EYxa$Age),msp1.EYxa$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha=0.5))
+lines(msp1.EYxa$Age,msp1.EYxa$pY,col=cols[1],lwd=2)
+
+# Axis labels
+mtext("A",line=1,at=-11,adj=0,font=2,cex=2)
+mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=1,cex=1.5)
+mtext(expression(paste(italic('P. falciparum '),MSP-1[19], " (MFI-Background)")),side=2,line=3,cex=1.25)
+mtext("Age, years",side=1,line=3,cex=1.5)
+
+
+# Panel B age category E(Y_x) plot
+op <- par(mar=c(5,5,3,0)+0.1)
+
+plot(1:4,1:4,type="n",
+     ylab="",yaxt="n",ylim=range(ytics),
+     xlab="",xaxt="n",xlim=c(0.5,4.5),
+     bty="n"
+)
+axis(2,at=ytics,labels=c(
+  expression(10^0),
+  expression(10^1),
+  expression(10^2),
+  expression(10^3),
+  expression(10^4),
+  expression(10^5)
+  ), las=1,cex.axis=1.5
+)
+# X labels and line segments
+mtext(levels(d$agecat),side=1,line=1,at=1:4,cex=1.5)
+mtext("Age Category, Years",side=1,line=3,cex=1.5)
+
+# Y label
+mtext("B",line=1,at=-0.3,adj=0,font=2,cex=2)
+mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
+
+# add in geometric means
+arrows(x0=c(1:4), y0=unlist(msp1.EYx[3,]), y1=unlist(msp1.EYx[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
+points(c(1:4),unlist(msp1.EYx[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+
+
+par(op)
+
+dev.off()
+
