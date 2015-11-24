@@ -59,10 +59,34 @@ msp1.EYxa <- SLAb.curve(Y=log10(d$msp1+1),Age=d$age,id=d$id)
 # estimate age-adjusted means E(Y_x)
 # by 5 year age category
 #-------------------------------------------
+table(d$agecat)
 agegrps <-c("1-5","6-10","11-15","16-20") 
 msp1.EYx <- sapply(agegrps, function(x) 
   SLAb.tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=d$age[d$agecat==x],id=d$id[d$agecat==x]) 
 )
+
+#-------------------------------------------
+# randomly downsample the population to
+# N=300, N=200, N=100, and N=50
+#-------------------------------------------
+set.seed(238)
+d300 <- d[sample(1:nrow(d),300,replace=FALSE),]
+d200 <- d[sample(1:nrow(d),200,replace=FALSE),]
+d100 <- d[sample(1:nrow(d),100,replace=FALSE),]
+d050 <- d[sample(1:nrow(d),50,replace=FALSE),]
+
+
+#-------------------------------------------
+# re-estimate the curves and 
+# age-stratified means with downsampled
+# data to see if they deteriorate
+#-------------------------------------------
+set.seed(555)
+msp1.EYxa.300 <- SLAb.curve(Y=log10(d300$msp1+1),Age=d300$age,id=d300$id)
+msp1.EYxa.200 <- SLAb.curve(Y=log10(d200$msp1+1),Age=d200$age,id=d200$id)
+msp1.EYxa.100 <- SLAb.curve(Y=log10(d100$msp1+1),Age=d100$age,id=d100$id)
+msp1.EYxa.050 <- SLAb.curve(Y=log10(d050$msp1+1),Age=d050$age,id=d050$id)
+
 
 #-------------------------------------------
 # save results
