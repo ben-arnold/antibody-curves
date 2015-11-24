@@ -87,6 +87,7 @@ msp1.EYxa.200 <- SLAb.curve(Y=log10(d200$msp1+1),Age=d200$age,id=d200$id)
 msp1.EYxa.100 <- SLAb.curve(Y=log10(d100$msp1+1),Age=d100$age,id=d100$id)
 msp1.EYxa.050 <- SLAb.curve(Y=log10(d050$msp1+1),Age=d050$age,id=d050$id)
 
+### need to add means here
 
 #-------------------------------------------
 # save results
