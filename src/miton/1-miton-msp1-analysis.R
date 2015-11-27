@@ -81,6 +81,10 @@ d050 <- d[sample(1:nrow(d),50,replace=FALSE),]
 # age-stratified means with downsampled
 # data to see if they deteriorate
 #-------------------------------------------
+
+# sampling idea
+# sample: 30, 25, 20, 15, 10 per 5-year age group
+
 set.seed(555)
 msp1.EYxa.300 <- SLAb.curve(Y=log10(d300$msp1+1),Age=d300$age,id=d300$id)
 msp1.EYxa.200 <- SLAb.curve(Y=log10(d200$msp1+1),Age=d200$age,id=d200$id)
