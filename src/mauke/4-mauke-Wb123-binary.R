@@ -22,7 +22,8 @@
 #   mauke1992.dta
 #
 # output files:
-#   xxx
+#   mauke-Wb123-binary.RData
+#   mauke-Wb123-binary.pdf
 #-------------------------------------------
 
 
@@ -43,47 +44,6 @@ library(SuperLearner)
 source("~/SLAbcurves/src/SLAb-curve.R")
 source("~/SLAbcurves/src/SLAb-tmle.R")
 source("~/SLAbcurves/src/SLAb-cvRF.R")
-
-
-#--------------------------------------
-# estimate seroconversion rate using
-# a reversible catalytic model
-#--------------------------------------
-Lrcm <- function(theta,data) {
-  # theta : vector of length two, including h, r (parameters to be maximized)
-  # data  : data frame with 1 row per age group. cols = age / n / k
-  h <- rep(theta[1],nrow(data))
-  r <- rep(theta[2],nrow(data))
-  t <- data[,1]
-  n <- data[,2]
-  k <- data[,3]
-  p <- h/(r+h)*(1-exp(-(r+h)*t))
-  # negative log likelihood function (to minimize with optim)
-  sum( - (k)*log(p) - (n-k)*log(1-p) )
-}
-
-# reversible catalytic model probability function
-rcp <- function(h,r,t) h/(r+h)*(1-exp(-(r+h)*t))
-
-# function to get CIs for a and b from the max likelihood fit (2 parameters)
-hrci <- function(llobj) {
-  
-  I <- solve(llobj$hessian)
-  ahat <- llobj$par[1]
-  ahatse <- sqrt(I)[1]
-  ahatlb <- ahat-1.96*ahatse
-  ahatub <- ahat+1.96*ahatse
-  
-  bhat <- llobj$par[2]
-  bhatse <- sqrt(I)[2]
-  bhatlb <- bhat-1.96*bhatse
-  bhatub <- bhat+1.96*bhatse
-  
-  res <- cbind(c(ahat,ahatse,ahatlb,ahatub),c(bhat,bhatse,bhatlb,bhatub) )
-  rownames(res) <- c("est","se","lb","ub")
-  colnames(res) <- c("h","r")
-  return(res)
-}
 
 #-------------------------------------------
 # load the Mauke data from 1974(1975) and 1992
@@ -179,26 +139,10 @@ diff.maukekids2y <- sapply(agegrps2, function(x)
   SLAb.tmle(Y=a7592$wb123p[a7592$agecat2==x], Age=a7592$ager[a7592$agecat2==x], id=a7592$id[a7592$agecat2==x], X=a7592$mda[a7592$agecat2==x], diff=TRUE) 
 )
 
-
-#--------------------------------------
-# SIS reversible catalytic model fits
-#--------------------------------------
-rc75 <- optim(c(0.3,0.01),fn=Lrcm,data=a7592[a7592$mda==0,c("ager","n","wb123p")],method="L-BFGS-B", lower=c(0.00001,0.0000001),upper=c(1000,1000),hessian=TRUE)
-rc92 <- optim(c(0.3,0.01),fn=Lrcm,data=a7592[a7592$mda==1,c("ager","n","wb123p")],method="L-BFGS-B", lower=c(0.00001,0.0000001),upper=c(1000,1000),hessian=TRUE)
-
-# parameter estimates of seroconversion rate (h) and seroreversion rate (r)
-rcp75 <- hrci(rc75)
-rcp75
-rcp92 <- hrci(rc92)
-rcp92
-
-
-# predicted values, RC model
-ts <- seq(1,70,by=0.1)
-ps75 <- rcp(h=rcp75[1,1],r=rcp75[1,2],t=ts)
-ps92 <- rcp(h=rcp92[1,1],r=rcp92[1,2],t=ts)
-
-
+#-------------------------------------- 
+# save results
+#-------------------------------------- 
+save.image("~/SLAbcurves/results/raw/mauke-Wb123-binary.RData")
 
 #--------------------------------------
 # make figure
@@ -231,7 +175,7 @@ rug.hgh <- ifelse(mauke75$Y[mauke75$Age<=70.5]==1,1,mauke75$Y[mauke75$Age<=70.5]
 segments(x0=jitter(mauke75$Age[mauke75$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col=cols[1])
 
 # Axis labels
-mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence")),side=2,line=3,cex=1.25)
+mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 # mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("A",line=1,at=-10,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") in 1975 (pre-MDA)")),line=1,cex=1.5)
@@ -258,14 +202,14 @@ rug.hgh <- ifelse(mauke92$Y[mauke92$Age<=70.5]==1,1,mauke92$Y[mauke92$Age<=70.5]
 segments(x0=jitter(mauke92$Age[mauke92$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col=cols[2])
 
 # Axis labels
-# mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence")),side=2,line=3,cex=1.25)
+# mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("B",line=1,at=-10,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") in 1992 (post-MDA)")),line=1,cex=1.5)
 
 par(op)
 
-# Panel C, comparison of non-parametric and parametric curves
+# Panel C, overlay
 op <- par(mar=c(5,5,3,4)+0.1)
 ytics <- seq(0,1,by=0.1)
 plot(mauke92$Age,mauke92$pY,type="n",
@@ -278,12 +222,10 @@ axis(1,at=seq(0,70,by=10),cex.axis=1.5)
 axis(2,at=ytics,labels=seq(0,100,by=10), las=1,cex.axis=1.5)
 
 lines(mauke75$Age,mauke75$pY,col=cols[1],lwd=2)
-lines(ts,ps75,col=cols[1],lwd=2,lty=2)
 lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
-lines(ts,ps92,col=cols[2],lwd=2,lty=2)
 
 # Axis labels
-mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence")),side=2,line=3,cex=1.25)
+mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("C",line=1,at=-10,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
