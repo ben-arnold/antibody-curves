@@ -17,6 +17,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > #-------------------------------
 > # 1-miton-msp1-analysis
 > #
@@ -131,6 +133,10 @@ There were 33 warnings (use warnings() to see them)
 > # estimate age-adjusted means E(Y_x)
 > # by 5 year age category
 > #-------------------------------------------
+> table(d$agecat)
+
+  1-5  6-10 11-15 16-20 
+   69    74    68    40 
 > agegrps <-c("1-5","6-10","11-15","16-20") 
 > msp1.EYx <- sapply(agegrps, function(x) 
 +   SLAb.tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=d$age[d$agecat==x],id=d$id[d$agecat==x]) 
@@ -157,6 +163,253 @@ There were 33 warnings (use warnings() to see them)
     95% Conf Interval: (2.0554, 2.8585) 
 > 
 > #-------------------------------------------
+> # randomly downsample the population to
+> # N=30, 25, 20, 15, 10 per 5-year age group
+> #------------------------------------------- 
+> strat.samp <- function(x,n) {
++   d1 <- x[x$agecat=="1-5", ][sample(1:nrow(x[x$agecat=="1-5", ]),n),]
++   d2 <- x[x$agecat=="6-10",][sample(1:nrow(x[x$agecat=="6-10",]),n),]
++   d3 <- x[x$agecat=="11-15",][sample(1:nrow(x[x$agecat=="11-15",]),n),]
++   d4 <- x[x$agecat=="16-20",][sample(1:nrow(x[x$agecat=="16-20",]),n),]
++   dd <- rbind(d1,d2,d3,d4)
++   return(dd)
++ }
+> 
+> set.seed(327234)
+> dlt20 <- subset(d,age<=20)
+> d30 <- strat.samp(dlt20,30)
+> d25 <- strat.samp(dlt20,25)
+> d20 <- strat.samp(dlt20,20)
+> d15 <- strat.samp(dlt20,15)
+> d10 <- strat.samp(dlt20,10)
+> 
+> 
+> #-------------------------------------------
+> # re-estimate the curves and 
+> # age-stratified means with downsampled
+> # data to see if they deteriorate
+> #-------------------------------------------
+> 
+> set.seed(33141)
+> msp1.EYxa.30 <- SLAb.curve(Y=log10(d30$msp1+1),Age=d30$age,id=d30$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk      Coef
+SL.mean_All              1.382602 0.0000000
+SL.glm_All               1.125254 0.0000000
+SL.bayesglm_All          1.125253 0.0000000
+SL.loess_All             1.138830 0.2513502
+SL.gam_All               1.132649 0.0000000
+SL.gam.3_All             1.134044 0.0000000
+SL.glmnet_All            1.123851 0.5374761
+SL.randomForest.ns15_All 1.165498 0.2111737
+There were 33 warnings (use warnings() to see them)
+> msp1.EYxa.25 <- SLAb.curve(Y=log10(d25$msp1+1),Age=d25$age,id=d25$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk      Coef
+SL.mean_All              1.234877 0.0000000
+SL.glm_All               1.048412 0.7564374
+SL.bayesglm_All          1.048412 0.0000000
+SL.loess_All             1.087523 0.0000000
+SL.gam_All               1.062873 0.0000000
+SL.gam.3_All             1.070759 0.0000000
+SL.glmnet_All            1.049560 0.0000000
+SL.randomForest.ns15_All 1.085955 0.2435626
+There were 33 warnings (use warnings() to see them)
+> msp1.EYxa.20 <- SLAb.curve(Y=log10(d20$msp1+1),Age=d20$age,id=d20$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.2526255 0.03949787
+SL.glm_All               0.9483759 0.00000000
+SL.bayesglm_All          0.9483757 0.00000000
+SL.loess_All             0.9837018 0.00000000
+SL.gam_All               0.9563104 0.00000000
+SL.gam.3_All             0.9664715 0.00000000
+SL.glmnet_All            0.9476180 0.96050213
+SL.randomForest.ns15_All 1.0641826 0.00000000
+There were 33 warnings (use warnings() to see them)
+> msp1.EYxa.15 <- SLAb.curve(Y=log10(d15$msp1+1),Age=d15$age,id=d15$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.3550282 0.00000000
+SL.glm_All               0.8992278 0.62540304
+SL.bayesglm_All          0.8992293 0.00000000
+SL.loess_All             0.9178137 0.31702588
+SL.gam_All               0.9115731 0.00000000
+SL.gam.3_All             0.9084894 0.00000000
+SL.glmnet_All            0.8987012 0.00000000
+SL.randomForest.ns15_All 1.0111979 0.05757108
+There were 33 warnings (use warnings() to see them)
+> msp1.EYxa.10 <- SLAb.curve(Y=log10(d10$msp1+1),Age=d10$age,id=d10$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                             Risk       Coef
+SL.mean_All              1.401528 0.06715401
+SL.glm_All               1.216992 0.00000000
+SL.bayesglm_All          1.216974 0.00000000
+SL.loess_All             1.422428 0.00000000
+SL.gam_All               1.267276 0.00000000
+SL.gam.3_All             1.340155 0.00000000
+SL.glmnet_All            1.209064 0.93284599
+SL.randomForest.ns30_All 1.306023 0.00000000
+There were 33 warnings (use warnings() to see them)
+> 
+> 
+> # use TMLE to estimate group means for each subsample
+> agegrps <-c("1-5","6-10","11-15","16-20")
+> agecatmu <- function(data) {
++   print(table(data$agecat))
++   msp1.EYx <- sapply(agegrps, function(x) 
++     SLAb.tmle(Y=log10(data$msp1[data$agecat==x]+1),Age=data$age[data$agecat==x],id=data$id[data$agecat==x]) 
++   )
++   return(msp1.EYx)
++ }
+> msp1.EYx.30 <- agecatmu(d30)
+
+  1-5  6-10 11-15 16-20 
+   30    30    30    30 
+ Population Mean
+   Parameter Estimate:  1.3229
+   Estimated Variance:  0.023698
+              p-value:  <2e-16
+    95% Conf Interval: (1.0212, 1.6247) 
+ Population Mean
+   Parameter Estimate:  1.6074
+   Estimated Variance:  0.036348
+              p-value:  <2e-16
+    95% Conf Interval: (1.2337, 1.9811) 
+ Population Mean
+   Parameter Estimate:  2.1672
+   Estimated Variance:  0.039427
+              p-value:  <2e-16
+    95% Conf Interval: (1.778, 2.5564) 
+ Population Mean
+   Parameter Estimate:  2.5445
+   Estimated Variance:  0.054494
+              p-value:  <2e-16
+    95% Conf Interval: (2.087, 3.0021) 
+> msp1.EYx.25 <- agecatmu(d25)
+
+  1-5  6-10 11-15 16-20 
+   25    25    25    25 
+ Population Mean
+   Parameter Estimate:  1.1657
+   Estimated Variance:  0.013104
+              p-value:  <2e-16
+    95% Conf Interval: (0.94132, 1.39) 
+ Population Mean
+   Parameter Estimate:  1.6988
+   Estimated Variance:  0.031994
+              p-value:  <2e-16
+    95% Conf Interval: (1.3482, 2.0494) 
+ Population Mean
+   Parameter Estimate:  2.4205
+   Estimated Variance:  0.049981
+              p-value:  <2e-16
+    95% Conf Interval: (1.9823, 2.8587) 
+ Population Mean
+   Parameter Estimate:  2.2451
+   Estimated Variance:  0.06636
+              p-value:  <2e-16
+    95% Conf Interval: (1.7402, 2.75) 
+> msp1.EYx.20 <- agecatmu(d20)
+
+  1-5  6-10 11-15 16-20 
+   20    20    20    20 
+Error in predmat[which, seq(nlami)] = preds : replacement has length zero
+ Population Mean
+   Parameter Estimate:  1.0249
+   Estimated Variance:  0.012685
+              p-value:  <2e-16
+    95% Conf Interval: (0.80412, 1.2456) 
+ Population Mean
+   Parameter Estimate:  1.7255
+   Estimated Variance:  0.045917
+              p-value:  8.1051e-16
+    95% Conf Interval: (1.3055, 2.1455) 
+ Population Mean
+   Parameter Estimate:  2.0671
+   Estimated Variance:  0.044009
+              p-value:  <2e-16
+    95% Conf Interval: (1.6559, 2.4782) 
+ Population Mean
+   Parameter Estimate:  2.5642
+   Estimated Variance:  0.089631
+              p-value:  <2e-16
+    95% Conf Interval: (1.9774, 3.151) 
+> msp1.EYx.15 <- agecatmu(d15)
+
+  1-5  6-10 11-15 16-20 
+   15    15    15    15 
+ Population Mean
+   Parameter Estimate:  1.2105
+   Estimated Variance:  0.013603
+              p-value:  <2e-16
+    95% Conf Interval: (0.98188, 1.4391) 
+ Population Mean
+   Parameter Estimate:  1.6344
+   Estimated Variance:  0.074378
+              p-value:  2.0598e-09
+    95% Conf Interval: (1.0999, 2.169) 
+ Population Mean
+   Parameter Estimate:  2.4047
+   Estimated Variance:  0.084053
+              p-value:  <2e-16
+    95% Conf Interval: (1.8364, 2.9729) 
+ Population Mean
+   Parameter Estimate:  2.919
+   Estimated Variance:  0.08167
+              p-value:  <2e-16
+    95% Conf Interval: (2.3589, 3.4791) 
+> msp1.EYx.10 <- agecatmu(d10)
+
+  1-5  6-10 11-15 16-20 
+   10    10    10    10 
+ Population Mean
+   Parameter Estimate:  1.6892
+   Estimated Variance:  0.15454
+              p-value:  1.7324e-05
+    95% Conf Interval: (0.91867, 2.4597) 
+ Population Mean
+   Parameter Estimate:  1.4465
+   Estimated Variance:  0.023436
+              p-value:  <2e-16
+    95% Conf Interval: (1.1464, 1.7465) 
+ Population Mean
+   Parameter Estimate:  2.2193
+   Estimated Variance:  0.098494
+              p-value:  1.5317e-12
+    95% Conf Interval: (1.6042, 2.8345) 
+ Population Mean
+   Parameter Estimate:  2.8278
+   Estimated Variance:  0.18449
+              p-value:  4.5977e-11
+    95% Conf Interval: (1.9859, 3.6696) 
+> 
+> #-------------------------------------------
 > # save results
 > #-------------------------------------------
 > save.image(file="~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
@@ -167,4 +420,4 @@ There were 33 warnings (use warnings() to see them)
 > 
 > proc.time()
    user  system elapsed 
- 12.778   0.169  12.995 
+ 41.614   0.347  42.245 

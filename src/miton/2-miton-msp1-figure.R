@@ -2,10 +2,8 @@
 # 2-miton-msp1-figure.R
 #
 # Plot the age-specific antibody
-# curve for MSP1_19 in Miton, Haiti
+# curves for MSP1_19 in Miton, Haiti
 # 
-#
-# version 1 (21 nov 2015)
 #-------------------------------
 
 #-------------------------------
@@ -33,14 +31,16 @@ load("~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
 # plot curve and means
 #-------------------------------------------
 
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cols <- cbPalette[c(7,6)]
+cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cols <- cbPalette[c(7,6,4,3,2,1)]
 
-pdf("~/SLAbcurves/results/figs/miton-msp1-analysis.pdf",width=12,height=6)
+pdf("~/SLAbcurves/results/figs/miton-msp1-analysis.pdf",width=12,height=12)
 
-lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE),widths=c(1,0.75))
+lo <- layout(mat=matrix(1:4,nrow=2,ncol=2,byrow=TRUE),widths=c(1,0.75))
 
-op <- par(mar=c(5,5,3,4)+0.1)
+
+## Panel A, E(Y_x,a)
+op <- par(mar=c(5,5,4,2)+0.1)
 ytics <- 0:5
 xtics <- seq(0,70,by=10)
 plot(msp1.EYxa$Age,msp1.EYxa$Y,type="n",
@@ -71,7 +71,7 @@ mtext("Age, years",side=1,line=3,cex=1.5)
 
 
 # Panel B age category E(Y_x) plot
-op <- par(mar=c(5,5,3,0)+0.1)
+op <- par(mar=c(5,5,4,2)+0.1)
 
 plot(1:4,1:4,type="n",
      ylab="",yaxt="n",ylim=range(ytics),
@@ -93,11 +93,113 @@ mtext("Age Category, Years",side=1,line=3,cex=1.5)
 
 # Y label
 mtext("B",line=1,at=-0.3,adj=0,font=2,cex=2)
-mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
+mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by age")),line=1,cex=1.5)
 
 # add in geometric means
 arrows(x0=c(1:4), y0=unlist(msp1.EYx[3,]), y1=unlist(msp1.EYx[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
 points(c(1:4),unlist(msp1.EYx[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+
+
+par(op)
+
+
+## Panel C, E(Y_x,a) in subsamples
+# cols <- c("black",rainbow(5,v=0.9)) 
+op <- par(mar=c(5,5,4,2)+0.1)
+ytics <- 0:5
+xtics <- seq(0,20,by=2)
+plot(msp1.EYxa$Age,msp1.EYxa$Y,type="n",
+     xlab="",xaxt="n",xlim=range(xtics),
+     ylab="",yaxt="n",ylim=range(ytics),
+     main="",
+     las=1,bty="n"
+)
+axis(1,at=seq(0,20,by=2),cex.axis=1.5)
+axis(2,at=ytics,labels=c(
+  expression(10^0),
+  expression(10^1),
+  expression(10^2),
+  expression(10^3),
+  expression(10^4),
+  expression(10^5)
+), las=1,cex.axis=1.5
+)
+
+lines(msp1.EYxa.30$Age,msp1.EYxa.30$pY,lwd=2,col=cols[1])
+lines(msp1.EYxa.25$Age,msp1.EYxa.25$pY,lwd=2,col=cols[2])
+lines(msp1.EYxa.20$Age,msp1.EYxa.20$pY,lwd=2,col=cols[3])
+lines(msp1.EYxa.15$Age,msp1.EYxa.15$pY,lwd=2,col=cols[4])
+lines(msp1.EYxa.10$Age,msp1.EYxa.10$pY,lwd=2,col=cols[5])
+lines(msp1.EYxa$Age,msp1.EYxa$pY,col=cols[6],lwd=3)
+
+# Axis labels
+mtext("C",line=1,at=-3,adj=0,font=2,cex=2)
+mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") ages 0-20 for subsamples")),side=3,line=1,cex=1.5)
+mtext(expression(paste(italic('P. falciparum '),MSP-1[19], " (MFI-Background)")),side=2,line=3,cex=1.25)
+mtext("Age, years",side=1,line=3,cex=1.5)
+legend("topleft",legend=c(paste("N=",sum(table(d$agecat)),"(full sample)"),paste("N=",c(120,100,80,60,40))),bty="n",col=cols[c(6,1:5)],lty=1,lwd=c(3,rep(2,5)) )
+
+par(op)
+
+
+# Panel D age category E(Y_x) plot, downsampled
+op <- par(mar=c(5,5,4,2)+0.1)
+
+plot(1:4,1:4,type="n",
+     ylab="",yaxt="n",ylim=range(ytics),
+     xlab="",xaxt="n",xlim=c(0.5,4.5),
+     bty="n"
+)
+axis(2,at=ytics,labels=c(
+  expression(10^0),
+  expression(10^1),
+  expression(10^2),
+  expression(10^3),
+  expression(10^4),
+  expression(10^5)
+), las=1,cex.axis=1.5
+)
+# X labels and line segments
+mtext(levels(d$agecat),side=1,line=1,at=1:4,cex=1.5)
+mtext("Age Category, Years",side=1,line=3,cex=1.5)
+segments(x0=c(1.5,2.5,3.5),y0=min(ytics),y1=max(ytics),col="gray90")
+
+# X positions
+xsep <- 0.2
+xspr <- c(-5*xsep/3,-3*xsep/3,-xsep/3,xsep/3,3*xsep/3,5*xsep/3)
+xs <- c(1+xspr,2+xspr,3+xspr,4+xspr)
+xs.full <- c(1,7,13,19)
+
+# Y label
+mtext("D",line=1,at=-0.3,adj=0,font=2,cex=2)
+mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by age for subsamples")),line=1,cex=1.5)
+
+# means in full sample
+arrows(x0=xs[xs.full], y0=unlist(msp1.EYx[3,]), y1=unlist(msp1.EYx[4,]), col=cols[6],lwd=2,length=0.05,angle=90,code=3)
+points(xs[xs.full],unlist(msp1.EYx[1,]),pch=16,cex=1.75,bg="white",col=cols[6],lwd=2)
+
+# N=120
+arrows(x0=xs[xs.full+1], y0=unlist(msp1.EYx.30[3,]), y1=unlist(msp1.EYx.30[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
+points(xs[xs.full+1],unlist(msp1.EYx.30[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+
+# N=100
+arrows(x0=xs[xs.full+2], y0=unlist(msp1.EYx.25[3,]), y1=unlist(msp1.EYx.25[4,]), col=cols[2],lwd=2,length=0.05,angle=90,code=3)
+points(xs[xs.full+2],unlist(msp1.EYx.25[1,]),pch=16,cex=1.75,bg="white",col=cols[2],lwd=2)
+
+# N=80
+arrows(x0=xs[xs.full+3], y0=unlist(msp1.EYx.20[3,]), y1=unlist(msp1.EYx.20[4,]), col=cols[3],lwd=2,length=0.05,angle=90,code=3)
+points(xs[xs.full+3],unlist(msp1.EYx.20[1,]),pch=16,cex=1.75,bg="white",col=cols[3],lwd=2)
+
+# N=60
+arrows(x0=xs[xs.full+4], y0=unlist(msp1.EYx.15[3,]), y1=unlist(msp1.EYx.15[4,]), col=cols[4],lwd=2,length=0.05,angle=90,code=3)
+points(xs[xs.full+4],unlist(msp1.EYx.15[1,]),pch=16,cex=1.75,bg="white",col=cols[4],lwd=2)
+
+# N=40
+arrows(x0=xs[xs.full+5], y0=unlist(msp1.EYx.10[3,]), y1=unlist(msp1.EYx.10[4,]), col=cols[5],lwd=2,length=0.05,angle=90,code=3)
+points(xs[xs.full+5],unlist(msp1.EYx.10[1,]),pch=16,cex=1.75,bg="white",col=cols[5],lwd=2)
+
+
+legend("topleft",legend=c(paste("N=",sum(table(d$agecat)),"(full sample)"),paste("N=",c(120,100,80,60,40))),bty="n",col=cols[c(6,1:5)],pch=16 )
 
 
 par(op)

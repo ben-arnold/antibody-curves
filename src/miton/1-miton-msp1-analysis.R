@@ -67,13 +67,24 @@ msp1.EYx <- sapply(agegrps, function(x)
 
 #-------------------------------------------
 # randomly downsample the population to
-# N=300, N=200, N=100, and N=50
-#-------------------------------------------
-set.seed(238)
-d300 <- d[sample(1:nrow(d),300,replace=FALSE),]
-d200 <- d[sample(1:nrow(d),200,replace=FALSE),]
-d100 <- d[sample(1:nrow(d),100,replace=FALSE),]
-d050 <- d[sample(1:nrow(d),50,replace=FALSE),]
+# N=30, 25, 20, 15, 10 per 5-year age group
+#------------------------------------------- 
+strat.samp <- function(x,n) {
+  d1 <- x[x$agecat=="1-5", ][sample(1:nrow(x[x$agecat=="1-5", ]),n),]
+  d2 <- x[x$agecat=="6-10",][sample(1:nrow(x[x$agecat=="6-10",]),n),]
+  d3 <- x[x$agecat=="11-15",][sample(1:nrow(x[x$agecat=="11-15",]),n),]
+  d4 <- x[x$agecat=="16-20",][sample(1:nrow(x[x$agecat=="16-20",]),n),]
+  dd <- rbind(d1,d2,d3,d4)
+  return(dd)
+}
+
+set.seed(327234)
+dlt20 <- subset(d,age<=20)
+d30 <- strat.samp(dlt20,30)
+d25 <- strat.samp(dlt20,25)
+d20 <- strat.samp(dlt20,20)
+d15 <- strat.samp(dlt20,15)
+d10 <- strat.samp(dlt20,10)
 
 
 #-------------------------------------------
@@ -82,16 +93,28 @@ d050 <- d[sample(1:nrow(d),50,replace=FALSE),]
 # data to see if they deteriorate
 #-------------------------------------------
 
-# sampling idea
-# sample: 30, 25, 20, 15, 10 per 5-year age group
+set.seed(33141)
+msp1.EYxa.30 <- SLAb.curve(Y=log10(d30$msp1+1),Age=d30$age,id=d30$id)
+msp1.EYxa.25 <- SLAb.curve(Y=log10(d25$msp1+1),Age=d25$age,id=d25$id)
+msp1.EYxa.20 <- SLAb.curve(Y=log10(d20$msp1+1),Age=d20$age,id=d20$id)
+msp1.EYxa.15 <- SLAb.curve(Y=log10(d15$msp1+1),Age=d15$age,id=d15$id)
+msp1.EYxa.10 <- SLAb.curve(Y=log10(d10$msp1+1),Age=d10$age,id=d10$id)
 
-set.seed(555)
-msp1.EYxa.300 <- SLAb.curve(Y=log10(d300$msp1+1),Age=d300$age,id=d300$id)
-msp1.EYxa.200 <- SLAb.curve(Y=log10(d200$msp1+1),Age=d200$age,id=d200$id)
-msp1.EYxa.100 <- SLAb.curve(Y=log10(d100$msp1+1),Age=d100$age,id=d100$id)
-msp1.EYxa.050 <- SLAb.curve(Y=log10(d050$msp1+1),Age=d050$age,id=d050$id)
 
-### need to add means here
+# use TMLE to estimate group means for each subsample
+agegrps <-c("1-5","6-10","11-15","16-20")
+agecatmu <- function(data) {
+  print(table(data$agecat))
+  msp1.EYx <- sapply(agegrps, function(x) 
+    SLAb.tmle(Y=log10(data$msp1[data$agecat==x]+1),Age=data$age[data$agecat==x],id=data$id[data$agecat==x]) 
+  )
+  return(msp1.EYx)
+}
+msp1.EYx.30 <- agecatmu(d30)
+msp1.EYx.25 <- agecatmu(d25)
+msp1.EYx.20 <- agecatmu(d20)
+msp1.EYx.15 <- agecatmu(d15)
+msp1.EYx.10 <- agecatmu(d10)
 
 #-------------------------------------------
 # save results
