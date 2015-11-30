@@ -167,7 +167,9 @@ EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
 
 
 pdf("~/SLAbcurves/results/figs/garki-IFATpf-by-village-svy.pdf",width=7,height=10)
-cols <- c(brewer.pal(8,"Dark2")[8],rainbow(6,v=0.75)) 
+# cols <- c(brewer.pal(8,"Dark2")[8],rainbow(6,v=0.75)) 
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cols <- c(brewer.pal(8,"Dark2")[8],cbPalette[c(2:4,6:8)])
 lo <- layout(mat=matrix(1:8,nrow=8,ncol=1),heights=c(0.3,rep(1,6),0.3))
 # header
 op <- par(mar=c(0,10,0,0)+0.1,xpd=TRUE)
