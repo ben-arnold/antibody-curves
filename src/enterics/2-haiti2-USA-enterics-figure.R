@@ -140,28 +140,28 @@ pdf("~/SLAbcurves/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,widt
 lo <- layout(mat=matrix(1:16,nrow=4,ncol=4,byrow=TRUE),widths=c(1,0.2,1,0.2))
 # lo <- layout(mat=matrix(1:2,nrow=1,ncol=2),widths=c(1,0.2))
 
-SLAb.plotEYax(usa.cp17,haiti.cp17,expression(paste(italic('Cryptosporidium parvum'), " Cp17")),"A",ylabel=T)
+SLAb.plotEYax(usa.cp17,haiti.cp17,expression(paste(italic('Cryptosporidium parvum'), " Cp17")),"a",ylabel=T)
 SLAb.plotEYx(EYx.usa.cp17,EYx.haiti.cp17,diff.cp17) 
 
-SLAb.plotEYax(usa.cp23,haiti.cp23,expression(paste(italic('Cryptosporidium parvum'), " Cp23")),"B")
+SLAb.plotEYax(usa.cp23,haiti.cp23,expression(paste(italic('Cryptosporidium parvum'), " Cp23")),"b")
 SLAb.plotEYx(EYx.usa.cp23,EYx.haiti.cp23,diff.cp23) 
 
-SLAb.plotEYax(usa.giar,haiti.giar,expression(paste(italic('Giardia intestinalis'), " VSP-5")),"C",ylabel=T)
+SLAb.plotEYax(usa.giar,haiti.giar,expression(paste(italic('Giardia intestinalis'), " VSP-5")),"c",ylabel=T)
 SLAb.plotEYx(EYx.usa.giar,EYx.haiti.giar,diff.giar) 
 
-SLAb.plotEYax(usa.leca,haiti.leca,expression(paste(italic('Entamoeba histolytica'), " LecA")),"D")
+SLAb.plotEYax(usa.leca,haiti.leca,expression(paste(italic('Entamoeba histolytica'), " LecA")),"d")
 SLAb.plotEYx(EYx.usa.leca,EYx.haiti.leca,diff.leca) 
 
-SLAb.plotEYax(usa.etec,haiti.etec,expression(paste("ETEC heat labile toxin ",beta," subunit")),"E",ylabel=T)
+SLAb.plotEYax(usa.etec,haiti.etec,expression(paste("ETEC heat labile toxin ",beta," subunit")),"e",ylabel=T)
 SLAb.plotEYx(EYx.usa.etec,EYx.haiti.etec,diff.etec) 
 
-SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group D")),"F")
+SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group D")),"f")
 SLAb.plotEYx(EYx.usa.salb,EYx.haiti.salb,diff.salb) 
 
-SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus Group I","G",ylabel=T,xlabel=T)
+SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus Group I","g",ylabel=T,xlabel=T)
 SLAb.plotEYx(EYx.usa.norogi,EYx.haiti.norogi,diff.norogi) 
 
-SLAb.plotEYax(usa.norogii,haiti.norogii,"Norovirus Group II","H",xlabel=T)
+SLAb.plotEYax(usa.norogii,haiti.norogii,"Norovirus Group II","h",xlabel=T)
 SLAb.plotEYx(EYx.usa.norogii,EYx.haiti.norogii,diff.norogii) 
 
 dev.off()

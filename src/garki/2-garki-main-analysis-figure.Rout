@@ -1,5 +1,5 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -75,7 +75,7 @@ Type 'q()' to quit R.
 + 	bty="n",las=1
 + 	)
 > 	mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=3)
-> 	mtext("A",adj=1,line=3,at=-5,font=2,cex=1.75)
+> 	mtext("a",adj=1,line=3,at=-5,font=2,cex=1.75)
 > 	mtext("Pre-Intervention Period",adj=0,line=3,at=0,cex=1.5)
 > 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
 > 	mtext("Age, years",side=1,line=2.5)
@@ -129,7 +129,7 @@ Type 'q()' to quit R.
 + 	bty="n",las=1
 + 	)
 > 	# mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=3)
-> 	mtext("B",adj=1,line=3,at=-5,font=2,cex=1.75)
+> 	mtext("b",adj=1,line=3,at=-5,font=2,cex=1.75)
 > 	mtext("Active Intervention Period",adj=0,line=3,at=0,cex=1.5)
 > 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
 > 	mtext("Age, years",side=1,line=2.5)
@@ -147,10 +147,10 @@ Type 'q()' to quit R.
 > 	lines(p.tr5$Age,p.tr5$pY,col=i.cols[5])
 > 	
 > 	text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
-> 	text(70,2.6,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[1])
-> 	text(14,3.12,"3",cex=0.75,col=i.cols[3])
-> 	text(17.5,2.95,"4",cex=0.75,col=i.cols[4])
-> 	text(21,2.7,"5",cex=0.75,col=i.cols[5],adj=0)
+> 	text(70,2.5,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[1])
+> 	text(11,3.0,"3",cex=0.75,col=i.cols[3])
+> 	text(14,2.85,"4",cex=0.75,col=i.cols[4])
+> 	text(19,2.6,"5",cex=0.75,col=i.cols[5],adj=0)
 > 	
 > # Active intervention  mean estimates
 > op <- par(mar=c(4,0,7,4)+0.1)
@@ -186,7 +186,7 @@ Type 'q()' to quit R.
 + 	bty="n",las=1
 + 	)
 > 	# mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=3)
-> 	mtext("C",adj=1,line=3,at=-5,font=2,cex=1.75)
+> 	mtext("c",adj=1,line=3,at=-5,font=2,cex=1.75)
 > 	mtext("Post Intervention Period",adj=0,line=3,at=0,cex=1.5)
 > 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
 > 	mtext("Age, years",side=1,line=2.5)
@@ -204,10 +204,10 @@ Type 'q()' to quit R.
 > 	lines(p.tr8$Age,p.tr8$pY,col=i.cols[8])
 > 	
 > 	text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
-> 	text(70,2.6,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[1])
+> 	text(70,2.5,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[1])
 > 	text(20,2.7,"6",cex=0.75,col=i.cols[6])
 > 	text(12,3.1,"7",cex=0.75,col=i.cols[7])
-> 	text(15,3,"8",cex=0.75,col=i.cols[8],adj=0)
+> 	text(15,2.9,"8",cex=0.75,col=i.cols[8],adj=0)
 > 
 > # Post-intervention  mean estimates
 > op <- par(mar=c(4,0,7,4)+0.1)
@@ -307,4 +307,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.798   0.074   1.658 
+  0.584   0.053   0.671 

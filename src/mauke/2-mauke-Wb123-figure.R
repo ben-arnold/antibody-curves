@@ -81,7 +81,7 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	# Axis labels
 	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
 	mtext("Age, years",side=1,line=3,cex=1.5)
-	mtext("A",line=1,at=-10,adj=0,font=2,cex=2)
+	mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
 	
 	# Group labels
@@ -134,7 +134,7 @@ mtext(levels(a7592$agecat),side=1,line=1,at=1:4,cex=1.5)
 mtext("Age Category, Years",side=1,line=3,cex=1.5)
 
 # Y label
-mtext("B",line=1,at=-0.3,adj=0,font=2,cex=2)
+mtext("b",line=1,at=-0.3,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
 # mtext(c("1975","1992"),at=c(1,2),col=cols[1:2],side=3,line=-0.5)
 

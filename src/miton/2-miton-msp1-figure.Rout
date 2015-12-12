@@ -85,7 +85,7 @@ Type 'q()' to quit R.
 > lines(msp1.EYxa$Age,msp1.EYxa$pY,col=cols[1],lwd=2)
 > 
 > # Axis labels
-> mtext("A",line=1,at=-11,adj=0,font=2,cex=2)
+> mtext("a",line=1,at=-11,adj=0,font=2,cex=2)
 > mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=1,cex=1.5)
 > mtext(expression(paste(italic('P. falciparum '),MSP-1[19], " (MFI-Background)")),side=2,line=3,cex=1.25)
 > mtext("Age, years",side=1,line=3,cex=1.5)
@@ -113,7 +113,7 @@ Type 'q()' to quit R.
 > mtext("Age Category, Years",side=1,line=3,cex=1.5)
 > 
 > # Y label
-> mtext("B",line=1,at=-0.3,adj=0,font=2,cex=2)
+> mtext("b",line=1,at=-0.3,adj=0,font=2,cex=2)
 > mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
 > 
 > # add in geometric means
@@ -130,4 +130,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.454   0.043   0.503 
+  0.442   0.033   0.469 

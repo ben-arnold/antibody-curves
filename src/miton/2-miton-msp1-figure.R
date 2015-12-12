@@ -64,7 +64,7 @@ points(jitter(msp1.EYxa$Age),msp1.EYxa$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha
 lines(msp1.EYxa$Age,msp1.EYxa$pY,col=cols[1],lwd=2)
 
 # Axis labels
-mtext("A",line=1,at=-11,adj=0,font=2,cex=2)
+mtext("a",line=1,at=-11,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=1,cex=1.5)
 mtext(expression(paste(italic('P. falciparum '),MSP-1[19], " (MFI-Background)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
@@ -92,7 +92,7 @@ mtext(levels(d$agecat),side=1,line=1,at=1:4,cex=1.5)
 mtext("Age Category, Years",side=1,line=3,cex=1.5)
 
 # Y label
-mtext("B",line=1,at=-0.3,adj=0,font=2,cex=2)
+mtext("b",line=1,at=-0.3,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
 
 # add in geometric means
