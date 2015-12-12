@@ -137,13 +137,13 @@ set.seed(27313)
 pdf("~/SLAbcurves/results/figs/caira-LF-curves.pdf",height=5,width=15)
 lo <- layout(mat=matrix(1:6,nrow=1,ncol=6,byrow=TRUE),widths=c(1,0.2,1,0.2,1,0.2))
 
-SLAb.plotEYax(wb123.fit1,wb123.fit3,expression(paste(italic('W. bancrofti'), " Wb123")),"A",xlabel=T,ylabel=T)
+SLAb.plotEYax(wb123.fit1,wb123.fit3,expression(paste(italic('W. bancrofti'), " Wb123")),"a",xlabel=T,ylabel=T)
 SLAb.plotEYx(mu.wb123[,1],mu.wb123[,2],diff.wb123) 
 
-SLAb.plotEYax(bm14.fit1,bm14.fit3,expression(paste(italic('W. bancrofti'), " Bm14")),"B",xlabel=T)
+SLAb.plotEYax(bm14.fit1,bm14.fit3,expression(paste(italic('W. bancrofti'), " Bm14")),"b",xlabel=T)
 SLAb.plotEYx(mu.bm14[,1],mu.bm14[,2],diff.bm14) 
 
-SLAb.plotEYax(bm33.fit1,bm33.fit3,expression(paste(italic('W. bancrofti'), " Bm33")),"C",xlabel=T)
+SLAb.plotEYax(bm33.fit1,bm33.fit3,expression(paste(italic('W. bancrofti'), " Bm33")),"c",xlabel=T)
 SLAb.plotEYx(mu.bm33[,1],mu.bm33[,2],diff.bm33) 
 
 dev.off()
