@@ -1,12 +1,9 @@
 #-------------------------------
 # 2-garki-main-analysis-figure.R
 #
-# summarize the garki 
+# summarize the garki antibody curve
 # results in a figure
-# include both the antibody 
-# curves as well as the EIR
-# comparison
-#
+
 #-------------------------------
 
 
@@ -23,14 +20,13 @@ library(scales)
 
 # load the analysis results
 load("~/SLAbcurves/results/raw/garki-main-analysis.RData")
-load("~/SLAbcurves/results/raw/garki-eir-comparison.RData")
 
 
 #-------------------------------
 # Plot antibody response 
 # curves for the 3 study phases
 #-------------------------------
-pdf("~/SLAbcurves/results/figs/garki-antibody-curves-IFATPf.pdf",height=10,width=15)
+pdf("~/SLAbcurves/results/figs/garki-antibody-curves-IFAPf.pdf",height=5,width=15)
 
 # general plotting parameters
 ytics <- seq(0,4,by=1)
@@ -42,7 +38,7 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 i.cols <- rep(cbPalette[6],8)
 c.cols <- cbPalette[7]
 
-lo <- layout(mat=matrix(1:12,nrow=2,ncol=6,byrow=T),widths=c(1,0.25,1,0.25,1,0.25))
+lo <- layout(mat=matrix(1:6,nrow=1,ncol=6,byrow=T),widths=c(1,0.25,1,0.25,1,0.25))
 
 # Panel A: Pre-intervention age-antibody curves
 op <- par(mar=c(4,5,7,1)+0.1,xpd=T)
@@ -51,7 +47,7 @@ plot(p.c12$Age,p.c12$pY,type="l",lwd=2,col=c.cols,
 	xlim=c(0,71),xlab="",xaxt="n",
 	bty="n",las=1
 	)
-	mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=3)
+	mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 	mtext("a",adj=1,line=3,at=-5,font=2,cex=1.75)
 	mtext("Pre-Intervention Period",adj=0,line=3,at=0,cex=1.5)
 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
@@ -105,7 +101,7 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	xlim=c(0,71),xlab="",xaxt="n",
 	bty="n",las=1
 	)
-	# mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=3)
+	# mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 	mtext("b",adj=1,line=3,at=-5,font=2,cex=1.75)
 	mtext("Active Intervention Period",adj=0,line=3,at=0,cex=1.5)
 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
@@ -162,7 +158,7 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 	xlim=c(0,71),xlab="",xaxt="n",
 	bty="n",las=1
 	)
-	# mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=3)
+	# mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 	mtext("c",adj=1,line=3,at=-5,font=2,cex=1.75)
 	mtext("Post Intervention Period",adj=0,line=3,at=0,cex=1.5)
 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
@@ -214,67 +210,6 @@ mtext("Survey",side=1,line=2.5)
 
 par(op)
 
-
-# panel D: EYx vs EIR
-plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
-plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
-plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
-plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cols <- c(brewer.pal(8,"Dark2")[8],cbPalette[c(7,6)])
-
-op <- par(mar=c(5,6,1,2)+0.1)
-i.cols <- rep(cbPalette[6],8)
-ytics <- seq(1,4,by=1)
-xtics <- seq(0,2,by=1)
-plot(1,1,type="n",bty="n",
-     xaxt="n",xlab="",xlim=c(0,2.2),
-     yaxt="n",ylab="",ylim=range(ytics),
-     las=1
-)
-axis(1,at=xtics,labels=c(1,10,100))
-axis(2,at=ytics,labels=c(
-  expression(10^1),
-  expression(10^2),
-  expression(10^3),
-  expression(10^4)),
-  las=1
-)
-mtext(expression(paste("Age-adjusted Geometric Mean, ", italic(E(Y[x])))),side=2,line=3.5)
-mtext(expression(paste(italic('P. falciparum')," IFAT antibody titre")),side=2,line=2.5)
-mtext("Entomological Innoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=3.5)
-text(2,1,rho.text,adj=1,cex=0.8)
-
-# Ajura
-points(md$log10eir[md$vname=="Ajura"],md$mu[md$vname=="Ajura"], pch=16,cex=1.5,col=alpha(cols[1],alpha=0.6))
-
-# Rafin Marke
-points(md$log10eir[md$vname=="Rafin Marke"],md$mu[md$vname=="Rafin Marke"], pch=16, cex=1.5,col=alpha(cols[2],alpha=0.6))
-
-# Nasakar, exclude 1972 b/c it is out of the scale
-points(md$log10eir[md$vname=="Nasakar" & md$wetseason!=1972],md$mu[md$vname=="Nasakar" & md$wetseason!=1972], pch=16,cex=1.5,col=alpha(cols[3],alpha=0.6))
-
-# circle pre-intervention measures
-points(md$log10eir[md$wetseason==1971],md$mu[md$wetseason==1971],cex=1.5)
-
-
-# label the villages
-ajura.x <- md$log10eir[md$vname=="Ajura" & md$wetseason==1971]
-ajura.y <- md$mu[md$vname=="Ajura" & md$wetseason==1971]
-segments(x0=ajura.x,y0=ajura.y+0.1,y1=ajura.y+0.2,col="gray40")
-text(ajura.x,ajura.y+0.2,"Ajura (control)",col=cols[1],pos=3,cex=0.7)
-
-rafin.x <- md$log10eir[md$vname=="Rafin Marke" & md$wetseason==1971]
-rafin.y <- md$mu[md$vname=="Rafin Marke" & md$wetseason==1971]
-segments(x0=rafin.x-0.07,x1=rafin.x-0.3,y0=rafin.y+0.07,y1=rafin.y+0.25,col="gray40")
-text(rafin.x-0.3,rafin.y+0.3,"Rafin Marke",col=cols[2],pos=2,cex=0.7)
-
-nasak.x <- md$log10eir[md$vname=="Nasakar" & md$wetseason==1971]
-nasak.y <- md$mu[md$vname=="Nasakar" & md$wetseason==1971]
-segments(x0= nasak.x,y0= nasak.y +0.1,y1= nasak.y +0.4,col="gray40") 
-text(nasak.x, nasak.y +0.4,"Nasakar",col=cols[3],pos=3,cex=0.7)
-
-par(op)
 
 dev.off()
 
