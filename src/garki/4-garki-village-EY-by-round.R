@@ -2,11 +2,11 @@
 #-------------------------------
 # 3-garki-village-EY-by-round
 #
-# Calculate age-adjusted mean
-# IFAT antibody titres by
+# Calculate age-specific antibody
+# curves and age-adjusted mean
+# Pf IFA antibody titres by
 # village and survey round
 #
-# version 1 (24 sep 2015)
 #-------------------------------
 
 
@@ -16,8 +16,6 @@
 #-------------------------------
 
 rm(list=ls())
-library(RColorBrewer)
-library(scales)
 library(SuperLearner)
 library(tmle)
 
@@ -46,7 +44,68 @@ d$vname <- factor(d$vname)
 
 
 #-------------------------------
-# Estimate mean IFAT P. falciparm
+# Estimate antibody curves
+# by village and survey round
+# group 2 control villages into
+# the same curve for visual
+# presentation
+#-------------------------------
+set.seed(5463452)
+
+
+# small wrapper function to call
+# SLAb.curve() by village
+# and by survey round
+SLAb.wrap <- function(svy,vil,d) {
+  # svy : survey round
+  # vil : village number
+  # d   : dataset
+  return( SLAb.curve(Y=log10(d$ifatpftitre[d$village==vil & d$serosvy==svy]+1),Age=d$ageyrs[d$village==vil & d$serosvy==svy],id=d$id[d$village==vil & d$serosvy==svy]) )
+}
+
+# Control Villages 
+# Nabanawa + Ajura
+# (not using wrapper fn above because need to combine across svy rounds)
+c12.EYxa <- SLAb.curve(
+  Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2]+1),
+  Age=d$ageyrs[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2],
+  id=d$id[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2]
+  )
+c345.EYxa <- SLAb.curve(
+  Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5]+1),
+  Age=d$ageyrs[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5],
+  id=d$id[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5]
+)
+c678.EYxa <- SLAb.curve(
+  Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8]+1),
+  Age=d$ageyrs[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8],
+  id=d$id[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8]
+)
+
+# village cluster 5
+# Kawari
+v153.EYxa <- sapply(1:8,SLAb.wrap,vil=153,d=d,simplify=FALSE)
+
+# Rafin Marke
+v154.EYxa <- sapply(1:8,SLAb.wrap,vil=154,d=d,simplify=FALSE)
+
+# Kukar Maikiva
+v155.EYxa <- sapply(1:8,SLAb.wrap,vil=155,d=d,simplify=FALSE)
+
+# village cluster 7
+# Kargo Kudu
+v213.EYxa <- sapply(1:8,SLAb.wrap,vil=213,d=d,simplify=FALSE)
+
+# Nasakar
+v218.EYxa <- sapply(1:8,SLAb.wrap,vil=218,d=d,simplify=FALSE)
+
+# Bakan Sabara
+v220.EYxa <- sapply(1:8,SLAb.wrap,vil=220,d=d,simplify=FALSE)
+
+
+
+#-------------------------------
+# Estimate mean IFA P. falciparm
 # titre by village and survey round
 #-------------------------------
 
@@ -57,7 +116,6 @@ d$vname <- factor(d$vname)
 # 6-8 : post-intervention
 #-------------------------------
 
-set.seed(5463452)
 
 ## Control Villages (no measurement in round 6)
 # Nabanawa + Ajura
@@ -121,79 +179,8 @@ v220 <- sapply(c(1:8),function(x) SLAb.tmle(
   )
 )
 
-
-
 #-------------------------------
-# plot means over time
-#-------------------------------
-
-
-# plotting schema, repeated for each intervention village
-EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
-	# x    : intervention village/survey round results, from above
-	# cols : colors for control and intervention points
-	# vname: village name for printing
-	# header: logical. print header text?
-	# footer: logical. print footer text?
-	
-	# set up an empty plot
-	ytics <- seq(1,4)
-	MidPts <- barplot(1:8,names.arg=NA,border=NA,col=NA,
-		ylim=range(ytics),ylab="",yaxt="n",
-		las=1,bty="n"
-	)
-	axis(2,at=1:4,labels=c(
-		expression(10^1),
-		expression(10^2),
-		expression(10^3),
-		expression(10^4)
-		), las=1,cex.axis=1.25
-	)
-	mtext(1:8,side=1,line=1,at=MidPts,cex=0.8,col="gray40")
-	if(header==TRUE) mtext(c("Pre-Intervention","Intervention Phase","Post-Intervention"),side=3,line=1,at=c(mean(MidPts[1:2]),mean(MidPts[3:5]),mean(MidPts[6:8])) )
-	segments(x0=c(mean(MidPts[2:3]), mean(MidPts[5:6])),y0=min(ytics), y1=max(ytics), lty=2,col="gray80",lwd=2 )
-	
-	mtext(vname,side=2,line=3,adj=1,col=cols[2],las=1)
-	
-	
-	# control 
-	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=1,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
-	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=1))
-
-	# intervention
-	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=1,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
-	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=1))
-}
-
-
-pdf("~/SLAbcurves/results/figs/garki-IFATpf-by-village-svy.pdf",width=7,height=10)
-# cols <- c(brewer.pal(8,"Dark2")[8],rainbow(6,v=0.75)) 
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cols <- c(brewer.pal(8,"Dark2")[8],cbPalette[c(2:4,6:8)])
-lo <- layout(mat=matrix(1:8,nrow=8,ncol=1),heights=c(0.3,rep(1,6),0.3))
-# header
-op <- par(mar=c(0,10,0,0)+0.1,xpd=TRUE)
-MidPts <- barplot(rep(1,8),names.arg=NA,border=NA,col=NA,ylab="",yaxt="n",bty="n")
-text(c(mean(MidPts[1:2]),mean(MidPts[3:5]),mean(MidPts[6:8])),rep(0.5,3),c("Pre-Intervention","Intervention Phase","Post-Intervention"),cex=1.5)
-mtext(expression(italic('P. falciparum')),side=2,at=0.5,adj=1,las=1,cex=0.9 )
-mtext("IFAT antibody titre",side=2,at=0,adj=1,las=1,cex=0.9 )
-# figures
-op <- par(mar=c(2,10,1,0)+0.1)
-EYplot(v154,cols=cols[c(1,2)],vname="Rafin\nMarke")
-EYplot(v153,cols=cols[c(1,3)],vname="Kawari")
-EYplot(v155,cols=cols[c(1,4)],vname="Kukar\nMaikiva")
-EYplot(v213,cols=cols[c(1,5)],vname="Kargo\nKudu")
-EYplot(v218,cols=cols[c(1,6)],vname="Nasakar")
-EYplot(v220,cols=cols[c(1,7)],vname="Bakan\nSabara")
-# footer
-op <- par(mar=c(0,10,0,0)+0.1)
-plot(1:8,rep(1,8),type="n",bty="n",xlab="",xaxt="n",ylab="",yaxt="n")
-text(mean(1:8),1,"Survey Round",cex=1.5)
-par(op)
-dev.off()
-
-#-------------------------------
-# save the output
+# save the analysis output
 #-------------------------------
 rm(d)
 save.image("~/SLAbcurves/results/raw/garki-village-EY-by-round.RData")
