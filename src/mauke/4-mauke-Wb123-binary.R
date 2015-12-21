@@ -230,6 +230,10 @@ mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("c",line=1,at=-10,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
 
+# Group labels
+mtext("1975",side=4,line=0.5,adj=0,at=0.92,col=cols[1],cex=1.25,las=1)
+mtext("1992",side=4,line=0.5,adj=0,at=0.82,col=cols[2],cex=1.25,las=1)
+
 par(op)
 
 
