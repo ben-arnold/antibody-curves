@@ -6,8 +6,6 @@
 # looking at the age-specific
 # antibody curves
 #
-# version 1 (12 Nov 2015)
-#
 #------------------------------------
 
 #------------------------------------
@@ -141,6 +139,7 @@ diff.bm33 <- SLAb.tmle(
   X=ad$mda,
   diff=TRUE
 )
+
 
 #-------------------------------
 # save down the results
