@@ -248,7 +248,7 @@ plot(1,1,type="n",bty="n",
   mtext("d",adj=1,line=1,at=-0.2,font=2,cex=1.75)
 	mtext("Wet Season Village Geometric Mean",side=2,line=4)
   mtext(expression(paste(italic('P. falciparum')," IFA antibody titre, ", italic(E(Y[x])) )) ,side=2,line=2.5)
-	mtext("Entomological Innoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=4)
+	mtext("Entomological Inoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=4)
 	text(2,1,rho.text,adj=1,cex=1.25)
 	
 	# Ajura
