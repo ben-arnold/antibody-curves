@@ -1,0 +1,220 @@
+
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> 
+> #-------------------------------------------
+> # 5-mauke-Wb123-long.R
+> # Ben Arnold
+> #
+> # TMLE means of WB123 antibody in Mauke
+> # among individuals measured at both time
+> # points, stratified by age
+> #
+> #-------------------------------------------
+> 
+> #-------------------------------------------
+> # input files:
+> #   mauke1974.dta
+> #   mauke1992.dta
+> #
+> # output files:
+> #   mauke-Wb123-long.RData
+> #-------------------------------------------
+> 
+> 
+> 
+> #-------------------------------------------
+> # preamble
+> #-------------------------------------------
+> 
+> rm(list=ls())
+> library(foreign)
+> library(tmle)
+Loading required package: SuperLearner
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(SuperLearner)
+> 
+> # source the base functions for
+> # SL fits of age-antibody curves
+> # and TMLE estimates of mean differences
+> source("~/SLAbcurves/src/SLAb-curve.R")
+> source("~/SLAbcurves/src/SLAb-tmle.R")
+> source("~/SLAbcurves/src/SLAb-cvRF.R")
+> 
+> #-------------------------------------------
+> # load the Mauke data from 1974(1975) and 1992
+> #-------------------------------------------
+> 
+> d75 <- read.dta("~/dropbox/mauke/data/final/mauke1974.dta")
+> d92 <- read.dta("~/dropbox/mauke/data/final/mauke1992.dta")
+> 
+> 
+> # drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
+> a75 <- subset(d75,age>0,select=c("id74","age","CAg","wb123"))
+>   names(a75) <- c("id","age","CAg","wb123")
+> a75$mda <- 0
+> a92 <- subset(d92,select=c("id74","age","CAg","wb123"))
+>   names(a92) <- c("id","age","CAg","wb123")
+> a92$id <- paste(a92$id)
+> a92$mda <- 1
+> 
+> # create an appended dataset (long format)
+> d7592 <- rbind(a75,a92)
+> 
+> # create a merged dataset (wide format)
+> names(a75) <- c("id","age.75","CAg.75","wb123.75","mda.75")
+> names(a92) <- c("id","age.92","CAg.92","wb123.92","mda.92")
+> d <- merge(a75,a92,by="id")
+> 
+> # restrict long format dataset to individuals 
+> # with measuremments in both 1975 and 1992
+> a7592 <- merge(d7592,subset(d,select="id"),by="id",all.x=F)
+> 
+> # create an age category in 1975 (not used)
+> # d$agecat <- cut(d$age.75,breaks=c(1,20,40,80))
+> # quantile(d$age.75)
+> # d$agecat <- cut(d$age.75,breaks=c(0,18,33,43,65))
+> 
+> # create antigen status variables in 1975 and 1992
+> d$ab75 <- as.factor(ifelse(d$CAg.75>32,"Pos","Neg"))
+> d$ab92 <- as.factor(ifelse(d$CAg.92>32,"Pos","Neg"))
+> d$Abstatus <- factor(rep("Neg-Neg",nrow(d)),levels=c("Neg-Neg","Pos-Neg","Pos-Pos","Neg-Pos"))
+>   d$Abstatus[d$ab75=="Pos"&d$ab92=="Neg"] <- "Pos-Neg"
+>   d$Abstatus[d$ab75=="Pos"&d$ab92=="Pos"] <- "Pos-Pos"
+>   d$Abstatus[d$ab75=="Neg"&d$ab92=="Pos"] <- "Neg-Pos"
+>   
+> # merge antigen status at both time points into the long format data as well
+> a7592 <- merge(a7592,subset(d,select=c("id","Abstatus")),by="id",all.x=T)
+> 
+> #--------------------------------------
+> # Estimate means and differences between
+> # time points for each antigen+/- 
+> # combo
+> #--------------------------------------
+> set.seed(2194543)
+> Abstatus <- c("Neg-Neg","Pos-Neg","Pos-Pos")
+> EYx.75.Abstatus <- sapply(Abstatus, function(x) 
++ 	SLAb.tmle(Y=log10(d$wb123.75[d$Abstatus==x]),Age=d$age.75[d$Abstatus==x],id=d$id[d$Abstatus==x]) 
++ 	)
+Loading required package: randomForest
+randomForest 4.6-12
+Type rfNews() to see new features/changes/bug fixes.
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+Loading required package: Rcpp
+
+arm (Version 1.8-5, built: 2015-05-13)
+
+Working directory is /Users/benarnold/SLAbcurves/src/mauke
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+ Population Mean
+   Parameter Estimate:  4.7619
+   Estimated Variance:  0.012932
+              p-value:  <2e-16
+    95% Conf Interval: (4.539, 4.9848) 
+ Population Mean
+   Parameter Estimate:  5.4058
+   Estimated Variance:  0.00047092
+              p-value:  <2e-16
+    95% Conf Interval: (5.3633, 5.4484) 
+ Population Mean
+   Parameter Estimate:  5.3795
+   Estimated Variance:  0.00095143
+              p-value:  <2e-16
+    95% Conf Interval: (5.319, 5.4399) 
+> EYx.92.Abstatus <- sapply(Abstatus, function(x) 
++ 	SLAb.tmle(Y=log10(d$wb123.92[d$Abstatus==x]),Age=d$age.92[d$Abstatus==x],id=d$id[d$Abstatus==x]) 
++ 	)
+ Population Mean
+   Parameter Estimate:  4.4299
+   Estimated Variance:  0.01298
+              p-value:  <2e-16
+    95% Conf Interval: (4.2066, 4.6532) 
+ Population Mean
+   Parameter Estimate:  4.6448
+   Estimated Variance:  0.011639
+              p-value:  <2e-16
+    95% Conf Interval: (4.4333, 4.8562) 
+ Population Mean
+   Parameter Estimate:  5.3775
+   Estimated Variance:  0.005641
+              p-value:  <2e-16
+    95% Conf Interval: (5.2303, 5.5248) 
+> diff.Abstatus <- sapply(Abstatus, function(x) 
++ 	SLAb.tmle(Y=log10(a7592$wb123[a7592$Abstatus==x]), Age=a7592$age[a7592$Abstatus==x], id=a7592$id[a7592$Abstatus==x], X=a7592$mda[a7592$Abstatus==x], diff=TRUE) 
++ 	)
+ Additive Effect
+   Parameter Estimate:  -0.42046
+   Estimated Variance:  0.024006
+              p-value:  0.006653
+    95% Conf Interval: (-0.72414, -0.11678) 
+ Additive Effect
+   Parameter Estimate:  -0.5912
+   Estimated Variance:  0.012789
+              p-value:  1.7155e-07
+    95% Conf Interval: (-0.81285, -0.36955) 
+ Additive Effect
+   Parameter Estimate:  -0.036496
+   Estimated Variance:  0.0061462
+              p-value:  0.64156
+    95% Conf Interval: (-0.19016, 0.11716) 
+> 
+> 
+> #--------------------------------------
+> # store results for later summary
+> # and plotting
+> #--------------------------------------
+> save.image("~/SLAbcurves/results/raw/mauke-Wb123-long.RData")
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 18.161   0.258  19.844 
