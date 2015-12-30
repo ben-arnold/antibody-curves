@@ -82,6 +82,7 @@ d$Abstatus <- factor(rep("Neg-Neg",nrow(d)),levels=c("Neg-Neg","Pos-Neg","Pos-Po
 # merge antigen status at both time points into the long format data as well
 a7592 <- merge(a7592,subset(d,select=c("id","Abstatus")),by="id",all.x=T)
 
+
 #--------------------------------------
 # Estimate means and differences between
 # time points for each antigen+/- 
