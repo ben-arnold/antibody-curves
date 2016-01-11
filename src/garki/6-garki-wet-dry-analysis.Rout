@@ -1,0 +1,686 @@
+
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # 6-garki-wet-dry-analysis.R
+> #
+> # Calculate age-adjusted mean
+> # IFA Pf antibody titres by
+> # treatment group and wet/dry season
+> # in the pre-intervention period
+> # (i.e., stratified by svy 1, 2)
+> #
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> rm(list=ls())
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> 
+> # source the base functions for
+> # SL fits of age-antibody curves
+> # and TMLE estimates of mean differences
+> source("~/SLAbcurves/src/SLAb-curve.R")
+> source("~/SLAbcurves/src/SLAb-tmle.R")
+> source("~/SLAbcurves/src/SLAb-cvRF.R")
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> 
+> # add 2 control village names
+> d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
+> d$vname[d$village==552] <- "Nabanawa"
+> d$vname[d$village==553] <- "Ajura"
+> d$vname <- factor(d$vname)
+> 
+> # factor for child age group categories
+> d$agecat <- cut(d$ageyrs,c(-1,5,10,15),labels=c("0-4","5-9","10-14"))
+> 
+> # create a numeric 0/1 treatment variable
+> d$tr01 <- ifelse(d$tr=="Control",0,1)
+> 
+> # create a numeric 0/1 wet season variable
+> d$wet <- ifelse(d$wetseason=="Wet",1,0)
+> 
+> 
+> #-------------------------------
+> # subset the data to the pre-
+> # intervention period (svy 1-2)
+> #-------------------------------
+> # subset the data by group and survey round for convenience
+> d.c1  <- d[d$tr=="Control" & (d$serosvy==1),]
+> d.c2  <- d[d$tr=="Control" & (d$serosvy==2),]
+> d.c3  <- d[d$tr=="Control" & (d$serosvy==3),]
+> d.c4  <- d[d$tr=="Control" & (d$serosvy==4),]
+> d.c5  <- d[d$tr=="Control" & (d$serosvy==5),]
+> d.c7  <- d[d$tr=="Control" & (d$serosvy==7),]
+> d.c8  <- d[d$tr=="Control" & (d$serosvy==8),]
+> 
+> d.tr1 <- d[d$tr=="Intervention" & d$serosvy==1,]
+> d.tr2 <- d[d$tr=="Intervention" & d$serosvy==2,]
+> 
+> # all villages combined (pre-intervention)
+> d.1 <- d[d$serosvy==1,]
+> d.2 <- d[d$serosvy==2,]
+> 
+> #-------------------------------
+> # Step 1: 
+> # Age-specific antibody response
+> # curves
+> #-------------------------------
+> 
+> set.seed(65452)
+> 
+> # Pre-intervention period fitted curves
+> # stratified by season, averaged over control + intervention
+> p.1 <-SLAb.curve(Y=log10(d.1$ifatpftitre+1),Age=d.1$ageyrs,id=d.1$id)
+Loading required package: randomForest
+randomForest 4.6-10
+Type rfNews() to see new features/changes/bug fixes.
+Loading required package: arm
+Loading required package: MASS
+Loading required package: Matrix
+Loading required package: lme4
+
+arm (Version 1.8-6, built: 2015-7-7)
+
+Working directory is /Users/benarnold/SLAbcurves/src/garki
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: glmnet
+Loaded glmnet 2.0-2
+
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.2656995 0.0000000
+SL.glm_All               0.2616421 0.0000000
+SL.bayesglm_All          0.2616421 0.0000000
+SL.loess_All             0.2470407 0.8800223
+SL.gam_All               0.2546188 0.0000000
+SL.gam.3_All             0.2514620 0.0000000
+SL.glmnet_All            0.2616064 0.0000000
+SL.randomForest.ns15_All 0.2520264 0.1199777
+There were 33 warnings (use warnings() to see them)
+> p.2 <-SLAb.curve(Y=log10(d.2$ifatpftitre+1),Age=d.2$ageyrs,id=d.2$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.3727144 0.0000000
+SL.glm_All               0.3511400 0.0000000
+SL.bayesglm_All          0.3511400 0.0000000
+SL.loess_All             0.2548700 0.7610345
+SL.gam_All               0.3119162 0.0000000
+SL.gam.3_All             0.2878816 0.0000000
+SL.glmnet_All            0.3511517 0.0000000
+SL.randomForest.ns40_All 0.2755677 0.2389655
+There were 33 warnings (use warnings() to see them)
+> 
+> # surveys 1-2 stratified by intervention assignment and season
+> # doing this extra leg work to confirm that there
+> # is no difference between assignment
+> p.c1 <- SLAb.curve(Y=log10(d.c1$ifatpftitre+1),Age=d.c1$ageyrs,id=d.c1$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.2881099 0.0000000
+SL.glm_All               0.2810958 0.0000000
+SL.bayesglm_All          0.2810958 0.0000000
+SL.loess_All             0.2641922 0.5059403
+SL.gam_All               0.2687352 0.0000000
+SL.gam.3_All             0.2646913 0.1280330
+SL.glmnet_All            0.2810853 0.0000000
+SL.randomForest.ns20_All 0.2664457 0.3660267
+There were 34 warnings (use warnings() to see them)
+> p.c2 <- SLAb.curve(Y=log10(d.c2$ifatpftitre+1),Age=d.c2$ageyrs,id=d.c2$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.2968387 0.0000000
+SL.glm_All               0.2786643 0.0000000
+SL.bayesglm_All          0.2786642 0.0000000
+SL.loess_All             0.1853126 0.7021557
+SL.gam_All               0.2446188 0.0000000
+SL.gam.3_All             0.2210806 0.0000000
+SL.glmnet_All            0.2785407 0.0000000
+SL.randomForest.ns40_All 0.1996701 0.2978443
+There were 33 warnings (use warnings() to see them)
+> p.tr1 <- SLAb.curve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              0.2504740 0.09922195
+SL.glm_All               0.2497039 0.00000000
+SL.bayesglm_All          0.2497039 0.00000000
+SL.loess_All             0.2405753 0.90077805
+SL.gam_All               0.2458638 0.00000000
+SL.gam.3_All             0.2438744 0.00000000
+SL.glmnet_All            0.2496601 0.00000000
+SL.randomForest.ns20_All 0.2429931 0.00000000
+There were 33 warnings (use warnings() to see them)
+> p.tr2 <- SLAb.curve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.4159380 0.0000000
+SL.glm_All               0.3935947 0.0000000
+SL.bayesglm_All          0.3935946 0.0000000
+SL.loess_All             0.2955873 0.7390382
+SL.gam_All               0.3504254 0.0000000
+SL.gam.3_All             0.3254493 0.0000000
+SL.glmnet_All            0.3935398 0.0000000
+SL.randomForest.ns15_All 0.3148129 0.2609618
+There were 33 warnings (use warnings() to see them)
+> 
+> # control village fitted curves for surveys 3,4,5,7,8 (wet, dry, wet, wet, dry)
+> p.c3 <- SLAb.curve(Y=log10(d.c3$ifatpftitre+1),Age=d.c3$ageyrs,id=d.c3$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.4827813 0.0000000
+SL.glm_All               0.4642486 0.0000000
+SL.bayesglm_All          0.4642485 0.0000000
+SL.loess_All             0.3700496 0.6485006
+SL.gam_All               0.4256760 0.0000000
+SL.gam.3_All             0.4042451 0.0000000
+SL.glmnet_All            0.4644433 0.0000000
+SL.randomForest.ns25_All 0.3817313 0.3514994
+There were 33 warnings (use warnings() to see them)
+> p.c4 <- SLAb.curve(Y=log10(d.c4$ifatpftitre+1),Age=d.c4$ageyrs,id=d.c4$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.8477722 0.0000000
+SL.glm_All               0.7793981 0.0000000
+SL.bayesglm_All          0.7793979 0.0000000
+SL.loess_All             0.4812383 0.6804434
+SL.gam_All               0.6295803 0.0000000
+SL.gam.3_All             0.5587453 0.0000000
+SL.glmnet_All            0.7791995 0.0000000
+SL.randomForest.ns15_All 0.5288007 0.3195566
+There were 33 warnings (use warnings() to see them)
+> p.c5 <- SLAb.curve(Y=log10(d.c5$ifatpftitre+1),Age=d.c5$ageyrs,id=d.c5$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.5627347 0.0000000
+SL.glm_All               0.5257391 0.0000000
+SL.bayesglm_All          0.5257390 0.0000000
+SL.loess_All             0.4200570 0.5454388
+SL.gam_All               0.4737706 0.0000000
+SL.gam.3_All             0.4489646 0.0000000
+SL.glmnet_All            0.5259093 0.0000000
+SL.randomForest.ns25_All 0.4249085 0.4545612
+There were 33 warnings (use warnings() to see them)
+> p.c7 <- SLAb.curve(Y=log10(d.c7$ifatpftitre+1),Age=d.c7$ageyrs,id=d.c7$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.4454145 0.0000000
+SL.glm_All               0.4188740 0.0000000
+SL.bayesglm_All          0.4188739 0.0000000
+SL.loess_All             0.3090727 0.8999649
+SL.gam_All               0.3728753 0.0000000
+SL.gam.3_All             0.3533701 0.0000000
+SL.glmnet_All            0.4189656 0.0000000
+SL.randomForest.ns35_All 0.3381401 0.1000351
+There were 33 warnings (use warnings() to see them)
+> p.c8 <- SLAb.curve(Y=log10(d.c8$ifatpftitre+1),Age=d.c8$ageyrs,id=d.c8$id)
+
+Call:  
+SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
+    id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.5757995 0.0000000
+SL.glm_All               0.5422536 0.0000000
+SL.bayesglm_All          0.5422532 0.0000000
+SL.loess_All             0.4087598 0.6841779
+SL.gam_All               0.4855360 0.0000000
+SL.gam.3_All             0.4574991 0.0000000
+SL.glmnet_All            0.5419142 0.0000000
+SL.randomForest.ns25_All 0.4301941 0.3158221
+There were 33 warnings (use warnings() to see them)
+> 
+> 
+> 
+> 
+> # temp code to look at curves
+> # lo <- layout(mat=matrix(1:3,nrow=3,ncol=1))
+> # cols <- rainbow(n=7,v=0.7)
+> # plot(p.1$Age,p.1$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[1])
+> # lines(p.2$Age,p.2$pY,col=cols[2])
+> # 
+> # plot(p.c3$Age,p.c3$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[3])
+> # lines(p.c4$Age,p.c4$pY,col=cols[4])
+> # lines(p.c5$Age,p.c5$pY,col=cols[5])
+> # 
+> # plot(p.c7$Age,p.c7$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[6])
+> # lines(p.c8$Age,p.c8$pY,col=cols[7])
+> 
+> 
+> 
+> #-------------------------------
+> # Step 2: 
+> # Calculate age-adjusted means
+> # and difference in means
+> # by wet/dry season survey
+> #-------------------------------
+> set.seed(8969754)
+> 
+> ## All villages, rounds 1-2
+> mu12.0to4 <- sapply(c(1:2),function(x) SLAb.tmle(
++ 	Y=log10(d$ifatpftitre[d$agecat=="0-4" & d$serosvy==x]+1),
++ 	Age=d$ageyrs[d$agecat=="0-4" & d$serosvy==x],
++ 	id=d$id[d$agecat=="0-4" & d$serosvy==x]
++ 	)
++ )
+ Population Mean
+   Parameter Estimate:  3.1776
+   Estimated Variance:  0.001312
+              p-value:  <2e-16
+    95% Conf Interval: (3.1066, 3.2486) 
+ Population Mean
+   Parameter Estimate:  2.8332
+   Estimated Variance:  0.0021233
+              p-value:  <2e-16
+    95% Conf Interval: (2.7428, 2.9235) 
+> mu12.5to9 <- sapply(c(1:2),function(x) SLAb.tmle(
++   Y=log10(d$ifatpftitre[d$agecat=="5-9" & d$serosvy==x]+1),
++   Age=d$ageyrs[d$agecat=="5-9" & d$serosvy==x],
++   id=d$id[d$agecat=="5-9" & d$serosvy==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.3519
+   Estimated Variance:  0.00081663
+              p-value:  <2e-16
+    95% Conf Interval: (3.2959, 3.4079) 
+ Population Mean
+   Parameter Estimate:  3.3658
+   Estimated Variance:  0.00076147
+              p-value:  <2e-16
+    95% Conf Interval: (3.3117, 3.4199) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> mu12.10to14 <- sapply(c(1:2),function(x) SLAb.tmle(
++   Y=log10(d$ifatpftitre[d$agecat=="10-14" & d$serosvy==x]+1),
++   Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x],
++   id=d$id[d$agecat=="10-14" & d$serosvy==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.4451
+   Estimated Variance:  0.0030387
+              p-value:  <2e-16
+    95% Conf Interval: (3.337, 3.5531) 
+ Population Mean
+   Parameter Estimate:  3.4274
+   Estimated Variance:  0.0020051
+              p-value:  <2e-16
+    95% Conf Interval: (3.3396, 3.5151) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> 
+> # Control villages only, round 3-5,7,8
+> mu.0to4 <- sapply(c(3,4,5,7,8),function(x) SLAb.tmle(
++   Y=log10(d$ifatpftitre[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x]+1),
++   Age=d$ageyrs[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x],
++   id=d$id[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  2.8161
+   Estimated Variance:  0.0074587
+              p-value:  <2e-16
+    95% Conf Interval: (2.6468, 2.9854) 
+ Population Mean
+   Parameter Estimate:  2.2409
+   Estimated Variance:  0.012298
+              p-value:  <2e-16
+    95% Conf Interval: (2.0235, 2.4583) 
+ Population Mean
+   Parameter Estimate:  2.9113
+   Estimated Variance:  0.0094135
+              p-value:  <2e-16
+    95% Conf Interval: (2.7211, 3.1015) 
+ Population Mean
+   Parameter Estimate:  2.836
+   Estimated Variance:  0.0069216
+              p-value:  <2e-16
+    95% Conf Interval: (2.6729, 2.9991) 
+ Population Mean
+   Parameter Estimate:  2.5146
+   Estimated Variance:  0.01234
+              p-value:  <2e-16
+    95% Conf Interval: (2.2969, 2.7324) 
+> mu.5to9 <- sapply(c(3,4,5,7,8),function(x) SLAb.tmle(
++   Y=log10(d$ifatpftitre[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x]+1),
++   Age=d$ageyrs[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x],
++   id=d$id[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.344
+   Estimated Variance:  0.0018292
+              p-value:  <2e-16
+    95% Conf Interval: (3.2602, 3.4279) 
+ Population Mean
+   Parameter Estimate:  3.215
+   Estimated Variance:  0.0021574
+              p-value:  <2e-16
+    95% Conf Interval: (3.124, 3.3061) 
+ Population Mean
+   Parameter Estimate:  3.4433
+   Estimated Variance:  0.0017452
+              p-value:  <2e-16
+    95% Conf Interval: (3.3615, 3.5252) 
+ Population Mean
+   Parameter Estimate:  3.3498
+   Estimated Variance:  0.0024387
+              p-value:  <2e-16
+    95% Conf Interval: (3.253, 3.4466) 
+ Population Mean
+   Parameter Estimate:  3.1374
+   Estimated Variance:  0.0032847
+              p-value:  <2e-16
+    95% Conf Interval: (3.0251, 3.2497) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> mu.10to14 <- sapply(c(3,4,5,7,8),function(x) SLAb.tmle(
++   Y=log10(d$ifatpftitre[d$agecat=="10-14" & d$serosvy==x]+1),
++   Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x],
++   id=d$id[d$agecat=="10-14" & d$serosvy==x]
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.1955
+   Estimated Variance:  0.0027506
+              p-value:  <2e-16
+    95% Conf Interval: (3.0927, 3.2983) 
+ Population Mean
+   Parameter Estimate:  3.0909
+   Estimated Variance:  0.0032619
+              p-value:  <2e-16
+    95% Conf Interval: (2.979, 3.2029) 
+ Population Mean
+   Parameter Estimate:  2.9181
+   Estimated Variance:  0.0053038
+              p-value:  <2e-16
+    95% Conf Interval: (2.7753, 3.0608) 
+ Population Mean
+   Parameter Estimate:  3.166
+   Estimated Variance:  0.0035064
+              p-value:  <2e-16
+    95% Conf Interval: (3.0499, 3.282) 
+ Population Mean
+   Parameter Estimate:  3.1131
+   Estimated Variance:  0.0027514
+              p-value:  <2e-16
+    95% Conf Interval: (3.0103, 3.2159) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> #-------------------------------
+> # Estimate difference between
+> # control and intervention villages in
+> # IFA P. falciparum
+> # titre by survey round
+> # to ensure it is reasonable to
+> # pool them in rounds 1-2
+> #-------------------------------
+> 
+> set.seed(8234234)
+> ages <- levels(d$agecat)
+> tc.diff.psi1 <- sapply(ages,function(x) SLAb.tmle(
++ 	Y=log10(d$ifatpftitre[d$serosvy==1 & d$agecat==x]+1),
++ 	Age=d$ageyrs[d$serosvy==1 & d$agecat==x],
++ 	id=d$id[d$serosvy==1 & d$agecat==x],
++ 	X=d$tr01[d$serosvy==1 & d$agecat==x],
++ 	diff=TRUE
++ 	)
++ )
+ Additive Effect
+   Parameter Estimate:  0.15339
+   Estimated Variance:  0.0049893
+              p-value:  0.029889
+    95% Conf Interval: (0.014944, 0.29183) 
+ Additive Effect
+   Parameter Estimate:  0.071398
+   Estimated Variance:  0.0035825
+              p-value:  0.23292
+    95% Conf Interval: (-0.045916, 0.18871) 
+ Additive Effect
+   Parameter Estimate:  0.04562
+   Estimated Variance:  0.015586
+              p-value:  0.7148
+    95% Conf Interval: (-0.19907, 0.29031) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> tc.diff.psi2 <- sapply(ages,function(x) SLAb.tmle(
++   Y=log10(d$ifatpftitre[d$serosvy==2 & d$agecat==x]+1),
++   Age=d$ageyrs[d$serosvy==2 & d$agecat==x],
++   id=d$id[d$serosvy==2 & d$agecat==x],
++   X=d$tr01[d$serosvy==2 & d$agecat==x],
++   diff=TRUE
++   )
++ )
+ Additive Effect
+   Parameter Estimate:  0.044445
+   Estimated Variance:  0.0050931
+              p-value:  0.53343
+    95% Conf Interval: (-0.095433, 0.18432) 
+ Additive Effect
+   Parameter Estimate:  0.12302
+   Estimated Variance:  0.0028806
+              p-value:  0.0219
+    95% Conf Interval: (0.017824, 0.22822) 
+ Additive Effect
+   Parameter Estimate:  0.14869
+   Estimated Variance:  0.0099923
+              p-value:  0.1369
+    95% Conf Interval: (-0.047237, 0.34461) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> # P-values for differences in means, with Bonferroni correction for 6 tests
+> sprintf("%1.4f",unlist(tc.diff.psi1[5,])*6)
+[1] "0.1793" "1.3975" "4.2888"
+> sprintf("%1.4f",unlist(tc.diff.psi2[5,])*6)
+[1] "3.2006" "0.1314" "0.8214"
+> 
+> #-------------------------------
+> # Estimate difference between
+> # successive wet and dry survey 
+> # rounds
+> #-------------------------------
+> 
+> # small wrapper for the TMLE function
+> # to streamline between-round comparisons
+> # for wet v. dry, stratified by child age
+> tmle.wrap <- function(d) {
++   ages <- levels(d$agecat)
++   diffs <- sapply(ages,function(x) SLAb.tmle(
++     Y=log10(d$ifatpftitre[d$agecat==x]+1),
++     Age=d$ageyrs[d$agecat==x],
++     id=d$id[d$agecat==x],
++     X=d$wet[d$agecat==x],
++     diff=TRUE
++     )
++   )
++   return(diffs)
++ }
+> d.12 <- rbind(d.1,d.2)
+> d.23 <- rbind(d.2,d.c3)
+> d.34 <- rbind(d.c3,d.c4)
+> d.45 <- rbind(d.c4,d.c5)
+> 
+> 
+> set.seed(3413)
+> wet.diff.12 <- tmle.wrap(d.12)
+ Additive Effect
+   Parameter Estimate:  0.29279
+   Estimated Variance:  0.0033786
+              p-value:  4.7262e-07
+    95% Conf Interval: (0.17886, 0.40671) 
+ Additive Effect
+   Parameter Estimate:  -0.014391
+   Estimated Variance:  0.001387
+              p-value:  0.6992
+    95% Conf Interval: (-0.087386, 0.058604) 
+ Additive Effect
+   Parameter Estimate:  0.017722
+   Estimated Variance:  0.0053818
+              p-value:  0.80911
+    95% Conf Interval: (-0.12606, 0.16151) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> wet.diff.23 <- tmle.wrap(d.23)
+ Additive Effect
+   Parameter Estimate:  0.049597
+   Estimated Variance:  0.0060824
+              p-value:  0.52482
+    95% Conf Interval: (-0.10326, 0.20246) 
+ Additive Effect
+   Parameter Estimate:  -0.021803
+   Estimated Variance:  0.0024716
+              p-value:  0.66098
+    95% Conf Interval: (-0.11925, 0.075639) 
+ Additive Effect
+   Parameter Estimate:  -0.048776
+   Estimated Variance:  0.0078784
+              p-value:  0.58264
+    95% Conf Interval: (-0.22275, 0.12519) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> wet.diff.34 <- tmle.wrap(d.34)
+ Additive Effect
+   Parameter Estimate:  0.56047
+   Estimated Variance:  0.01454
+              p-value:  3.3502e-06
+    95% Conf Interval: (0.32413, 0.7968) 
+ Additive Effect
+   Parameter Estimate:  0.13797
+   Estimated Variance:  0.0034295
+              p-value:  0.018474
+    95% Conf Interval: (0.023189, 0.25275) 
+ Additive Effect
+   Parameter Estimate:  0.1062
+   Estimated Variance:  0.012276
+              p-value:  0.33778
+    95% Conf Interval: (-0.11096, 0.32336) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> wet.diff.45 <- tmle.wrap(d.45)
+ Additive Effect
+   Parameter Estimate:  0.61785
+   Estimated Variance:  0.015122
+              p-value:  5.0524e-07
+    95% Conf Interval: (0.37683, 0.85888) 
+ Additive Effect
+   Parameter Estimate:  0.22638
+   Estimated Variance:  0.0030704
+              p-value:  4.3985e-05
+    95% Conf Interval: (0.11778, 0.33499) 
+ Additive Effect
+   Parameter Estimate:  0.29259
+   Estimated Variance:  0.017275
+              p-value:  0.026004
+    95% Conf Interval: (0.034982, 0.55021) 
+There were 50 or more warnings (use warnings() to see the first 50)
+> # note: 5 v 7 and 7 v 8 are not tested b/c all wet season
+> 
+> 
+> #-------------------------------
+> # save down the results
+> #-------------------------------
+> save.image("~/SLAbcurves/results/raw/garki-wet-dry-analysis.RData")
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+162.310   1.670 164.525 
