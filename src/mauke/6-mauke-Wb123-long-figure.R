@@ -53,14 +53,14 @@ SLAb.plotLong <- function(Ab1,Ab2,mu1,mu2,diff,labels=c("Ab-","Ab-"),letter="",y
   
   op <- par(mar=c(3,6,4,0)+0.1)
   cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-  cols <- cbPalette[c(7,6)]
+  cols <- cbPalette[c(7,6,2,3)]
   mus <- cbind(mu1,mu2)
   
   plot(1,1,type="n",xaxt="n",yaxt="n",xlab="",ylab="",bty="n",xlim=c(0,2),ylim=c(2,6))
   xs <- c(0.5,1.5)
   # axes
-  mtext(labels,side=3,line=0.5,at=xs,col=cols)
-  mtext(c("1975","1992"),side=1,line=0,at=xs,col=cols)
+  mtext(labels,side=3,line=0.5,at=xs,col=cols[1:2])
+  mtext(c("1975","1992"),side=1,line=0,at=xs,col=cols[1:2])
   if (ylabel==TRUE) mtext(expression(paste(italic('W. bancrofti'), " Wb123 (Light Units)")),side=2,line=3.5,cex=1.25)
   axis(2,at=2:6,labels=c(
     # expression(10^-1),
@@ -78,8 +78,8 @@ SLAb.plotLong <- function(Ab1,Ab2,mu1,mu2,diff,labels=c("Ab-","Ab-"),letter="",y
   mtext(letter,side=3,line=1.75,font=2,at=-0.3,cex=1.75)
   
   # plot individual trajectories
-  segments(x0=xs[1],x1=xs[2],y0=Ab1[Ab2>=Ab1],y1=Ab2[Ab2>=Ab1],col=cols[2])
-  segments(x0=xs[1],x1=xs[2],y0=Ab1[Ab2<Ab1],y1=Ab2[Ab2<Ab1],col=cols[1])
+  segments(x0=xs[1],x1=xs[2],y0=Ab1[Ab2>=Ab1],y1=Ab2[Ab2>=Ab1],col=cols[4])
+  segments(x0=xs[1],x1=xs[2],y0=Ab1[Ab2<Ab1],y1=Ab2[Ab2<Ab1],col=cols[3])
   points(rep(xs[1],length(Ab1)),Ab1,col=cols[1],pch=16)
   points(rep(xs[2],length(Ab2)),Ab2,col=cols[2],pch=16)
   # plot geometric means
