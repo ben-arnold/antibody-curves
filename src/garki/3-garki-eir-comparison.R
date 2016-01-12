@@ -218,15 +218,15 @@ rho.text <- substitute(paste("Spearman's ",rho," = ",rho.txt ),list(rho.txt=spri
 # plot the values
 #-------------------------------
 
-pdf("~/SLAbcurves/results/figs/garki-IFAPf-EIR.pdf",width=15,height=5)
-op <- par(mar=c(6,5,3,2)+0.1)
+pdf("~/SLAbcurves/results/figs/garki-IFAPf-EIR.pdf",width=6,height=6)
+op <- par(mar=c(5,5,3,2)+0.1)
 # cols <- c(brewer.pal(8,"Dark2")[c(8,4)],brewer.pal(8,"Set1")[2])
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cols <- c(cbPalette[c(7,6,1)])
 
-lo <- layout(mat=matrix(1:3,nrow=1,ncol=3))
-plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
-plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
+# lo <- layout(mat=matrix(1:3,nrow=1,ncol=3))
+# plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
+# plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
 
 
 i.cols <- rep(cbPalette[6],8)
@@ -245,10 +245,10 @@ plot(1,1,type="n",bty="n",
 		expression(10^4)),
 		las=1,cex.axis=1.25
 	)
-  mtext("d",adj=1,line=1,at=-0.2,font=2,cex=1.75)
-	mtext("Wet Season Village Geometric Mean",side=2,line=4)
-  mtext(expression(paste(italic('P. falciparum')," IFA antibody titre, ", italic(E(Y[x])) )) ,side=2,line=2.5)
-	mtext("Entomological Inoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=4)
+  mtext("d",adj=1,line=0.5,at=-0.4,font=2,cex=2)
+	mtext("Wet Season Village Geometric Mean",side=2,line=4,cex=1.25)
+  mtext(expression(paste(italic('P. falciparum')," IFA antibody titre, ", italic(E(Y[x])) )) ,side=2,line=2.5,cex=1.25)
+	mtext("Entomological Inoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=3.5,cex=1.25)
 	text(2,1,rho.text,adj=1,cex=1.25)
 	
 	# Ajura

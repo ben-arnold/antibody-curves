@@ -58,18 +58,34 @@
 % Figure 1 - Garki results
 %-------------------------------------------------------------------------------------------
 
+%\begin{landscape}
 \begin{figure}[htbp]
+\includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/garki-antibody-curves-IFAPf.pdf} \\
+\hspace*{\fill} \includegraphics[width=0.33\textwidth]{/users/benarnold/SLAbcurves/results/figs/garki-IFAPf-EIR.pdf} 
+
 \begin{center}
-\includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/garki-antibody-curves-IFAPf.pdf} \\ 
-\includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/garki-IFAPf-EIR.pdf}
 \begin{minipage}{\textwidth}
 \caption{Shifts in the \textit{Plasmodium falciparum} age-antibody curve measure changes in malaria transmission due to intervention in the Garki Project, Nigeria (1970-1976). The intervention included a combination of insecticide spraying and mass drug administration of surfanene-pyrimethamine in 1972-1973. Antibody response measured with the IgG indirect fluorescent antibody (IFA) test for \textit{P. falciparum}. \textbf{a}, pre-intervention period wet and dry seasons measures (survey rounds 1-2); \textbf{b}, active intervention period (survey rounds 3-5, at 20, 50, and 70 weeks following the start of intervention); \textbf{c}, post-intervention period (survey rounds 6-8 at 20, 40, and 90 weeks following the end of the intervention).  Age-antibody curves, $E(Y_{x,a})$ by group ($x$) and age ($a$), were fit using antibody responses in individuals (N=6,024 total measurements, with 459 - 551 measurements per curve) using a nonparametric ensemble machine learning algorithm (Online Methods). Control measurements were combined across survey rounds within each period when plotting the curves to facilitate visual comparison of shifts in transmission intensity between surveys. Age-adjusted geometric means by group, $E(Y_x)$, provide summary differences between curves at each survey round. Error bars show 95\% confidence intervals for the age-adjusted geometric means and asterisks indicate $P\leq0.01$ (Bonferroni corrected) for differences between control and intervention groups. Control villages were not measured in survey 6. \textbf{d}, Village-level, age-adjusted geometric mean \textit{P. falciparum} IFA titres, $E(Y_x)$, versus wet season entomological inoculation rate (EIR) in the three study villages with both entomological and serological measurements. Ajura was a control village (no treatment) while Rafine Marke and Nasakar were intervention villages.  The circled and labeled points are from the 1971 wet season (pre-intervention) and other points represent wet seasons for 1972-73 (Ajura) or 1972-75 (Rafine Marke and Nasakar). A single data point outside the figure range is not shown (Nasakar 1972, EIR value = 0, $E(Y_x) = 10^{3.0591}$), but was included in the Spearman rank correlation estimate.   }
 \label{fig:garki}
 \end{minipage}
 \end{center}
 \end{figure}
-
+%\end{landscape}
 % note: timing of surveys estimated from Figs 1, 2 and 4 of Cornille-Broger 1978 Bull World Health Org  56 (4): 579-600
+
+
+%-------------------------------------------------------------------------------------------
+% Figure 2 - Garki wet and dry season results
+%-------------------------------------------------------------------------------------------
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/garki-wet-dry-analysis.pdf}
+\begin{minipage}{\textwidth}
+\caption{Higher sensitivity among children <5 to seasonal changes in \textit{Plasmodium falciparum} transmission as depicted by age-antibody curves estimated within control villages in the Garki Project, Nigeria (1970-1976). Antibody response measured with the IgG indirect fluorescent antibody (IFA) test for \textit{P. falciparum}.  Age-antibody curves, $E(Y_{x,a})$ by season ($x$) and age ($a$), were fit using antibody responses in individuals as described in Fig 1. Age-adjusted geometric means by age category and season, $E(Y_x)$, summarize the curves. Error bars show 95\% confidence intervals and \textit{P}-values mark significant differences (Bonferroni corrected) between adjacent seasons.  }
+\label{fig:garkiwetdry}
+\end{minipage}
+\end{center}
+\end{figure}
 
 
 %-------------------------------------------------------------------------------------------
@@ -80,7 +96,7 @@
 \includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf} \\
 \includegraphics[width=\textwidth]{/users/benarnold/SLAbcurves/results/figs/mauke-Wb123-long.pdf}
 \begin{minipage}{\textwidth}
-\caption{\textbf{a}, A shift in the age-antibody curve measures a reduction in transmission intensity of \textit{Wuchereria bancrofti} due to mass drug administration (MDA) on Mauke Island.  IgG antibody response to the Wb123 antigen for \textit{W. bancrofti} measured in blood specimens from residents in 1975 (N=362) before MDA and again in 1992 (N=553), five years following a single, island-wide MDA with diethylcarbamazine. Geometric mean antibody levels $E(Y_{x,a})$ by survey year ($x$) and age ($a$); individual antibody responses (points) are shown along with summary curves fit with a nonparametric ensemble machine learning algorithm (Online Methods). \textbf{b}, Age-adjusted geometric mean antibody response $E(Y_{x})$ and 95\% confidence intervals before (1975) and five years after (1992) MDA, stratified by 5 year age category (all differences significant at $P\leq0.01$ after Bonferroni correction). \textbf{c}, Wb123 antibody response in 1975 and 1992 stratified by the presence of circulating antigens (Ag) at each measurement in the subsample of 112 individuals who were measured at both time points (two individuals not shown were Ag- in 1975 and Ag+ in 1992), along with age-adjusted geometric means, $E(Y_{x})$, and 95\% confidence intervals. Differences between means are significant (Bonferroni corrected $P\leq0.02$ for differences except for the Ag+/Ag+ group). Individual trajectories are colored by the higher of the two measurements: decreases are orange, increases are blue. }
+\caption{A shift in the age-antibody curve measures a reduction in transmission intensity of \textit{Wuchereria bancrofti} due to mass drug administration (MDA) on Mauke Island.  IgG antibody response to the Wb123 antigen for \textit{W. bancrofti} measured in blood specimens from residents in 1975 (N=362) before MDA and again in 1992 (N=553), five years following a single, island-wide MDA with diethylcarbamazine. Geometric mean antibody levels $E(Y_{x,a})$ by survey year ($x$) and age ($a$); individual antibody responses (points) are shown along with summary curves fit with a nonparametric ensemble machine learning algorithm (Online Methods). \textbf{b}, Age-adjusted geometric mean antibody response $E(Y_{x})$ and 95\% confidence intervals before (1975) and five years after (1992) MDA, stratified by 5 year age category (all differences significant at $P\leq0.01$ after Bonferroni correction). \textbf{c}, Wb123 antibody response in 1975 and 1992 stratified by the presence of circulating antigens (Ag) at each measurement in the subsample of 112 individuals who were measured at both time points (two individuals not shown were Ag- in 1975 and Ag+ in 1992), along with age-adjusted geometric means, $E(Y_{x})$, and 95\% confidence intervals. Differences between means are significant (Bonferroni corrected $P\leq0.02$ for differences except for the Ag+/Ag+ group). Individual trajectories are colored by the higher of the two measurements: decreases are orange, increases are blue. }
 \label{fig:mauke}
 \end{minipage}
 \end{center}

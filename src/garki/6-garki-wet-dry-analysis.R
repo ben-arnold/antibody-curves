@@ -146,19 +146,19 @@ mu12.10to14 <- sapply(c(1:2),function(x) SLAb.tmle(
 
 
 # Control villages only, round 3-5,7,8
-mu.0to4 <- sapply(c(3,4,5,7,8),function(x) SLAb.tmle(
+mu.0to4 <- sapply(c(1:5,7,8),function(x) SLAb.tmle(
   Y=log10(d$ifatpftitre[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x]+1),
   Age=d$ageyrs[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x],
   id=d$id[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x]
   )
 )
-mu.5to9 <- sapply(c(3,4,5,7,8),function(x) SLAb.tmle(
+mu.5to9 <- sapply(c(1:5,7,8),function(x) SLAb.tmle(
   Y=log10(d$ifatpftitre[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x]+1),
   Age=d$ageyrs[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x],
   id=d$id[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x]
   )
 )
-mu.10to14 <- sapply(c(3,4,5,7,8),function(x) SLAb.tmle(
+mu.10to14 <- sapply(c(1:5,7,8),function(x) SLAb.tmle(
   Y=log10(d$ifatpftitre[d$agecat=="10-14" & d$serosvy==x]+1),
   Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x],
   id=d$id[d$agecat=="10-14" & d$serosvy==x]
@@ -200,7 +200,7 @@ sprintf("%1.4f",unlist(tc.diff.psi2[5,])*6)
 #-------------------------------
 # Estimate difference between
 # successive wet and dry survey 
-# rounds
+# rounds in the 2 control villages
 #-------------------------------
 
 # small wrapper for the TMLE function
@@ -218,8 +218,8 @@ tmle.wrap <- function(d) {
   )
   return(diffs)
 }
-d.12 <- rbind(d.1,d.2)
-d.23 <- rbind(d.2,d.c3)
+d.12 <- rbind(d.c1,d.c2)
+d.23 <- rbind(d.c2,d.c3)
 d.34 <- rbind(d.c3,d.c4)
 d.45 <- rbind(d.c4,d.c5)
 
