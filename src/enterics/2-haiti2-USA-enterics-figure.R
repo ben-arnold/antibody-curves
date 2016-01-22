@@ -6,7 +6,6 @@
 #
 # plot SL and TMLE estimates
 #
-# version 1 (11 oct 2015)
 #--------------------------------------
 
 #--------------------------------------
@@ -58,7 +57,7 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	# header
 	mtext(letter,side=3,line=1.25,font=2,at=-0.7,cex=1.75)
 	mtext(main,cex=1.25,line=1.5)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=-0.5)
+	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=-0.5)
 	
 	# axes
 	if (xlabel==TRUE) mtext("Age, years",side=1,line=3,cex=1.5)
@@ -155,13 +154,13 @@ SLAb.plotEYx(EYx.usa.leca,EYx.haiti.leca,diff.leca)
 SLAb.plotEYax(usa.etec,haiti.etec,expression(paste("ETEC heat labile toxin ",beta," subunit")),"e",ylabel=T)
 SLAb.plotEYx(EYx.usa.etec,EYx.haiti.etec,diff.etec) 
 
-SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group D")),"f")
+SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group B")),"f")
 SLAb.plotEYx(EYx.usa.salb,EYx.haiti.salb,diff.salb) 
 
-SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus Group I","g",ylabel=T,xlabel=T)
+SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus GI.4","g",ylabel=T,xlabel=T)
 SLAb.plotEYx(EYx.usa.norogi,EYx.haiti.norogi,diff.norogi) 
 
-SLAb.plotEYax(usa.norogii,haiti.norogii,"Norovirus Group II","h",xlabel=T)
+SLAb.plotEYax(usa.norogii,haiti.norogii,"Norovirus GII.4 NO","h",xlabel=T)
 SLAb.plotEYx(EYx.usa.norogii,EYx.haiti.norogii,diff.norogii) 
 
 dev.off()

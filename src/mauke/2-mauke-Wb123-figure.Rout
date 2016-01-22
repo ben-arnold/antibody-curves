@@ -1,5 +1,5 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -109,7 +109,7 @@ Type 'q()' to quit R.
 > 	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
 > 	mtext("Age, years",side=1,line=3,cex=1.5)
 > 	mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
-> 	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
+> 	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
 > 	
 > 	# Group labels
 > 	mtext("1975",side=4,line=0.5,adj=0,at=5.1,col=cols[1],cex=1.25,las=1)
@@ -187,4 +187,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.496   0.045   0.582 
+  0.618   0.047   0.757 

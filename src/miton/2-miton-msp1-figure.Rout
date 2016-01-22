@@ -1,5 +1,5 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -16,8 +16,6 @@ Type 'contributors()' for more information and
 Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
-
-[Previously saved workspace restored]
 
 > #-------------------------------
 > # 2-miton-msp1-figure.R
@@ -86,7 +84,7 @@ Type 'q()' to quit R.
 > 
 > # Axis labels
 > mtext("a",line=1,at=-11,adj=0,font=2,cex=2)
-> mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=1,cex=1.5)
+> mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=1,cex=1.5)
 > mtext(expression(paste(italic('P. falciparum '),MSP-1[19], " (MFI-Background)")),side=2,line=3,cex=1.25)
 > mtext("Age, years",side=1,line=3,cex=1.5)
 > 
@@ -130,4 +128,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.442   0.033   0.469 
+  0.600   0.056   1.008 

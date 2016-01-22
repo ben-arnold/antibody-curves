@@ -178,7 +178,7 @@ segments(x0=jitter(mauke75$Age[mauke75$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col
 mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 # mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
-mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") in 1975 (pre-MDA)")),line=1,cex=1.5)
+mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),") in 1975 (pre-MDA)")),line=1,cex=1.5)
 
 par(op)
 
@@ -205,7 +205,7 @@ segments(x0=jitter(mauke92$Age[mauke92$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col
 # mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("b",line=1,at=-10,adj=0,font=2,cex=2)
-mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") in 1992 (post-MDA)")),line=1,cex=1.5)
+mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),") in 1992 (post-MDA)")),line=1,cex=1.5)
 
 par(op)
 
@@ -228,7 +228,7 @@ lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
 mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("c",line=1,at=-10,adj=0,font=2,cex=2)
-mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
+mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
 
 # Group labels
 mtext("1975",side=4,line=0.5,adj=0,at=0.92,col=cols[1],cex=1.25,las=1)

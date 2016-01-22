@@ -90,7 +90,7 @@ plot(p.c1$Age,p.c1$pY,type="n",lwd=2,
 mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 mtext("a",adj=1,line=4,at=-1.5,font=2,cex=1.75)
 mtext("Control villages\n1971-72 wet and dry seasons",adj=0,line=3,at=0,cex=1)
-mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 mtext("Age, years",side=1,line=2.5)
 axis(2,at=1:4,labels=c(
   expression(10^1),
@@ -115,7 +115,7 @@ plot(p.c3$Age,p.c3$pY,type="n",lwd=2,
 # mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 # mtext("e",adj=1,line=3,at=-1,font=2,cex=1.75)
 mtext("Control villages\n1972-73 wet and dry seasons",adj=0,line=3,at=0,cex=1)
-mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 mtext("Age, years",side=1,line=2.5)
 axis(2,at=1:4,labels=c(
   expression(10^1),

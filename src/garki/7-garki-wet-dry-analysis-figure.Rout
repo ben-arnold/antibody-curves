@@ -104,7 +104,6 @@ Type 'q()' to quit R.
 > # subset and re-order the colors to correspond to the figure
 > cols <- cols[c(2,1,3,6,5)]
 > 
-> # lo <- layout(mat=matrix(1:6,nrow=1,ncol=6,byrow=T),widths=c(1,0.25,1,0.25,1,0.25))
 > lo <- layout(mat=matrix(1:3,nrow=1,ncol=3),widths=c(0.6,0.6,1))
 > 
 > # Antibody curves, E(Y_x,a) by survey round (season)
@@ -115,9 +114,9 @@ Type 'q()' to quit R.
 +      bty="n",las=1
 + )
 > mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
-> mtext("e",adj=1,line=4,at=-1.5,font=2,cex=1.75)
-> mtext("Control village\n1971-72 wet and dry seasons",adj=0,line=3,at=0,cex=1)
-> mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+> mtext("a",adj=1,line=4,at=-1.5,font=2,cex=1.75)
+> mtext("Control villages\n1971-72 wet and dry seasons",adj=0,line=3,at=0,cex=1)
+> mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 > mtext("Age, years",side=1,line=2.5)
 > axis(2,at=1:4,labels=c(
 +   expression(10^1),
@@ -141,8 +140,8 @@ Type 'q()' to quit R.
 + )
 > # mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 > # mtext("e",adj=1,line=3,at=-1,font=2,cex=1.75)
-> mtext("Control village\n1972-73 wet and dry seasons",adj=0,line=3,at=0,cex=1)
-> mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+> mtext("Control villages\n1972-73 wet and dry seasons",adj=0,line=3,at=0,cex=1)
+> mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 > mtext("Age, years",side=1,line=2.5)
 > axis(2,at=1:4,labels=c(
 +   expression(10^1),
@@ -180,12 +179,13 @@ Type 'q()' to quit R.
 +   ), las=1,cex.axis=1.25
 + )
 > # panel title info
-> mtext("Control village",side=3,line=4.5,adj=0)
+> mtext("b",adj=1,line=4,at=0.3,font=2,cex=1.75)
+> mtext("Control villages",side=3,line=4.5,adj=0)
 > mtext(expression(paste(italic(E),"(",italic(Y[x]),"), stratified by child age and survey")),side=3,line=2.5,adj=0)
 > 
 > # age group labels
-> mtext(c("0 to 4","5 to 9"),side=1,line=1,at=1:2,cex=1.25)
-> mtext("Age category, years completed",side=1,line=2.75,cex=1.25)
+> mtext(c("<5","5 to 10"),side=1,line=1,at=1:2,cex=1.25)
+> mtext("Age category, years",side=1,line=2.75,cex=1.25)
 > 
 > # children ages 0-4 
 > arrows(x0=xs.0to4,y0=unlist(mu.0to4[3,1:5]), y1=unlist(mu.0to4[4,1:5]),lwd=1,col=cols,length=0.05,angle=90,code=3)
@@ -236,4 +236,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.817   0.065   1.467 
+  0.820   0.055   0.896 

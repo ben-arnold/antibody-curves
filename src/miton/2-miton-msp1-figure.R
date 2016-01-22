@@ -65,7 +65,7 @@ lines(msp1.EYxa$Age,msp1.EYxa$pY,col=cols[1],lwd=2)
 
 # Axis labels
 mtext("a",line=1,at=-11,adj=0,font=2,cex=2)
-mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=1,cex=1.5)
+mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=1,cex=1.5)
 mtext(expression(paste(italic('P. falciparum '),MSP-1[19], " (MFI-Background)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
 

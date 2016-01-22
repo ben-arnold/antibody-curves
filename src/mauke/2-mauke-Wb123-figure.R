@@ -82,7 +82,7 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
 	mtext("Age, years",side=1,line=3,cex=1.5)
 	mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
+	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
 	
 	# Group labels
 	mtext("1975",side=4,line=0.5,adj=0,at=5.1,col=cols[1],cex=1.25,las=1)

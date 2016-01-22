@@ -450,7 +450,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
 > mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 > # mtext("Age, years",side=1,line=3,cex=1.5)
 > mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
-> mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") in 1975 (pre-MDA)")),line=1,cex=1.5)
+> mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),") in 1975 (pre-MDA)")),line=1,cex=1.5)
 > 
 > par(op)
 > 
@@ -477,7 +477,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
 > # mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 > mtext("Age, years",side=1,line=3,cex=1.5)
 > mtext("b",line=1,at=-10,adj=0,font=2,cex=2)
-> mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),") in 1992 (post-MDA)")),line=1,cex=1.5)
+> mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),") in 1992 (post-MDA)")),line=1,cex=1.5)
 > 
 > par(op)
 > 
@@ -500,7 +500,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
 > mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
 > mtext("Age, years",side=1,line=3,cex=1.5)
 > mtext("c",line=1,at=-10,adj=0,font=2,cex=2)
-> mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),line=1,cex=1.5)
+> mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
 > 
 > # Group labels
 > mtext("1975",side=4,line=0.5,adj=0,at=0.92,col=cols[1],cex=1.25,las=1)
@@ -552,4 +552,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
- 95.290   1.129  99.023 
+ 91.138   1.066  94.608 

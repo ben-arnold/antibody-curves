@@ -50,7 +50,7 @@ plot(p.c12$Age,p.c12$pY,type="l",lwd=2,col=c.cols,
 	mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 	mtext("a",adj=1,line=3,at=-5,font=2,cex=1.75)
 	mtext("Pre-Intervention Period",adj=0,line=3,at=0,cex=1.5)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 	mtext("Age, years",side=1,line=2.5)
 	axis(2,at=1:4,labels=c(
 		expression(10^1),
@@ -104,7 +104,7 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	# mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 	mtext("b",adj=1,line=3,at=-5,font=2,cex=1.75)
 	mtext("Active Intervention Period",adj=0,line=3,at=0,cex=1.5)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 	mtext("Age, years",side=1,line=2.5)
 	axis(2,at=1:4,labels=c(
 		expression(10^1),
@@ -161,7 +161,7 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 	# mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 	mtext("c",adj=1,line=3,at=-5,font=2,cex=1.75)
 	mtext("Post Intervention Period",adj=0,line=3,at=0,cex=1.5)
-	mtext(expression(paste(italic(E),"(",italic(Y[x][","][a]),")")),side=3,line=0)
+	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 	mtext("Age, years",side=1,line=2.5)
 	axis(2,at=1:4,labels=c(
 		expression(10^1),
