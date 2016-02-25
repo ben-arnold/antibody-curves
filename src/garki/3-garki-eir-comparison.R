@@ -55,7 +55,7 @@ deir <- data.frame(village,vname,wetseason,eirdates,eir)
 #-------------------------------
 # load the serology dataset
 #-------------------------------
-d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
 
 d$mdate <- as.Date(d$mdate,"%d %b %Y")
 
@@ -218,7 +218,7 @@ rho.text <- substitute(paste("Spearman's ",rho," = ",rho.txt ),list(rho.txt=spri
 # plot the values
 #-------------------------------
 
-pdf("~/SLAbcurves/results/figs/garki-IFAPf-EIR.pdf",width=6,height=6)
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFAPf-EIR.pdf",width=6,height=6)
 op <- par(mar=c(5,5,3,2)+0.1)
 # cols <- c(brewer.pal(8,"Dark2")[c(8,4)],brewer.pal(8,"Set1")[2])
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
@@ -289,7 +289,7 @@ dev.off()
 # save the output
 #-------------------------------
 rm(d)
-save.image("~/SLAbcurves/results/raw/garki-eir-comparison.RData")
+save.image("~/dropbox/articles/antibody-curves/results/raw/garki-eir-comparison.RData")
 
 
 

@@ -29,7 +29,7 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 #-------------------------------
 # load the serology dataset
 #-------------------------------
-d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
 
 d$mdate <- as.Date(d$mdate,"%d %b %Y")
 
@@ -235,7 +235,7 @@ wet.diff.45 <- tmle.wrap(d.45)
 #-------------------------------
 # save down the results
 #-------------------------------
-save.image("~/SLAbcurves/results/raw/garki-wet-dry-analysis.RData")
+save.image("~/dropbox/articles/antibody-curves/results/raw/garki-wet-dry-analysis.RData")
 
 
 

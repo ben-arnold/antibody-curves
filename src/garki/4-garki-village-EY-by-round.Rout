@@ -69,7 +69,7 @@ The following object is masked from ‘package:SuperLearner’:
 > #-------------------------------
 > # load the serology dataset
 > #-------------------------------
-> d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+> d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
 > 
 > d$mdate <- as.Date(d$mdate,"%d %b %Y")
 > 
@@ -130,808 +130,702 @@ Loading required package: glmnet
 Loaded glmnet 2.0-2
 
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.2976047 0.0000000
-SL.glm_All               0.2840672 0.0000000
-SL.bayesglm_All          0.2840672 0.0000000
-SL.loess_All             0.2324847 0.8822111
-SL.gam_All               0.2625387 0.0000000
-SL.gam.3_All             0.2503073 0.0000000
-SL.glmnet_All            0.2840403 0.0000000
-SL.randomForest.ns20_All 0.2490702 0.1177889
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              0.2972471 0.0000000
+SL.glm_All               0.2842034 0.0000000
+SL.bayesglm_All          0.2842034 0.0000000
+SL.loess_All             0.2315552 0.8621148
+SL.gam_All               0.2621045 0.0000000
+SL.gam.3_All             0.2496966 0.0000000
+SL.glmnet_All            0.2841834 0.0000000
+SL.randomForest.ns30_All 0.2474721 0.1378852
 > c345.EYxa <- SLAb.curve(
 +   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5]+1),
 +   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5],
 +   id=d$id[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5]
 + )
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.6600296 0.0000000
-SL.glm_All               0.6215561 0.0000000
-SL.bayesglm_All          0.6215560 0.0000000
-SL.loess_All             0.4601725 0.7105244
-SL.gam_All               0.5480544 0.0000000
-SL.gam.3_All             0.5111022 0.0000000
-SL.glmnet_All            0.6214506 0.0000000
-SL.randomForest.ns20_All 0.4872561 0.2894756
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              0.6589971 0.0000000
+SL.glm_All               0.6193433 0.0000000
+SL.bayesglm_All          0.6193432 0.0000000
+SL.loess_All             0.4561798 0.7132587
+SL.gam_All               0.5443835 0.0000000
+SL.gam.3_All             0.5071066 0.0000000
+SL.glmnet_All            0.6193407 0.0000000
+SL.randomForest.ns20_All 0.4839771 0.2867413
 > c678.EYxa <- SLAb.curve(
 +   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8]+1),
 +   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8],
 +   id=d$id[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8]
 + )
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.5151970 0.0000000
-SL.glm_All               0.4845702 0.0000000
-SL.bayesglm_All          0.4845701 0.0000000
-SL.loess_All             0.3582868 0.8726159
-SL.gam_All               0.4322200 0.0000000
-SL.gam.3_All             0.4077866 0.0000000
-SL.glmnet_All            0.4845608 0.0000000
-SL.randomForest.ns40_All 0.3931461 0.1273841
-There were 33 warnings (use warnings() to see them)
+                              Risk       Coef
+SL.mean_All              0.5161807 0.00000000
+SL.glm_All               0.4839255 0.00000000
+SL.bayesglm_All          0.4839254 0.00000000
+SL.loess_All             0.3545476 0.93529508
+SL.gam_All               0.4317981 0.00000000
+SL.gam.3_All             0.4072944 0.00000000
+SL.glmnet_All            0.4839189 0.00000000
+SL.randomForest.ns15_All 0.3952675 0.06470492
 > 
 > # village cluster 5
 > # Kawari
 > v153.EYxa <- sapply(1:8,SLAb.wrap,vil=153,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.1941172 0.0000000
-SL.glm_All               0.1975645 0.0000000
-SL.bayesglm_All          0.1975637 0.0000000
-SL.loess_All             0.1977372 0.3141366
-SL.gam_All               0.1981942 0.0000000
-SL.gam.3_All             0.1980484 0.0000000
-SL.glmnet_All            0.1941172 0.5165667
-SL.randomForest.ns25_All 0.1930559 0.1692966
+SL.mean_All              0.1945937 0.5720526
+SL.glm_All               0.2004246 0.0000000
+SL.bayesglm_All          0.2004252 0.0000000
+SL.loess_All             0.2001358 0.2672750
+SL.gam_All               0.1995582 0.0000000
+SL.gam.3_All             0.1982232 0.0000000
+SL.glmnet_All            0.1984394 0.0000000
+SL.randomForest.ns20_All 0.1945752 0.1606723
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.5696781 0.0854568
-SL.glm_All               0.5613366 0.0000000
-SL.bayesglm_All          0.5613329 0.0000000
-SL.loess_All             0.4256111 0.7277883
-SL.gam_All               0.4773334 0.0000000
-SL.gam.3_All             0.4417759 0.0000000
-SL.glmnet_All            0.5611366 0.0000000
-SL.randomForest.ns20_All 0.4533818 0.1867549
+                              Risk        Coef
+SL.mean_All              0.5745694 0.000000000
+SL.glm_All               0.5568191 0.006145113
+SL.bayesglm_All          0.5568156 0.000000000
+SL.loess_All             0.4326954 0.677647437
+SL.gam_All               0.4847790 0.000000000
+SL.gam.3_All             0.4504655 0.000000000
+SL.glmnet_All            0.5633644 0.000000000
+SL.randomForest.ns15_All 0.4545679 0.316207450
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              0.7726049 0.00000000
-SL.glm_All               0.6420436 0.00000000
-SL.bayesglm_All          0.6420386 0.00000000
-SL.loess_All             0.4334496 0.72606658
-SL.gam_All               0.4912407 0.00000000
-SL.gam.3_All             0.4395606 0.02205154
-SL.glmnet_All            0.6356041 0.00000000
-SL.randomForest.ns30_All 0.4959629 0.25188188
+SL.mean_All              0.7830127 0.00000000
+SL.glm_All               0.6453485 0.00000000
+SL.bayesglm_All          0.6453420 0.00000000
+SL.loess_All             0.4116766 0.79749185
+SL.gam_All               0.4827825 0.00000000
+SL.gam.3_All             0.4249417 0.03126525
+SL.glmnet_All            0.6436628 0.00000000
+SL.randomForest.ns20_All 0.4942918 0.17124290
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk     Coef
-SL.mean_All              1.2884439 0.000000
-SL.glm_All               1.0467200 0.000000
-SL.bayesglm_All          1.0467104 0.000000
-SL.loess_All             0.6342237 0.697226
-SL.gam_All               0.7615203 0.000000
-SL.gam.3_All             0.6618878 0.000000
-SL.glmnet_All            1.0431388 0.000000
-SL.randomForest.ns15_All 0.7215435 0.302774
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.3482360 0.0000000
-SL.glm_All               0.9354449 0.0000000
-SL.bayesglm_All          0.9354378 0.0000000
-SL.loess_All             0.4790224 0.8654206
-SL.gam_All               0.5998689 0.0000000
-SL.gam.3_All             0.4988859 0.0000000
-SL.glmnet_All            0.9298128 0.0000000
-SL.randomForest.ns20_All 0.6808615 0.1345794
+SL.mean_All              1.2620488 0.0000000
+SL.glm_All               1.0500396 0.0000000
+SL.bayesglm_All          1.0500329 0.0000000
+SL.loess_All             0.6452671 0.7108661
+SL.gam_All               0.7691185 0.0000000
+SL.gam.3_All             0.6747638 0.0000000
+SL.glmnet_All            1.0408171 0.0000000
+SL.randomForest.ns15_All 0.7293918 0.2891339
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.5330470 0.0000000
-SL.glm_All               1.0453186 0.0000000
-SL.bayesglm_All          1.0453129 0.0000000
-SL.loess_All             0.6337367 0.7468596
-SL.gam_All               0.7497148 0.0000000
-SL.gam.3_All             0.6659555 0.0000000
-SL.glmnet_All            1.0452576 0.0000000
-SL.randomForest.ns15_All 0.7881121 0.2531404
+SL.mean_All              1.3237206 0.0000000
+SL.glm_All               0.8895142 0.0000000
+SL.bayesglm_All          0.8895093 0.0000000
+SL.loess_All             0.4549905 0.7909551
+SL.gam_All               0.5634586 0.0000000
+SL.gam.3_All             0.4679705 0.1028980
+SL.glmnet_All            0.8902315 0.0000000
+SL.randomForest.ns20_All 0.6660895 0.1061470
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.8985021 0.0000000
-SL.glm_All               0.8166969 0.0000000
-SL.bayesglm_All          0.8166944 0.0000000
-SL.loess_All             0.7096183 0.0000000
-SL.gam_All               0.6818142 0.0000000
-SL.gam.3_All             0.6557745 0.7252341
-SL.glmnet_All            0.8154216 0.0000000
-SL.randomForest.ns40_All 0.6919443 0.2747659
+SL.mean_All              1.5002622 0.0000000
+SL.glm_All               1.0238001 0.0000000
+SL.bayesglm_All          1.0237982 0.0000000
+SL.loess_All             0.6142148 0.7106814
+SL.gam_All               0.7273231 0.0000000
+SL.gam.3_All             0.6458309 0.0000000
+SL.glmnet_All            1.0217677 0.0000000
+SL.randomForest.ns15_All 0.7450703 0.2893186
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.5861329 0.0000000
-SL.glm_All               0.5540491 0.0000000
-SL.bayesglm_All          0.5540433 0.0000000
-SL.loess_All             0.4679447 0.7202503
-SL.gam_All               0.5157032 0.0000000
-SL.gam.3_All             0.5025448 0.0000000
-SL.glmnet_All            0.5486077 0.2797497
-SL.randomForest.ns40_All 0.4918220 0.0000000
+SL.mean_All              0.8931333 0.0000000
+SL.glm_All               0.8106566 0.0000000
+SL.bayesglm_All          0.8106538 0.0000000
+SL.loess_All             0.6767517 0.0447814
+SL.gam_All               0.6779391 0.0000000
+SL.gam.3_All             0.6474907 0.5734747
+SL.glmnet_All            0.8079973 0.0000000
+SL.randomForest.ns30_All 0.6651538 0.3817439
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.6062928 0.1474122
+SL.glm_All               0.5736852 0.0000000
+SL.bayesglm_All          0.5736819 0.0000000
+SL.loess_All             0.4654754 0.8424678
+SL.gam_All               0.5182018 0.0101200
+SL.gam.3_All             0.5053994 0.0000000
+SL.glmnet_All            0.5774730 0.0000000
+SL.randomForest.ns15_All 0.5075986 0.0000000
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > # Rafin Marke
 > v154.EYxa <- sapply(1:8,SLAb.wrap,vil=154,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.3016518 0.0000000
+SL.glm_All               0.2955214 0.0000000
+SL.bayesglm_All          0.2955205 0.0000000
+SL.loess_All             0.2983769 0.0000000
+SL.gam_All               0.2890129 0.0000000
+SL.gam.3_All             0.2854517 0.6082048
+SL.glmnet_All            0.2951507 0.0000000
+SL.randomForest.ns25_All 0.2898280 0.3917952
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              0.3088994 0.11930085
-SL.glm_All               0.3024691 0.00000000
-SL.bayesglm_All          0.3024682 0.00000000
-SL.loess_All             0.2952774 0.48830079
-SL.gam_All               0.2996732 0.00000000
-SL.gam.3_All             0.2945624 0.02576114
-SL.glmnet_All            0.3022746 0.06165390
-SL.randomForest.ns40_All 0.2964793 0.30498332
+SL.mean_All              0.6502311 0.00000000
+SL.glm_All               0.6066293 0.00000000
+SL.bayesglm_All          0.6066264 0.00000000
+SL.loess_All             0.4949913 0.56489190
+SL.gam_All               0.5311357 0.00000000
+SL.gam.3_All             0.5061999 0.06212138
+SL.glmnet_All            0.6081485 0.00000000
+SL.randomForest.ns20_All 0.5086193 0.37298672
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.6493673 0.0000000
-SL.glm_All               0.6109880 0.0000000
-SL.bayesglm_All          0.6109871 0.0000000
-SL.loess_All             0.4695076 0.7441207
-SL.gam_All               0.5251497 0.0000000
-SL.gam.3_All             0.4943466 0.0000000
-SL.glmnet_All            0.6094747 0.0000000
-SL.randomForest.ns40_All 0.5047978 0.2558793
+SL.mean_All              0.9605395 0.0000000
+SL.glm_All               0.7858930 0.0000000
+SL.bayesglm_All          0.7858880 0.0000000
+SL.loess_All             0.4894759 0.6687555
+SL.gam_All               0.5891568 0.0000000
+SL.gam.3_All             0.5177308 0.0000000
+SL.glmnet_All            0.7809555 0.0000000
+SL.randomForest.ns30_All 0.5467205 0.3312445
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.9312615 0.0000000
-SL.glm_All               0.7622353 0.0000000
-SL.bayesglm_All          0.7622327 0.0000000
-SL.loess_All             0.4402097 0.6665532
-SL.gam_All               0.5527683 0.0000000
-SL.gam.3_All             0.4765981 0.0000000
-SL.glmnet_All            0.7588731 0.0000000
-SL.randomForest.ns15_All 0.4971874 0.3334468
+                              Risk       Coef
+SL.mean_All              1.4196267 0.00000000
+SL.glm_All               1.0759737 0.00000000
+SL.bayesglm_All          1.0759691 0.00000000
+SL.loess_All             0.6585487 0.78840771
+SL.gam_All               0.7922199 0.00000000
+SL.gam.3_All             0.6962439 0.12398037
+SL.glmnet_All            1.0735482 0.00000000
+SL.randomForest.ns30_All 0.8468670 0.08761192
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk        Coef
-SL.mean_All              1.4229254 0.000000000
-SL.glm_All               1.0480413 0.000000000
-SL.bayesglm_All          1.0480378 0.001270157
-SL.loess_All             0.6091400 0.862740516
-SL.gam_All               0.7576216 0.000000000
-SL.gam.3_All             0.6573307 0.069416943
-SL.glmnet_All            1.0497440 0.000000000
-SL.randomForest.ns25_All 0.8140441 0.066572383
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk     Coef
-SL.mean_All              1.2982354 0.000000
-SL.glm_All               0.8553649 0.000000
-SL.bayesglm_All          0.8553628 0.000000
-SL.loess_All             0.5092326 0.789517
-SL.gam_All               0.6206283 0.000000
-SL.gam.3_All             0.5464820 0.000000
-SL.glmnet_All            0.8550329 0.000000
-SL.randomForest.ns20_All 0.6566421 0.210483
+SL.mean_All              1.2944438 0.000000
+SL.glm_All               0.8598732 0.000000
+SL.bayesglm_All          0.8598708 0.000000
+SL.loess_All             0.4990853 0.765546
+SL.gam_All               0.6106485 0.000000
+SL.gam.3_All             0.5340810 0.000000
+SL.glmnet_All            0.8594184 0.000000
+SL.randomForest.ns20_All 0.6447651 0.234454
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.5291341 0.0000000
-SL.glm_All               1.0190268 0.0000000
-SL.bayesglm_All          1.0190255 0.0000000
-SL.loess_All             0.5151032 0.7563679
-SL.gam_All               0.6938921 0.0000000
-SL.gam.3_All             0.6138265 0.0000000
-SL.glmnet_All            1.0194663 0.0000000
-SL.randomForest.ns35_All 0.6907699 0.2436321
+SL.mean_All              1.5353307 0.0000000
+SL.glm_All               1.0232485 0.0000000
+SL.bayesglm_All          1.0232469 0.0000000
+SL.loess_All             0.5029856 0.7649928
+SL.gam_All               0.6797376 0.0000000
+SL.gam.3_All             0.5910002 0.0000000
+SL.glmnet_All            1.0218108 0.0000000
+SL.randomForest.ns35_All 0.6844122 0.2350072
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                              Risk      Coef
-SL.mean_All              1.614519 0.0000000
-SL.glm_All               1.388062 0.0000000
-SL.bayesglm_All          1.388059 0.0000000
-SL.loess_All             1.076460 0.4001659
-SL.gam_All               1.134586 0.0000000
-SL.gam.3_All             1.066679 0.4889712
-SL.glmnet_All            1.388170 0.0000000
-SL.randomForest.ns30_All 1.181015 0.1108629
+SL.mean_All              1.606133 0.0000000
+SL.glm_All               1.361279 0.0000000
+SL.bayesglm_All          1.361278 0.0000000
+SL.loess_All             1.065103 0.3043446
+SL.gam_All               1.109165 0.0000000
+SL.gam.3_All             1.046153 0.5932596
+SL.glmnet_All            1.360293 0.0000000
+SL.randomForest.ns35_All 1.154300 0.1023958
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.2956670 0.0000000
-SL.glm_All               1.1296053 0.0000000
-SL.bayesglm_All          1.1295986 0.0000000
-SL.loess_All             0.9580430 0.0000000
-SL.gam_All               0.9490515 0.0000000
-SL.gam.3_All             0.9163853 0.7444934
-SL.glmnet_All            1.1333411 0.0000000
-SL.randomForest.ns20_All 0.9818919 0.2555066
-There were 50 or more warnings (use warnings() to see the first 50)
+SL.mean_All              1.2774538 0.0000000
+SL.glm_All               1.0895913 0.0000000
+SL.bayesglm_All          1.0895892 0.0000000
+SL.loess_All             0.9133935 0.4288416
+SL.gam_All               0.9450283 0.0000000
+SL.gam.3_All             0.9107275 0.3618525
+SL.glmnet_All            1.0878434 0.0000000
+SL.randomForest.ns15_All 0.9789972 0.2093060
+There were 12 warnings (use warnings() to see them)
 > 
 > # Kukar Maikiva
 > v155.EYxa <- sapply(1:8,SLAb.wrap,vil=155,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.4140456 0.0000000
-SL.glm_All               0.4193345 0.0000000
-SL.bayesglm_All          0.4193339 0.0000000
-SL.loess_All             0.3971669 0.6846128
-SL.gam_All               0.4144161 0.0000000
-SL.gam.3_All             0.4080354 0.0000000
-SL.glmnet_All            0.4140456 0.3153872
-SL.randomForest.ns30_All 0.3987131 0.0000000
+SL.mean_All              0.4205984 0.2950501
+SL.glm_All               0.4236187 0.0000000
+SL.bayesglm_All          0.4236187 0.0000000
+SL.loess_All             0.4030862 0.7049499
+SL.gam_All               0.4166918 0.0000000
+SL.gam.3_All             0.4127342 0.0000000
+SL.glmnet_All            0.4205984 0.0000000
+SL.randomForest.ns30_All 0.4072326 0.0000000
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk     Coef
-SL.mean_All              0.5484151 0.000000
-SL.glm_All               0.5316296 0.000000
-SL.bayesglm_All          0.5316289 0.000000
-SL.loess_All             0.4012409 0.332073
-SL.gam_All               0.4751525 0.000000
-SL.gam.3_All             0.4398572 0.000000
-SL.glmnet_All            0.5300223 0.000000
-SL.randomForest.ns15_All 0.3814126 0.667927
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.9240638 0.0000000
-SL.glm_All               0.7452291 0.0000000
-SL.bayesglm_All          0.7452287 0.0000000
-SL.loess_All             0.5188092 0.7515016
-SL.gam_All               0.5907408 0.0000000
-SL.gam.3_All             0.5440253 0.0000000
-SL.glmnet_All            0.7442415 0.0000000
-SL.randomForest.ns15_All 0.5893767 0.2484984
+SL.mean_All              0.5549272 0.0000000
+SL.glm_All               0.5399208 0.0000000
+SL.bayesglm_All          0.5399201 0.0000000
+SL.loess_All             0.4208614 0.4261923
+SL.gam_All               0.4900972 0.0000000
+SL.gam.3_All             0.4606243 0.0000000
+SL.glmnet_All            0.5407250 0.0000000
+SL.randomForest.ns35_All 0.4126527 0.5738077
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.3274231 0.0000000
-SL.glm_All               0.9722065 0.0000000
-SL.bayesglm_All          0.9722054 0.0000000
-SL.loess_All             0.5241542 0.8597003
-SL.gam_All               0.7000354 0.0000000
-SL.gam.3_All             0.5916991 0.0000000
-SL.glmnet_All            0.9709965 0.0000000
-SL.randomForest.ns15_All 0.7161358 0.1402997
+SL.mean_All              0.9159528 0.0000000
+SL.glm_All               0.7446175 0.0000000
+SL.bayesglm_All          0.7446167 0.0000000
+SL.loess_All             0.5257171 0.6829564
+SL.gam_All               0.5926121 0.0000000
+SL.gam.3_All             0.5462550 0.0000000
+SL.glmnet_All            0.7428341 0.0000000
+SL.randomForest.ns15_All 0.5758407 0.3170436
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              1.3214692 0.0000000
+SL.glm_All               0.9683403 0.0000000
+SL.bayesglm_All          0.9683394 0.0000000
+SL.loess_All             0.5151321 0.8482302
+SL.gam_All               0.6794463 0.0000000
+SL.gam.3_All             0.5732751 0.0000000
+SL.glmnet_All            0.9662688 0.0000000
+SL.randomForest.ns15_All 0.7100307 0.1517698
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              1.2699361 0.00000000
-SL.glm_All               0.9086203 0.00000000
-SL.bayesglm_All          0.9086195 0.00000000
-SL.loess_All             0.5382617 0.83973628
-SL.gam_All               0.6484885 0.00000000
-SL.gam.3_All             0.5719795 0.07819377
-SL.glmnet_All            0.9085805 0.00000000
-SL.randomForest.ns30_All 0.7286362 0.08206995
+SL.mean_All              1.2657582 0.00000000
+SL.glm_All               0.9138086 0.00000000
+SL.bayesglm_All          0.9138075 0.00000000
+SL.loess_All             0.5386129 0.85441178
+SL.gam_All               0.6489431 0.00000000
+SL.gam.3_All             0.5735095 0.09492960
+SL.glmnet_All            0.9157208 0.00000000
+SL.randomForest.ns30_All 0.7413313 0.05065862
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              1.3714263 0.00000000
-SL.glm_All               0.9079236 0.00000000
-SL.bayesglm_All          0.9079227 0.00000000
-SL.loess_All             0.4867350 0.98875331
-SL.gam_All               0.6329682 0.00000000
-SL.gam.3_All             0.5549454 0.00000000
-SL.glmnet_All            0.9025763 0.00000000
-SL.randomForest.ns25_All 0.7205998 0.01124669
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk        Coef
-SL.mean_All              1.7200832 0.007184563
-SL.glm_All               1.3504115 0.000000000
-SL.bayesglm_All          1.3504099 0.010320250
-SL.loess_All             0.8668172 0.870838843
-SL.gam_All               1.0508237 0.000000000
-SL.gam.3_All             0.9391751 0.111656343
-SL.glmnet_All            1.3483172 0.000000000
-SL.randomForest.ns25_All 1.0917927 0.000000000
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.2929620 0.0000000
-SL.glm_All               1.1577020 0.0000000
-SL.bayesglm_All          1.1576994 0.0000000
-SL.loess_All             0.7824285 0.6099316
-SL.gam_All               0.9025327 0.0000000
-SL.gam.3_All             0.8084275 0.0000000
-SL.glmnet_All            1.1568006 0.0000000
-SL.randomForest.ns25_All 0.8259011 0.3900684
-There were 50 or more warnings (use warnings() to see the first 50)
+SL.mean_All              1.3739426 0.0000000
+SL.glm_All               0.9106951 0.0000000
+SL.bayesglm_All          0.9106943 0.0000000
+SL.loess_All             0.4953470 0.9418114
+SL.gam_All               0.6352874 0.0000000
+SL.gam.3_All             0.5600943 0.0000000
+SL.glmnet_All            0.9100412 0.0000000
+SL.randomForest.ns15_All 0.7189843 0.0581886
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.7202635 0.00000000
+SL.glm_All               1.3567191 0.00000000
+SL.bayesglm_All          1.3567177 0.08223055
+SL.loess_All             0.8461466 0.91776945
+SL.gam_All               1.0363059 0.00000000
+SL.gam.3_All             0.9226957 0.00000000
+SL.glmnet_All            1.3579928 0.00000000
+SL.randomForest.ns35_All 1.0674850 0.00000000
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              1.2895050 0.0000000
+SL.glm_All               1.1626421 0.0000000
+SL.bayesglm_All          1.1626392 0.0000000
+SL.loess_All             0.7479527 0.6910728
+SL.gam_All               0.8933792 0.0000000
+SL.gam.3_All             0.7942174 0.0000000
+SL.glmnet_All            1.1569637 0.0000000
+SL.randomForest.ns20_All 0.8222367 0.3089272
 > 
 > # village cluster 7
 > # Kargo Kudu
 > v213.EYxa <- sapply(1:8,SLAb.wrap,vil=213,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.1390736 0.2784334
-SL.glm_All               0.1396078 0.1881695
-SL.bayesglm_All          0.1396079 0.0000000
-SL.loess_All             0.1457849 0.0000000
-SL.gam_All               0.1420060 0.0000000
-SL.gam.3_All             0.1445365 0.0000000
-SL.glmnet_All            0.1454664 0.0000000
-SL.randomForest.ns35_All 0.1380848 0.5333971
+SL.mean_All              0.1388907 0.6037459
+SL.glm_All               0.1398394 0.3962541
+SL.bayesglm_All          0.1398395 0.0000000
+SL.loess_All             0.1574891 0.0000000
+SL.gam_All               0.1443121 0.0000000
+SL.gam.3_All             0.1504624 0.0000000
+SL.glmnet_All            0.1451238 0.0000000
+SL.randomForest.ns20_All 0.1410335 0.0000000
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              0.2090301 0.10005203
-SL.glm_All               0.2068602 0.00000000
-SL.bayesglm_All          0.2068553 0.00000000
-SL.loess_All             0.1450354 0.80702502
-SL.gam_All               0.1700380 0.00000000
-SL.gam.3_All             0.1578566 0.09292295
-SL.glmnet_All            0.2055826 0.00000000
-SL.randomForest.ns20_All 0.1619279 0.00000000
+SL.mean_All              0.2155479 0.05397859
+SL.glm_All               0.2077658 0.00000000
+SL.bayesglm_All          0.2077641 0.00000000
+SL.loess_All             0.1422456 0.94602141
+SL.gam_All               0.1738837 0.00000000
+SL.gam.3_All             0.1615710 0.00000000
+SL.glmnet_All            0.2081361 0.00000000
+SL.randomForest.ns30_All 0.1658848 0.00000000
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              0.9892320 0.00000000
-SL.glm_All               0.8391975 0.00000000
-SL.bayesglm_All          0.8391920 0.00000000
-SL.loess_All             0.3559328 0.94340257
-SL.gam_All               0.6424647 0.00000000
-SL.gam.3_All             0.5598411 0.00000000
-SL.glmnet_All            0.8395843 0.00000000
-SL.randomForest.ns20_All 0.5654536 0.05659743
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.2278406 0.0000000
-SL.glm_All               0.8549464 0.0000000
-SL.bayesglm_All          0.8549381 0.0000000
-SL.loess_All             0.5165404 0.7184813
-SL.gam_All               0.5952903 0.0000000
-SL.gam.3_All             0.5387609 0.0000000
-SL.glmnet_All            0.8530394 0.0000000
-SL.randomForest.ns15_All 0.6391461 0.2815187
+SL.mean_All              0.9587352 0.0000000
+SL.glm_All               0.7960455 0.0000000
+SL.bayesglm_All          0.7960416 0.0000000
+SL.loess_All             0.3193324 0.8792903
+SL.gam_All               0.5965785 0.0000000
+SL.gam.3_All             0.5142692 0.0000000
+SL.glmnet_All            0.7958895 0.0000000
+SL.randomForest.ns30_All 0.5099147 0.1207097
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.1895217 0.0000000
-SL.glm_All               0.7674657 0.0000000
-SL.bayesglm_All          0.7674647 0.0000000
-SL.loess_All             0.4638200 0.7514402
-SL.gam_All               0.5541350 0.0000000
-SL.gam.3_All             0.5147561 0.0000000
-SL.glmnet_All            0.7657889 0.0000000
-SL.randomForest.ns15_All 0.5861499 0.2485598
+SL.mean_All              1.2377519 0.0000000
+SL.glm_All               0.8482300 0.0000000
+SL.bayesglm_All          0.8482227 0.0000000
+SL.loess_All             0.5208785 0.6121987
+SL.gam_All               0.5880461 0.0000000
+SL.gam.3_All             0.5287476 0.1300283
+SL.glmnet_All            0.8398795 0.0000000
+SL.randomForest.ns15_All 0.6470207 0.2577730
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              1.4250166 0.00000000
-SL.glm_All               0.9069168 0.00000000
-SL.bayesglm_All          0.9069143 0.00000000
-SL.loess_All             0.2857122 0.94986729
-SL.gam_All               0.5077153 0.03188060
-SL.gam.3_All             0.3685107 0.00000000
-SL.glmnet_All            0.9087591 0.00791167
-SL.randomForest.ns15_All 0.6147687 0.01034044
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              1.0457798 0.00000000
-SL.glm_All               0.8344289 0.00000000
-SL.bayesglm_All          0.8344262 0.00000000
-SL.loess_All             0.5589230 0.75463750
-SL.gam_All               0.6628902 0.03549088
-SL.gam.3_All             0.6106971 0.05326629
-SL.glmnet_All            0.8353243 0.00000000
-SL.randomForest.ns30_All 0.6631714 0.15660533
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.2353726 0.0000000
-SL.glm_All               0.2168443 0.0000000
-SL.bayesglm_All          0.2168416 0.0000000
-SL.loess_All             0.1909862 0.1512644
-SL.gam_All               0.2080786 0.0000000
-SL.gam.3_All             0.2051573 0.0000000
-SL.glmnet_All            0.2168330 0.0000000
-SL.randomForest.ns20_All 0.1588658 0.8487356
+SL.mean_All              1.2154730 0.0000000
+SL.glm_All               0.8076537 0.0000000
+SL.bayesglm_All          0.8076495 0.0000000
+SL.loess_All             0.4524531 0.8200175
+SL.gam_All               0.5652673 0.0000000
+SL.gam.3_All             0.5164194 0.0000000
+SL.glmnet_All            0.7927274 0.0000000
+SL.randomForest.ns20_All 0.6086187 0.1799825
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.4041921 0.00000000
+SL.glm_All               0.9107950 0.00000000
+SL.bayesglm_All          0.9107931 0.00000000
+SL.loess_All             0.2878160 0.92483401
+SL.gam_All               0.5049575 0.02049066
+SL.gam.3_All             0.3699052 0.00000000
+SL.glmnet_All            0.8940405 0.00000000
+SL.randomForest.ns15_All 0.5949892 0.05467534
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              1.0495358 0.0000000
+SL.glm_All               0.8274541 0.0000000
+SL.bayesglm_All          0.8274503 0.0000000
+SL.loess_All             0.5100443 0.8933233
+SL.gam_All               0.6530232 0.0000000
+SL.gam.3_All             0.5907741 0.0000000
+SL.glmnet_All            0.8273295 0.0000000
+SL.randomForest.ns25_All 0.6393872 0.1066767
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              0.2338254 0.0000000
+SL.glm_All               0.2245999 0.0000000
+SL.bayesglm_All          0.2245981 0.0000000
+SL.loess_All             0.1869536 0.1999268
+SL.gam_All               0.2157276 0.0000000
+SL.gam.3_All             0.2125329 0.0000000
+SL.glmnet_All            0.2278620 0.0000000
+SL.randomForest.ns25_All 0.1543029 0.8000732
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > # Nasakar
 > v218.EYxa <- sapply(1:8,SLAb.wrap,vil=218,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk Coef
-SL.mean_All              0.1525245    1
-SL.glm_All               0.1581514    0
-SL.bayesglm_All          0.1581501    0
-SL.loess_All             0.1680747    0
-SL.gam_All               0.1617909    0
-SL.gam.3_All             0.1640299    0
-SL.glmnet_All            0.1612249    0
-SL.randomForest.ns15_All 0.1547820    0
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.2081284 0.0000000
-SL.glm_All               0.1922326 0.0000000
-SL.bayesglm_All          0.1922325 0.0000000
-SL.loess_All             0.1579113 0.4161104
-SL.gam_All               0.1817002 0.0000000
-SL.gam.3_All             0.1732294 0.0000000
-SL.glmnet_All            0.1921790 0.0000000
-SL.randomForest.ns40_All 0.1550223 0.5838896
+SL.mean_All              0.1549507 0.7297866
+SL.glm_All               0.1572476 0.0000000
+SL.bayesglm_All          0.1572464 0.0000000
+SL.loess_All             0.1658286 0.0000000
+SL.gam_All               0.1568049 0.2702134
+SL.gam.3_All             0.1572660 0.0000000
+SL.glmnet_All            0.1599811 0.0000000
+SL.randomForest.ns15_All 0.1589291 0.0000000
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.6779862 0.0000000
-SL.glm_All               0.5635694 0.0000000
-SL.bayesglm_All          0.5635682 0.0000000
-SL.loess_All             0.4308969 0.6724307
-SL.gam_All               0.4965730 0.0000000
-SL.gam.3_All             0.4598298 0.0000000
-SL.glmnet_All            0.5627959 0.0000000
-SL.randomForest.ns20_All 0.4638479 0.3275693
+SL.mean_All              0.2096634 0.0000000
+SL.glm_All               0.1885017 0.0000000
+SL.bayesglm_All          0.1885008 0.0000000
+SL.loess_All             0.1558092 0.4796141
+SL.gam_All               0.1788985 0.0000000
+SL.gam.3_All             0.1704190 0.0000000
+SL.glmnet_All            0.1883062 0.0000000
+SL.randomForest.ns40_All 0.1550961 0.5203859
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk      Coef
-SL.mean_All              0.9453067 0.0000000
-SL.glm_All               0.7868628 0.0000000
-SL.bayesglm_All          0.7868611 0.0000000
-SL.loess_All             0.6385273 0.6152538
-SL.gam_All               0.6872040 0.0000000
-SL.gam.3_All             0.6584699 0.0000000
-SL.glmnet_All            0.7855414 0.0000000
-SL.randomForest.ns15_All 0.6643504 0.3847462
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk      Coef
-SL.mean_All              1.2855509 0.0000000
-SL.glm_All               0.8489079 0.0000000
-SL.bayesglm_All          0.8489073 0.0000000
-SL.loess_All             0.5292715 0.8300101
-SL.gam_All               0.6688008 0.0000000
-SL.gam.3_All             0.6010339 0.0000000
-SL.glmnet_All            0.8533931 0.0000000
-SL.randomForest.ns15_All 0.6890873 0.1699899
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              1.4028565 0.00000000
-SL.glm_All               0.8776220 0.00000000
-SL.bayesglm_All          0.8776212 0.00000000
-SL.loess_All             0.4519121 0.80676637
-SL.gam_All               0.6011365 0.00000000
-SL.gam.3_All             0.5100402 0.07679401
-SL.glmnet_All            0.8799444 0.00000000
-SL.randomForest.ns35_All 0.6830474 0.11643962
+SL.mean_All              0.6736806 0.00000000
+SL.glm_All               0.5586890 0.00000000
+SL.bayesglm_All          0.5586878 0.06247462
+SL.loess_All             0.4474192 0.59681961
+SL.gam_All               0.4960526 0.00000000
+SL.gam.3_All             0.4645038 0.00000000
+SL.glmnet_All            0.5594078 0.00000000
+SL.randomForest.ns40_All 0.4638504 0.34070577
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk     Coef
+SL.mean_All              0.9659897 0.000000
+SL.glm_All               0.8053961 0.000000
+SL.bayesglm_All          0.8053932 0.000000
+SL.loess_All             0.6358616 0.672409
+SL.gam_All               0.7045308 0.000000
+SL.gam.3_All             0.6704207 0.000000
+SL.glmnet_All            0.8042661 0.000000
+SL.randomForest.ns15_All 0.6745834 0.327591
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              1.7047926 0.00000000
-SL.glm_All               1.3513834 0.00000000
-SL.bayesglm_All          1.3513816 0.07528721
-SL.loess_All             0.8839471 0.92471279
-SL.gam_All               1.1062787 0.00000000
-SL.gam.3_All             0.9811639 0.00000000
-SL.glmnet_All            1.3502198 0.00000000
-SL.randomForest.ns30_All 1.1018077 0.00000000
+SL.mean_All              1.2939944 0.00000000
+SL.glm_All               0.8535029 0.00000000
+SL.bayesglm_All          0.8535017 0.00000000
+SL.loess_All             0.5189222 0.90836265
+SL.gam_All               0.6670139 0.00000000
+SL.gam.3_All             0.5948900 0.00000000
+SL.glmnet_All            0.8514864 0.00000000
+SL.randomForest.ns25_All 0.7045654 0.09163735
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.4145891 0.00000000
+SL.glm_All               0.9024230 0.00000000
+SL.bayesglm_All          0.9024207 0.00000000
+SL.loess_All             0.4664240 0.80652839
+SL.gam_All               0.6197138 0.00000000
+SL.gam.3_All             0.5240422 0.10361502
+SL.glmnet_All            0.9025717 0.00000000
+SL.randomForest.ns15_All 0.7075756 0.08985659
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.6980808 0.00000000
+SL.glm_All               1.3397828 0.00000000
+SL.bayesglm_All          1.3397809 0.06685282
+SL.loess_All             0.9163553 0.86981636
+SL.gam_All               1.1016262 0.06333081
+SL.gam.3_All             0.9899396 0.00000000
+SL.glmnet_All            1.3371046 0.00000000
+SL.randomForest.ns30_All 1.1211950 0.00000000
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.0855885 0.0000000
-SL.glm_All               0.8998376 0.0000000
-SL.bayesglm_All          0.8998363 0.0000000
-SL.loess_All             0.5990921 0.7011065
-SL.gam_All               0.7530986 0.0000000
-SL.gam.3_All             0.6884526 0.0000000
-SL.glmnet_All            0.9041939 0.0000000
-SL.randomForest.ns15_All 0.6691944 0.2988935
+SL.mean_All              1.1529812 0.0000000
+SL.glm_All               0.9642591 0.0000000
+SL.bayesglm_All          0.9642497 0.0000000
+SL.loess_All             0.6331345 0.8913884
+SL.gam_All               0.8135916 0.0000000
+SL.gam.3_All             0.7500702 0.0000000
+SL.glmnet_All            0.9642333 0.0000000
+SL.randomForest.ns35_All 0.7620870 0.1086116
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > # Bakan Sabara
 > v220.EYxa <- sapply(1:8,SLAb.wrap,vil=220,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.1726954 0.6415676
-SL.glm_All               0.1736649 0.3584324
-SL.bayesglm_All          0.1736640 0.0000000
-SL.loess_All             0.2018081 0.0000000
-SL.gam_All               0.1782804 0.0000000
-SL.gam.3_All             0.1866666 0.0000000
-SL.glmnet_All            0.1758235 0.0000000
-SL.randomForest.ns20_All 0.1746507 0.0000000
+SL.mean_All              0.1704254 0.8523307
+SL.glm_All               0.1870035 0.0000000
+SL.bayesglm_All          0.1869899 0.0000000
+SL.loess_All             0.2560915 0.0000000
+SL.gam_All               0.1766261 0.0000000
+SL.gam.3_All             0.1918614 0.0000000
+SL.glmnet_All            0.1899724 0.0000000
+SL.randomForest.ns30_All 0.1735206 0.1476693
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.1904715 0.0000000
-SL.glm_All               0.1923377 0.0000000
-SL.bayesglm_All          0.1923257 0.0000000
-SL.loess_All             0.1279505 0.7412621
-SL.gam_All               0.1587948 0.0000000
-SL.gam.3_All             0.1411996 0.0000000
-SL.glmnet_All            0.1909763 0.0000000
-SL.randomForest.ns25_All 0.1506580 0.2587379
+SL.mean_All              0.1850093 0.0000000
+SL.glm_All               0.1831491 0.0000000
+SL.bayesglm_All          0.1831450 0.0000000
+SL.loess_All             0.1472337 0.4748934
+SL.gam_All               0.1557380 0.0000000
+SL.gam.3_All             0.1453954 0.0000000
+SL.glmnet_All            0.1872121 0.0000000
+SL.randomForest.ns15_All 0.1447736 0.5251066
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk     Coef
-SL.mean_All              0.6497935 0.000000
-SL.glm_All               0.4311104 0.179385
-SL.bayesglm_All          0.4311108 0.000000
-SL.loess_All             0.3177824 0.820615
-SL.gam_All               0.3734404 0.000000
-SL.gam.3_All             0.3411105 0.000000
-SL.glmnet_All            0.4326527 0.000000
-SL.randomForest.ns20_All 0.4287457 0.000000
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.3081944 0.0000000
-SL.glm_All               0.9172681 0.0000000
-SL.bayesglm_All          0.9172578 0.0000000
-SL.loess_All             0.7798870 0.2215116
-SL.gam_All               0.7773365 0.0000000
-SL.gam.3_All             0.7562959 0.2909174
-SL.glmnet_All            0.9127212 0.0000000
-SL.randomForest.ns15_All 0.7704210 0.4875710
+SL.mean_All              0.6672334 0.0000000
+SL.glm_All               0.4631353 0.1403093
+SL.bayesglm_All          0.4631231 0.0000000
+SL.loess_All             0.3222932 0.8596907
+SL.gam_All               0.3862802 0.0000000
+SL.gam.3_All             0.3514264 0.0000000
+SL.glmnet_All            0.4550568 0.0000000
+SL.randomForest.ns15_All 0.4500874 0.0000000
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.8558054 0.0000000
-SL.glm_All               1.1141624 0.0000000
-SL.bayesglm_All          1.1141502 0.0000000
-SL.loess_All             0.7238488 0.6789594
-SL.gam_All               0.8818910 0.0000000
-SL.gam.3_All             0.8386521 0.0000000
-SL.glmnet_All            1.1175566 0.0000000
-SL.randomForest.ns15_All 0.9062067 0.3210406
+SL.mean_All              1.2741490 0.0000000
+SL.glm_All               0.8750858 0.0000000
+SL.bayesglm_All          0.8750788 0.0000000
+SL.loess_All             0.6535165 0.6021445
+SL.gam_All               0.7163693 0.0000000
+SL.gam.3_All             0.6744350 0.0000000
+SL.glmnet_All            0.8686525 0.0000000
+SL.randomForest.ns15_All 0.7048682 0.3978555
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.8156975 0.0000000
-SL.glm_All               1.0339425 0.0000000
-SL.bayesglm_All          1.0339260 0.0000000
-SL.loess_All             0.4266600 0.6299941
-SL.gam_All               0.5342441 0.0000000
-SL.gam.3_All             0.4224482 0.2032687
-SL.glmnet_All            0.9962883 0.0000000
-SL.randomForest.ns15_All 0.8024364 0.1667372
+SL.mean_All              1.9144141 0.0000000
+SL.glm_All               1.1185919 0.0000000
+SL.bayesglm_All          1.1185781 0.0000000
+SL.loess_All             0.6891216 0.7550701
+SL.gam_All               0.8742002 0.0000000
+SL.gam.3_All             0.8166571 0.0000000
+SL.glmnet_All            1.1147283 0.0000000
+SL.randomForest.ns15_All 0.9106751 0.2449299
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk      Coef
-SL.mean_All              1.6775658 0.0000000
-SL.glm_All               1.4093597 0.0000000
-SL.bayesglm_All          1.4093494 0.0000000
-SL.loess_All             0.9855023 0.7262032
-SL.gam_All               1.1607441 0.0000000
-SL.gam.3_All             1.0508990 0.0000000
-SL.glmnet_All            1.3981338 0.0000000
-SL.randomForest.ns40_All 1.1150747 0.2737968
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk       Coef
-SL.mean_All              1.4592798 0.00000000
-SL.glm_All               1.2312969 0.00000000
-SL.bayesglm_All          1.2312467 0.00000000
-SL.loess_All             1.3579593 0.15104918
-SL.gam_All               1.0328594 0.00000000
-SL.gam.3_All             0.9359207 0.03417879
-SL.glmnet_All            1.2214639 0.00000000
-SL.randomForest.ns15_All 0.8501137 0.81477203
+SL.mean_All              1.7558702 0.00000000
+SL.glm_All               0.9928899 0.00000000
+SL.bayesglm_All          0.9928842 0.00000000
+SL.loess_All             0.4187273 0.85464601
+SL.gam_All               0.5640394 0.00000000
+SL.gam.3_All             0.4500642 0.00000000
+SL.glmnet_All            0.9763279 0.05509476
+SL.randomForest.ns35_All 0.8256536 0.09025923
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              1.6478102 0.0000000
+SL.glm_All               1.3800920 0.0000000
+SL.bayesglm_All          1.3800877 0.0000000
+SL.loess_All             0.9907167 0.6668163
+SL.gam_All               1.1350280 0.0000000
+SL.gam.3_All             1.0436033 0.0000000
+SL.glmnet_All            1.3831537 0.0000000
+SL.randomForest.ns30_All 1.0966010 0.3331837
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk      Coef
+SL.mean_All              1.4062977 0.0000000
+SL.glm_All               1.2289164 0.0000000
+SL.bayesglm_All          1.2288818 0.0000000
+SL.loess_All             0.9684088 0.3293161
+SL.gam_All               1.0302232 0.0000000
+SL.gam.3_All             0.9092327 0.0000000
+SL.glmnet_All            1.2372566 0.0000000
+SL.randomForest.ns20_All 0.8242425 0.6706839
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > 
@@ -1295,10 +1189,10 @@ There were 50 or more warnings (use warnings() to see the first 50)
 > # save the analysis output
 > #-------------------------------
 > rm(d)
-> save.image("~/SLAbcurves/results/raw/garki-village-EY-by-round.RData")
+> save.image("~/dropbox/articles/antibody-curves/results/raw/garki-village-EY-by-round.RData")
 > 
 > 
 > 
 > proc.time()
    user  system elapsed 
-246.899   2.594 255.178 
+399.991   4.675 407.059 

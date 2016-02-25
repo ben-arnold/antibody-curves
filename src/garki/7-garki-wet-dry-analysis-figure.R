@@ -20,7 +20,7 @@ library(scales)
 #-------------------------------
 # load analysis output
 #-------------------------------
-load("~/SLAbcurves/results/raw/garki-wet-dry-analysis.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/garki-wet-dry-analysis.RData")
 
 #-------------------------------
 # grab the number of children
@@ -68,7 +68,7 @@ pformat <- pform(pvalues)
 # plot antibody curves and means
 #-------------------------------
 
-pdf("~/SLAbcurves/results/figs/garki-wet-dry-analysis.pdf",width=15,height=5)
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-wet-dry-analysis.pdf",width=15,height=5)
 
 # general plotting parameters
 ytics <- seq(0,4,by=1)

@@ -1,5 +1,5 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -24,18 +24,9 @@ Type 'q()' to quit R.
 > # 2-garki-main-analysis.R
 > #
 > # Calculate age-adjusted mean
-> # IFAT antibody titres by
-> # treatment group and survey round
+> # IFA antibody titres by
+> # intervention group and survey round
 > #
-> # version 2 (11 oct 2015)
-> # drew on common source code for
-> # estimation
-> # migrated everything to git
-> #
-> # version 2 (19 oct 2015)
-> # update pointer to base functions
-> #
-> # version 1 (26 sep 2015)
 > #-------------------------------
 > 
 > 
@@ -74,7 +65,7 @@ The following object is masked from ‘package:SuperLearner’:
 > #-------------------------------
 > # load the serology dataset
 > #-------------------------------
-> d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+> d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
 > 
 > d$mdate <- as.Date(d$mdate,"%d %b %Y")
 > 
@@ -113,20 +104,19 @@ The following object is masked from ‘package:SuperLearner’:
 > # curves
 > #-------------------------------
 > 
-> set.seed(2352374)
+> set.seed(23752)
 > 
 > # Pre-intervention period fitted curves
 > p.c12 <- SLAb.curve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id)
 Loading required package: randomForest
-randomForest 4.6-12
+randomForest 4.6-10
 Type rfNews() to see new features/changes/bug fixes.
 Loading required package: arm
 Loading required package: MASS
 Loading required package: Matrix
 Loading required package: lme4
-Loading required package: Rcpp
 
-arm (Version 1.8-5, built: 2015-05-13)
+arm (Version 1.8-6, built: 2015-7-7)
 
 Working directory is /Users/benarnold/SLAbcurves/src/garki
 
@@ -139,196 +129,163 @@ Loading required package: glmnet
 Loaded glmnet 2.0-2
 
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk     Coef
-SL.mean_All              0.2978141 0.000000
-SL.glm_All               0.2842381 0.000000
-SL.bayesglm_All          0.2842381 0.000000
-SL.loess_All             0.2318962 0.875182
-SL.gam_All               0.2630435 0.000000
-SL.gam.3_All             0.2507294 0.000000
-SL.glmnet_All            0.2842105 0.000000
-SL.randomForest.ns25_All 0.2482685 0.124818
-There were 33 warnings (use warnings() to see them)
+                              Risk      Coef
+SL.mean_All              0.2962923 0.0000000
+SL.glm_All               0.2827630 0.0000000
+SL.bayesglm_All          0.2827630 0.0000000
+SL.loess_All             0.2326871 0.8260266
+SL.gam_All               0.2611725 0.0000000
+SL.gam.3_All             0.2491179 0.0000000
+SL.glmnet_All            0.2827859 0.0000000
+SL.randomForest.ns40_All 0.2465517 0.1739734
 > p.tr1 <- SLAb.curve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.2502153 0.1239357
-SL.glm_All               0.2488674 0.0000000
-SL.bayesglm_All          0.2488673 0.0000000
-SL.loess_All             0.2420271 0.7701927
-SL.gam_All               0.2454747 0.0000000
-SL.gam.3_All             0.2439962 0.0000000
-SL.glmnet_All            0.2488606 0.0000000
-SL.randomForest.ns35_All 0.2433822 0.1058716
-There were 33 warnings (use warnings() to see them)
+                              Risk       Coef
+SL.mean_All              0.2505557 0.05651448
+SL.glm_All               0.2489075 0.00000000
+SL.bayesglm_All          0.2489075 0.00000000
+SL.loess_All             0.2412886 0.80137780
+SL.gam_All               0.2458002 0.00000000
+SL.gam.3_All             0.2441590 0.00000000
+SL.glmnet_All            0.2489065 0.00000000
+SL.randomForest.ns20_All 0.2432732 0.14210772
 > p.tr2 <- SLAb.curve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.4167728 0.0000000
-SL.glm_All               0.3943801 0.0000000
-SL.bayesglm_All          0.3943800 0.0000000
-SL.loess_All             0.2986833 0.7914462
-SL.gam_All               0.3522498 0.0000000
-SL.gam.3_All             0.3283913 0.0000000
-SL.glmnet_All            0.3944576 0.0000000
-SL.randomForest.ns30_All 0.3225122 0.2085538
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              0.4182397 0.0000000
+SL.glm_All               0.3957077 0.0000000
+SL.bayesglm_All          0.3957076 0.0000000
+SL.loess_All             0.2973843 0.7781577
+SL.gam_All               0.3526381 0.0000000
+SL.gam.3_All             0.3277805 0.0000000
+SL.glmnet_All            0.3955315 0.0000000
+SL.randomForest.ns25_All 0.3195011 0.2218423
 > 
 > # Intervention phase fitted curves
 > p.c345 <- SLAb.curve(Y=log10(d.c345$ifatpftitre+1),Age=d.c345$ageyrs,id=d.c345$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.6574936 0.0000000
-SL.glm_All               0.6171027 0.0000000
-SL.bayesglm_All          0.6171026 0.0000000
-SL.loess_All             0.4602784 0.6911972
-SL.gam_All               0.5449136 0.0000000
-SL.gam.3_All             0.5092408 0.0000000
-SL.glmnet_All            0.6170733 0.0000000
-SL.randomForest.ns15_All 0.4856384 0.3088028
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              0.6576940 0.0000000
+SL.glm_All               0.6177514 0.0000000
+SL.bayesglm_All          0.6177514 0.0000000
+SL.loess_All             0.4577843 0.6940297
+SL.gam_All               0.5453864 0.0000000
+SL.gam.3_All             0.5090298 0.0000000
+SL.glmnet_All            0.6177678 0.0000000
+SL.randomForest.ns25_All 0.4824807 0.3059703
 > p.tr3 <- SLAb.curve(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              0.8405860 0.0000000
-SL.glm_All               0.6731793 0.0000000
-SL.bayesglm_All          0.6731792 0.0000000
-SL.loess_All             0.4508781 0.7759159
-SL.gam_All               0.5467532 0.0000000
-SL.gam.3_All             0.4941561 0.0000000
-SL.glmnet_All            0.6732689 0.0000000
-SL.randomForest.ns15_All 0.5212250 0.2240841
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              0.8393391 0.0000000
+SL.glm_All               0.6743804 0.0000000
+SL.bayesglm_All          0.6743803 0.0000000
+SL.loess_All             0.4477436 0.7947144
+SL.gam_All               0.5470543 0.0000000
+SL.gam.3_All             0.4940533 0.0000000
+SL.glmnet_All            0.6743502 0.0000000
+SL.randomForest.ns25_All 0.5226279 0.2052856
 > p.tr4 <- SLAb.curve(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.2324809 0.0000000
-SL.glm_All               0.9280539 0.0000000
-SL.bayesglm_All          0.9280538 0.0000000
-SL.loess_All             0.5894637 0.7558143
-SL.gam_All               0.7145003 0.0000000
-SL.gam.3_All             0.6349192 0.0000000
-SL.glmnet_All            0.9279418 0.0000000
-SL.randomForest.ns30_All 0.7056561 0.2441857
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              1.2346849 0.0000000
+SL.glm_All               0.9285954 0.0000000
+SL.bayesglm_All          0.9285953 0.0000000
+SL.loess_All             0.5872425 0.7464139
+SL.gam_All               0.7139346 0.0000000
+SL.gam.3_All             0.6346310 0.0000000
+SL.glmnet_All            0.9286121 0.0000000
+SL.randomForest.ns20_All 0.6993632 0.2535861
 > p.tr5 <- SLAb.curve(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk      Coef
-SL.mean_All              1.3122630 0.0000000
-SL.glm_All               0.8819786 0.0000000
-SL.bayesglm_All          0.8819786 0.0000000
-SL.loess_All             0.5241792 0.8658147
-SL.gam_All               0.6452970 0.0000000
-SL.gam.3_All             0.5716995 0.0000000
-SL.glmnet_All            0.8819378 0.0000000
-SL.randomForest.ns15_All 0.7000204 0.1341853
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              1.3123548 0.0000000
+SL.glm_All               0.8833266 0.0000000
+SL.bayesglm_All          0.8833266 0.0000000
+SL.loess_All             0.5252981 0.8586063
+SL.gam_All               0.6465819 0.0000000
+SL.gam.3_All             0.5724159 0.0000000
+SL.glmnet_All            0.8833619 0.0000000
+SL.randomForest.ns30_All 0.6963875 0.1413937
 > 
 > # post intervention period fitted curves
 > # note: no control measurement in round 6
 > p.c78 <- SLAb.curve(Y=log10(d.c78$ifatpftitre+1),Age=d.c78$ageyrs,id=d.c78$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              0.5157798 0.00000000
-SL.glm_All               0.4839900 0.00000000
-SL.bayesglm_All          0.4839900 0.00000000
-SL.loess_All             0.3558133 0.94522419
-SL.gam_All               0.4318337 0.00000000
-SL.gam.3_All             0.4073771 0.00000000
-SL.glmnet_All            0.4838457 0.00000000
-SL.randomForest.ns25_All 0.3961393 0.05477581
-There were 33 warnings (use warnings() to see them)
-> p.tr6 <- SLAb.curve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id)
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              1.4414395 0.00000000
-SL.glm_All               0.9336630 0.00000000
-SL.bayesglm_All          0.9336629 0.00000000
-SL.loess_All             0.4760533 0.91187978
-SL.gam_All               0.6336506 0.00000000
-SL.gam.3_All             0.5380278 0.00000000
-SL.glmnet_All            0.9335084 0.00000000
-SL.randomForest.ns15_All 0.7019469 0.08812022
-There were 33 warnings (use warnings() to see them)
-> p.tr7 <- SLAb.curve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id)
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
-
-
-                              Risk        Coef
-SL.mean_All              1.4822914 0.000000000
-SL.glm_All               1.2234453 0.000000000
-SL.bayesglm_All          1.2234451 0.000000000
-SL.loess_All             0.8424117 0.904712290
-SL.gam_All               0.9913538 0.000000000
-SL.gam.3_All             0.9037755 0.002535543
-SL.glmnet_All            1.2231909 0.000000000
-SL.randomForest.ns15_All 1.0042698 0.092752167
-There were 33 warnings (use warnings() to see them)
-> p.tr8 <- SLAb.curve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id)
-
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                               Risk     Coef
-SL.mean_All              1.0927350 0.000000
-SL.glm_All               0.9625744 0.000000
-SL.bayesglm_All          0.9625740 0.000000
-SL.loess_All             0.7504636 0.749061
-SL.gam_All               0.8341089 0.000000
-SL.gam.3_All             0.7878165 0.000000
-SL.glmnet_All            0.9621002 0.000000
-SL.randomForest.ns40_All 0.8069173 0.250939
-There were 33 warnings (use warnings() to see them)
+SL.mean_All              0.5142221 0.000000
+SL.glm_All               0.4815215 0.000000
+SL.bayesglm_All          0.4815215 0.000000
+SL.loess_All             0.3570463 0.886081
+SL.gam_All               0.4311047 0.000000
+SL.gam.3_All             0.4073479 0.000000
+SL.glmnet_All            0.4815021 0.000000
+SL.randomForest.ns35_All 0.3943630 0.113919
+> p.tr6 <- SLAb.curve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id)
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk       Coef
+SL.mean_All              1.4467785 0.00000000
+SL.glm_All               0.9383037 0.00000000
+SL.bayesglm_All          0.9383036 0.00000000
+SL.loess_All             0.4785431 0.91076241
+SL.gam_All               0.6355753 0.00000000
+SL.gam.3_All             0.5403976 0.00000000
+SL.glmnet_All            0.9383706 0.00000000
+SL.randomForest.ns15_All 0.7156327 0.08923759
+> p.tr7 <- SLAb.curve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id)
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk         Coef
+SL.mean_All              1.4831371 0.0000000000
+SL.glm_All               1.2191455 0.0000000000
+SL.bayesglm_All          1.2191454 0.0000000000
+SL.loess_All             0.8425813 0.9071329017
+SL.gam_All               0.9907475 0.0000000000
+SL.gam.3_All             0.9039591 0.0003881864
+SL.glmnet_All            1.2192132 0.0000000000
+SL.randomForest.ns20_All 1.0017931 0.0924789119
+> p.tr8 <- SLAb.curve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id)
+
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+
+
+                              Risk     Coef
+SL.mean_All              1.0858721 0.000000
+SL.glm_All               0.9496583 0.000000
+SL.bayesglm_All          0.9496582 0.000000
+SL.loess_All             0.7355538 0.767164
+SL.gam_All               0.8225142 0.000000
+SL.gam.3_All             0.7761597 0.000000
+SL.glmnet_All            0.9491839 0.000000
+SL.randomForest.ns40_All 0.7954755 0.232836
 > 
 > 
 > #-------------------------------
@@ -456,54 +413,54 @@ There were 33 warnings (use warnings() to see them)
 + 	)
 + )
  Additive Effect
-   Parameter Estimate:  0.081334
-   Estimated Variance:  0.0012347
-              p-value:  0.020632
-    95% Conf Interval: (0.012462, 0.15021) 
+   Parameter Estimate:  0.081511
+   Estimated Variance:  0.0012278
+              p-value:  0.020004
+    95% Conf Interval: (0.012834, 0.15019) 
  Additive Effect
-   Parameter Estimate:  0.10317
-   Estimated Variance:  0.0011819
-              p-value:  0.0026926
-    95% Conf Interval: (0.035783, 0.17055) 
+   Parameter Estimate:  0.10174
+   Estimated Variance:  0.001166
+              p-value:  0.0028876
+    95% Conf Interval: (0.034811, 0.16867) 
  Additive Effect
-   Parameter Estimate:  -0.44862
-   Estimated Variance:  0.0020376
+   Parameter Estimate:  -0.44481
+   Estimated Variance:  0.0020505
               p-value:  <2e-16
-    95% Conf Interval: (-0.5371, -0.36015) 
+    95% Conf Interval: (-0.53357, -0.35606) 
  Additive Effect
-   Parameter Estimate:  -0.58993
-   Estimated Variance:  0.0026956
+   Parameter Estimate:  -0.58927
+   Estimated Variance:  0.0027102
               p-value:  <2e-16
-    95% Conf Interval: (-0.6917, -0.48817) 
+    95% Conf Interval: (-0.69131, -0.48723) 
  Additive Effect
-   Parameter Estimate:  -1.3934
-   Estimated Variance:  0.0025709
+   Parameter Estimate:  -1.3937
+   Estimated Variance:  0.0025697
               p-value:  <2e-16
-    95% Conf Interval: (-1.4928, -1.294) 
+    95% Conf Interval: (-1.4931, -1.2944) 
  Additive Effect
-   Parameter Estimate:  -0.63152
-   Estimated Variance:  0.0029162
+   Parameter Estimate:  -0.63223
+   Estimated Variance:  0.0029243
               p-value:  <2e-16
-    95% Conf Interval: (-0.73736, -0.52567) 
+    95% Conf Interval: (-0.73822, -0.52624) 
  Additive Effect
-   Parameter Estimate:  -0.3863
-   Estimated Variance:  0.0041153
-              p-value:  1.7258e-09
-    95% Conf Interval: (-0.51203, -0.26056) 
+   Parameter Estimate:  -0.38643
+   Estimated Variance:  0.0041095
+              p-value:  1.6602e-09
+    95% Conf Interval: (-0.51207, -0.26078) 
 > 
 > 
 > # P-values for differences in means, with Bonferroni correction for 7 tests
 > sprintf("%1.4f",unlist(diff.psi[5,])*7)
-[1] "0.1444" "0.0188" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
+[1] "0.1400" "0.0202" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
 > 
 > #-------------------------------
 > # save down the results
 > #-------------------------------
-> save.image("~/SLAbcurves/results/raw/garki-main-analysis.RData")
+> save.image("~/dropbox/articles/antibody-curves/results/raw/garki-main-analysis.RData")
 > 
 > 
 > 
 > 
 > proc.time()
    user  system elapsed 
-299.463   4.955 306.777 
+490.880  10.647 517.035 

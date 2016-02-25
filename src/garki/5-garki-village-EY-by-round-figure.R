@@ -18,7 +18,7 @@ library(scales)
 #-------------------------------
 # load analysis output
 #-------------------------------
-load("~/SLAbcurves/results/raw/garki-village-EY-by-round.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/garki-village-EY-by-round.RData")
 
 
 #-------------------------------
@@ -208,7 +208,7 @@ EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,lett
 }
 
 
-pdf("~/SLAbcurves/results/figs/garki-IFAPf-by-village.pdf",width=12,height=30) 
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFAPf-by-village.pdf",width=12,height=30) 
 lo <- layout(mat=matrix(c(31,32,34,33,35,1:30),nrow=7,ncol=5,byrow=T),widths=c(0.5,1,0.25,1,0.25,1,0.25),heights=c(0.2,rep(1,6)))
 
 EYxaplot(EYxa.c12=c12.EYxa,
@@ -320,7 +320,7 @@ EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
 }
 
 
-pdf("~/SLAbcurves/results/figs/garki-IFApf-by-village-svy.pdf",width=7,height=10)
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFApf-by-village-svy.pdf",width=7,height=10)
 # cols <- c(brewer.pal(8,"Dark2")[8],rainbow(6,v=0.75)) 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cols <- c(brewer.pal(8,"Dark2")[8],cbPalette[c(2:4,6:8)])

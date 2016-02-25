@@ -7,9 +7,6 @@
 #-------------------------------
 
 
-
-
-
 #-------------------------------
 # preamble
 #-------------------------------
@@ -19,14 +16,14 @@ library(RColorBrewer)
 library(scales)
 
 # load the analysis results
-load("~/SLAbcurves/results/raw/garki-main-analysis.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/garki-main-analysis.RData")
 
 
 #-------------------------------
 # Plot antibody response 
 # curves for the 3 study phases
 #-------------------------------
-pdf("~/SLAbcurves/results/figs/garki-antibody-curves-IFAPf.pdf",height=5,width=15)
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-antibody-curves-IFAPf.pdf",height=5,width=15)
 
 # general plotting parameters
 ytics <- seq(0,4,by=1)

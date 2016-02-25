@@ -31,7 +31,7 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 #-------------------------------
 # load the serology dataset
 #-------------------------------
-d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
 
 d$mdate <- as.Date(d$mdate,"%d %b %Y")
 
@@ -183,6 +183,6 @@ v220 <- sapply(c(1:8),function(x) SLAb.tmle(
 # save the analysis output
 #-------------------------------
 rm(d)
-save.image("~/SLAbcurves/results/raw/garki-village-EY-by-round.RData")
+save.image("~/dropbox/articles/antibody-curves/results/raw/garki-village-EY-by-round.RData")
 
 

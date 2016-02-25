@@ -1,5 +1,5 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -28,9 +28,6 @@ Type 'q()' to quit R.
 > #-------------------------------
 > 
 > 
-> 
-> 
-> 
 > #-------------------------------
 > # preamble
 > #-------------------------------
@@ -40,14 +37,14 @@ Type 'q()' to quit R.
 > library(scales)
 > 
 > # load the analysis results
-> load("~/SLAbcurves/results/raw/garki-main-analysis.RData")
+> load("~/dropbox/articles/antibody-curves/results/raw/garki-main-analysis.RData")
 > 
 > 
 > #-------------------------------
 > # Plot antibody response 
 > # curves for the 3 study phases
 > #-------------------------------
-> pdf("~/SLAbcurves/results/figs/garki-antibody-curves-IFAPf.pdf",height=5,width=15)
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-antibody-curves-IFAPf.pdf",height=5,width=15)
 > 
 > # general plotting parameters
 > ytics <- seq(0,4,by=1)
@@ -241,4 +238,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.779   0.063   1.461 
+  0.617   0.058   0.717 

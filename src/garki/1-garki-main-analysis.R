@@ -3,18 +3,9 @@
 # 2-garki-main-analysis.R
 #
 # Calculate age-adjusted mean
-# IFAT antibody titres by
-# treatment group and survey round
+# IFA antibody titres by
+# intervention group and survey round
 #
-# version 2 (11 oct 2015)
-# drew on common source code for
-# estimation
-# migrated everything to git
-#
-# version 2 (19 oct 2015)
-# update pointer to base functions
-#
-# version 1 (26 sep 2015)
 #-------------------------------
 
 
@@ -36,7 +27,7 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 #-------------------------------
 # load the serology dataset
 #-------------------------------
-d <- read.csv("~/dropbox/garki/data/final/garki-sero.csv")
+d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
 
 d$mdate <- as.Date(d$mdate,"%d %b %Y")
 
@@ -75,7 +66,7 @@ d.tr8 <- d[d$tr=="Intervention" & d$serosvy==8,]
 # curves
 #-------------------------------
 
-set.seed(2352374)
+set.seed(23752)
 
 # Pre-intervention period fitted curves
 p.c12 <- SLAb.curve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id)
@@ -153,7 +144,7 @@ sprintf("%1.4f",unlist(diff.psi[5,])*7)
 #-------------------------------
 # save down the results
 #-------------------------------
-save.image("~/SLAbcurves/results/raw/garki-main-analysis.RData")
+save.image("~/dropbox/articles/antibody-curves/results/raw/garki-main-analysis.RData")
 
 
 
