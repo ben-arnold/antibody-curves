@@ -30,7 +30,7 @@ library(scales)
 #-------------------------------------------
 # load the Mauke longitudinal analysis output
 #-------------------------------------------
-load("~/SLAbcurves/results/raw/mauke-Wb123-long.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-long.RData")
 
 
 #-------------------------------
@@ -100,7 +100,7 @@ SLAb.plotLong <- function(Ab1,Ab2,mu1,mu2,diff,labels=c("Ab-","Ab-"),letter="",y
 # make the plot
 #-------------------------------
 
-pdf("~/SLAbcurves/results/figs/mauke-Wb123-long.pdf",width=10,height=4)
+pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-long.pdf",width=10,height=4)
 lo <- layout(mat=matrix(1:3,nrow=1,ncol=3,byrow=TRUE))
 
 SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Pos-Neg"]),Ab2=log10(d$wb123.92[d$Abstatus=="Pos-Neg"]),mu1=unlist(EYx.75.Abstatus[,2]),mu2=unlist(EYx.92.Abstatus[,2]),diff=unlist(diff.Abstatus[,2]),labels=c("Ag+","Ag-"),letter="c",ylabel=TRUE)

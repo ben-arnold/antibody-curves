@@ -12,8 +12,8 @@
 
 #-------------------------------------------
 # input files:
-#   mauke1974.dta
-#   mauke1992.dta
+#   mauke1975-public.csv
+#   mauke1992-public.csv
 #
 # output files:
 #   mauke-Wb123-long.RData
@@ -26,7 +26,6 @@
 #-------------------------------------------
 
 rm(list=ls())
-library(foreign)
 library(tmle)
 library(SuperLearner)
 
@@ -41,15 +40,15 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 # load the Mauke data from 1974(1975) and 1992
 #-------------------------------------------
 
-d75 <- read.dta("~/dropbox/mauke/data/final/mauke1974.dta")
-d92 <- read.dta("~/dropbox/mauke/data/final/mauke1992.dta")
+d75 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1975-public.csv")
+d92 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1992-public.csv")
 
 
 # drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
-a75 <- subset(d75,age>0,select=c("id74","age","CAg","wb123"))
+a75 <- subset(d75,age>0,select=c("id75","age","CAg","wb123"))
   names(a75) <- c("id","age","CAg","wb123")
 a75$mda <- 0
-a92 <- subset(d92,select=c("id74","age","CAg","wb123"))
+a92 <- subset(d92,select=c("id75","age","CAg","wb123"))
   names(a92) <- c("id","age","CAg","wb123")
 a92$id <- paste(a92$id)
 a92$mda <- 1
@@ -105,7 +104,7 @@ diff.Abstatus <- sapply(Abstatus, function(x)
 # store results for later summary
 # and plotting
 #--------------------------------------
-save.image("~/SLAbcurves/results/raw/mauke-Wb123-long.RData")
+save.image("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-long.RData")
 
 
 

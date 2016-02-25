@@ -4,11 +4,8 @@
 # 3-mauke-Wb123-supp-figure
 # Ben Arnold
 #
-# Mauke beeswarm plot of age-stratified
+# Mauke plot of age-stratified
 # means in 2 year age bands
-#
-# version 1 (19 oct 2015)
-# 
 #
 #-------------------------------------------
 
@@ -17,7 +14,7 @@
 #   mauke-Wb123-analysis.RData
 #
 # output files:
-#   mauke-Wb123-analysis-2y-beeswarm.pdf
+#   mauke-Wb123-analysis-2y.pdf
 #-------------------------------------------
 
 
@@ -28,13 +25,12 @@
 rm(list=ls())
 library(RColorBrewer)
 library(scales)
-library(beeswarm)
 
 #-------------------------------------------
 # load the Mauke analysis results
 #-------------------------------------------
 
-load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-analysis.RData")
 
 
 #-------------------------------------------
@@ -46,7 +42,7 @@ load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
 Ntab <- table(a7592$agecat2,a7592$mda)
 Ntab 
 
-pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis-2y.pdf",width=7,height=6)
+pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-analysis-2y.pdf",width=7,height=6)
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cols <- cbPalette[c(7,6)]

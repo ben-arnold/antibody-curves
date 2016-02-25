@@ -1,5 +1,5 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -31,16 +31,12 @@ Type 'q()' to quit R.
 > # main analysis using the quantitative response
 > # (see 1-mauke-Wb123-analysis.R)
 > #
-> # Also, compare the results with
-> # a standard parametric model used for such data --
-> # the "reversible catalytic model"
-> #
 > #-------------------------------------------
 > 
 > #-------------------------------------------
 > # input files:
-> #   mauke1974.dta
-> #   mauke1992.dta
+> #   mauke1975-public.csv
+> #   mauke1992-public.csv
 > #
 > # output files:
 > #   mauke-Wb123-binary.RData
@@ -54,8 +50,6 @@ Type 'q()' to quit R.
 > #-------------------------------------------
 > 
 > rm(list=ls())
-> library(RColorBrewer)
-> library(foreign)
 > library(tmle)
 Loading required package: SuperLearner
 Loading required package: nnls
@@ -88,8 +82,8 @@ The following object is masked from ‘package:SuperLearner’:
 > # load the Mauke data from 1974(1975) and 1992
 > #-------------------------------------------
 > 
-> d75 <- read.dta("~/dropbox/mauke/data/final/mauke1974.dta")
-> d92 <- read.dta("~/dropbox/mauke/data/final/mauke1992.dta")
+> d75 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1975-public.csv")
+> d92 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1992-public.csv")
 > 
 > # drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
 > a75 <- subset(d75,age>0)
@@ -109,8 +103,8 @@ The following object is masked from ‘package:SuperLearner’:
 > a92$agecat2 <- cut(a92$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
 > 
 > # create a standard ID variable before appending
-> a75$id <- as.integer(a75$id74)
-> a92$id <- ifelse(is.na(a92$id74),a92$id92,a92$id74)
+> a75$id <- as.integer(a75$id75)
+> a92$id <- ifelse(is.na(a92$id75),a92$id92,a92$id75)
 > 
 > # identify the pre- vs. post-MDA measurements
 > a75$mda <- 0
@@ -136,15 +130,14 @@ The following object is masked from ‘package:SuperLearner’:
 > # SuperLearner fits of antibody levels
 > mauke75 <- SLAb.curve(Y=a75$wb123p,Age=a75$ager,id=a75$id)
 Loading required package: randomForest
-randomForest 4.6-12
+randomForest 4.6-10
 Type rfNews() to see new features/changes/bug fixes.
 Loading required package: arm
 Loading required package: MASS
 Loading required package: Matrix
 Loading required package: lme4
-Loading required package: Rcpp
 
-arm (Version 1.8-5, built: 2015-05-13)
+arm (Version 1.8-6, built: 2015-7-7)
 
 Working directory is /Users/benarnold/SLAbcurves/src/mauke
 
@@ -157,37 +150,33 @@ Loading required package: glmnet
 Loaded glmnet 2.0-2
 
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
                                Risk       Coef
-SL.mean_All              0.11970362 0.00000000
-SL.glm_All               0.10954127 0.00000000
-SL.bayesglm_All          0.10954125 0.00000000
-SL.loess_All             0.09951599 0.68339973
-SL.gam_All               0.10111948 0.17760999
-SL.gam.3_All             0.09958178 0.06500046
-SL.glmnet_All            0.10951966 0.00000000
-SL.randomForest.ns35_All 0.10466323 0.07398981
+SL.mean_All              0.11984148 0.00000000
+SL.glm_All               0.10936742 0.00000000
+SL.bayesglm_All          0.10936739 0.00000000
+SL.loess_All             0.09908744 0.77760364
+SL.gam_All               0.10113189 0.16811293
+SL.gam.3_All             0.09948838 0.00000000
+SL.glmnet_All            0.10936693 0.00000000
+SL.randomForest.ns20_All 0.10489790 0.05428343
 There were 50 or more warnings (use warnings() to see the first 50)
 > mauke92 <- SLAb.curve(Y=a92$wb123p,Age=a92$ager,id=a92$id)
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk       Coef
-SL.mean_All              0.2404370 0.00000000
-SL.glm_All               0.2131721 0.00000000
-SL.bayesglm_All          0.2131721 0.00000000
-SL.loess_All             0.2071672 0.00000000
-SL.gam_All               0.2070453 0.00000000
-SL.gam.3_All             0.2062111 0.94997929
-SL.glmnet_All            0.2131899 0.00000000
-SL.randomForest.ns25_All 0.2154318 0.05002071
+                              Risk      Coef
+SL.mean_All              0.2410063 0.0000000
+SL.glm_All               0.2134719 0.0000000
+SL.bayesglm_All          0.2134719 0.0000000
+SL.loess_All             0.2074709 0.0000000
+SL.gam_All               0.2075631 0.0000000
+SL.gam.3_All             0.2068058 0.8932994
+SL.glmnet_All            0.2134873 0.0000000
+SL.randomForest.ns35_All 0.2147175 0.1067006
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > # estimate group means
@@ -201,18 +190,18 @@ There were 50 or more warnings (use warnings() to see the first 50)
 > EYx.mauke92 <- SLAb.tmle(Y=a92$wb123p,Age=a92$ager,id=a92$id)
  Population Mean
    Parameter Estimate:  0.60398
-   Estimated Variance:  0.00043331
+   Estimated Variance:  0.00048737
               p-value:  <2e-16
-    95% Conf Interval: (0.56318, 0.64478) 
+    95% Conf Interval: (0.56071, 0.64725) 
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > # estimate difference in means
 > diff.mauke  <- SLAb.tmle(Y=a7592$wb123p,Age=a7592$ager,id=a7592$id,X=a7592$mda,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  -0.26198
-   Estimated Variance:  0.00072804
+   Parameter Estimate:  -0.26236
+   Estimated Variance:  0.00079209
               p-value:  <2e-16
-    95% Conf Interval: (-0.31487, -0.2091) 
+    95% Conf Interval: (-0.31753, -0.2072) 
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > 
@@ -268,33 +257,33 @@ In addition: There were 50 or more warnings (use warnings() to see the first 50)
     95% Conf Interval: (0.34353, 0.54778) 
  Population Mean
    Parameter Estimate:  0.5641
-   Estimated Variance:  0.0031934
+   Estimated Variance:  0.0032445
               p-value:  <2e-16
-    95% Conf Interval: (0.45334, 0.67486) 
+    95% Conf Interval: (0.45246, 0.67575) 
 There were 50 or more warnings (use warnings() to see the first 50)
 > diff.maukekids <- sapply(agegrps, function(x) 
 +   SLAb.tmle(Y=a7592$wb123p[a7592$agecat==x], Age=a7592$ager[a7592$agecat==x], id=a7592$id[a7592$agecat==x], X=a7592$mda[a7592$agecat==x], diff=TRUE) 
 + )
  Additive Effect
-   Parameter Estimate:  -0.33841
-   Estimated Variance:  0.0099683
-              p-value:  0.00070037
-    95% Conf Interval: (-0.5341, -0.14272) 
+   Parameter Estimate:  -0.33829
+   Estimated Variance:  0.010621
+              p-value:  0.0010288
+    95% Conf Interval: (-0.54028, -0.1363) 
  Additive Effect
-   Parameter Estimate:  -0.31487
-   Estimated Variance:  0.0061784
-              p-value:  6.1806e-05
-    95% Conf Interval: (-0.46893, -0.16081) 
+   Parameter Estimate:  -0.31591
+   Estimated Variance:  0.0060015
+              p-value:  4.5443e-05
+    95% Conf Interval: (-0.46775, -0.16407) 
  Additive Effect
-   Parameter Estimate:  -0.34692
-   Estimated Variance:  0.0063078
-              p-value:  1.2533e-05
-    95% Conf Interval: (-0.50259, -0.19126) 
+   Parameter Estimate:  -0.35093
+   Estimated Variance:  0.0063577
+              p-value:  1.0769e-05
+    95% Conf Interval: (-0.50721, -0.19464) 
  Additive Effect
-   Parameter Estimate:  -0.40018
-   Estimated Variance:  0.0044241
-              p-value:  1.7822e-09
-    95% Conf Interval: (-0.53055, -0.26982) 
+   Parameter Estimate:  -0.40037
+   Estimated Variance:  0.004655
+              p-value:  4.4078e-09
+    95% Conf Interval: (-0.53409, -0.26664) 
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > 
@@ -315,13 +304,17 @@ There were 50 or more warnings (use warnings() to see the first 50)
 Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) : 
   'NA' indices are not (yet?) supported for sparse Matrices
 In addition: There were 50 or more warnings (use warnings() to see the first 50)
-Error in predmat[which, seq(nlami)] = preds : replacement has length zero
+Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) : 
+  'NA' indices are not (yet?) supported for sparse Matrices
 Error in predmat[which, seq(nlami)] = preds : replacement has length zero
  Population Mean
    Parameter Estimate:  0.66667
    Estimated Variance:  0.013072
               p-value:  5.5112e-09
     95% Conf Interval: (0.44258, 0.89076) 
+Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) : 
+  'NA' indices are not (yet?) supported for sparse Matrices
+In addition: There were 50 or more warnings (use warnings() to see the first 50)
  Population Mean
    Parameter Estimate:  0.57143
    Estimated Variance:  0.012245
@@ -335,8 +328,8 @@ In addition: There were 50 or more warnings (use warnings() to see the first 50)
    Estimated Variance:  0.005608
               p-value:  <2e-16
     95% Conf Interval: (0.71686, 1.0104) 
-Error in approx(lambda, seq(lambda), sfrac) : 
-  need at least two non-NA values to interpolate
+Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) : 
+  'NA' indices are not (yet?) supported for sparse Matrices
 In addition: There were 50 or more warnings (use warnings() to see the first 50)
  Population Mean
    Parameter Estimate:  0.71429
@@ -346,9 +339,9 @@ In addition: There were 50 or more warnings (use warnings() to see the first 50)
 > EYx.mauke92kids2y <- sapply(agegrps2, function(x) 
 +   SLAb.tmle(Y=a92$wb123p[a92$agecat2==x],Age=a92$ager[a92$agecat2==x],id=a92$id[a92$agecat2==x]) 
 + )
-Error in approx(lambda, seq(lambda), sfrac) : 
-  need at least two non-NA values to interpolate
+Error in predmat[which, seq(nlami)] = preds : replacement has length zero
 In addition: There were 50 or more warnings (use warnings() to see the first 50)
+Error in predmat[which, seq(nlami)] = preds : replacement has length zero
 Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) : 
   'NA' indices are not (yet?) supported for sparse Matrices
  Population Mean
@@ -358,8 +351,8 @@ Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) :
     95% Conf Interval: (-0.0033108, 0.54877) 
 Error in predmat[which, seq(nlami)] = preds : replacement has length zero
 In addition: There were 50 or more warnings (use warnings() to see the first 50)
-Error in predmat[which, seq(nlami)] = preds : replacement has length zero
-Error in predmat[which, seq(nlami)] = preds : replacement has length zero
+Error in intI(j, n = x@Dim[2], dn[[2]], give.dn = FALSE) : 
+  'NA' indices are not (yet?) supported for sparse Matrices
  Population Mean
    Parameter Estimate:  0.26667
    Estimated Variance:  0.013968
@@ -385,42 +378,42 @@ There were 50 or more warnings (use warnings() to see the first 50)
 +   SLAb.tmle(Y=a7592$wb123p[a7592$agecat2==x], Age=a7592$ager[a7592$agecat2==x], id=a7592$id[a7592$agecat2==x], X=a7592$mda[a7592$agecat2==x], diff=TRUE) 
 + )
  Additive Effect
-   Parameter Estimate:  -0.21066
-   Estimated Variance:  0.030729
-              p-value:  0.22948
-    95% Conf Interval: (-0.55424, 0.13293) 
+   Parameter Estimate:  -0.22465
+   Estimated Variance:  0.032004
+              p-value:  0.20919
+    95% Conf Interval: (-0.57529, 0.12598) 
  Additive Effect
    Parameter Estimate:  -0.4
-   Estimated Variance:  0.026124
-              p-value:  0.013331
-    95% Conf Interval: (-0.71679, -0.083206) 
+   Estimated Variance:  0.026119
+              p-value:  0.013322
+    95% Conf Interval: (-0.71676, -0.08324) 
  Additive Effect
-   Parameter Estimate:  -0.37152
-   Estimated Variance:  0.016443
-              p-value:  0.0037639
-    95% Conf Interval: (-0.62284, -0.12019) 
+   Parameter Estimate:  -0.36806
+   Estimated Variance:  0.017021
+              p-value:  0.0047857
+    95% Conf Interval: (-0.62377, -0.11235) 
  Additive Effect
-   Parameter Estimate:  -0.42143
-   Estimated Variance:  0.01161
-              p-value:  9.1877e-05
-    95% Conf Interval: (-0.63262, -0.21023) 
+   Parameter Estimate:  -0.42205
+   Estimated Variance:  0.009197
+              p-value:  1.0778e-05
+    95% Conf Interval: (-0.61002, -0.23409) 
  Additive Effect
-   Parameter Estimate:  -0.1782
-   Estimated Variance:  0.018866
-              p-value:  0.19449
-    95% Conf Interval: (-0.44742, 0.091007) 
+   Parameter Estimate:  -0.17835
+   Estimated Variance:  0.018902
+              p-value:  0.19455
+    95% Conf Interval: (-0.44782, 0.091119) 
 There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > #-------------------------------------- 
 > # save results
 > #-------------------------------------- 
-> save.image("~/SLAbcurves/results/raw/mauke-Wb123-binary.RData")
+> save.image("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-binary.RData")
 > 
 > #--------------------------------------
 > # make figure
 > #--------------------------------------
 > 
-> pdf("~/SLAbcurves/results/figs/mauke-Wb123-binary.pdf",width=12,height=12)
+> pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-binary.pdf",width=12,height=12)
 > 
 > cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 > cols <- cbPalette[c(7,6)]
@@ -552,4 +545,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
- 91.138   1.066  94.608 
+ 79.187   1.198  81.088 

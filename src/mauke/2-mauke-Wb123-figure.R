@@ -5,11 +5,7 @@
 # Ben Arnold
 #
 # Plot age-specific antibody curves from 
-# Mauke and beeswarm plot of age-stratified
-# means
-#
-# version 1 (19 oct 2015)
-# 
+# Mauke and age-stratified means
 #
 #-------------------------------------------
 
@@ -29,13 +25,12 @@
 rm(list=ls())
 library(RColorBrewer)
 library(scales)
-library(beeswarm)
 
 #-------------------------------------------
 # load the Mauke analysis results
 #-------------------------------------------
 
-load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-analysis.RData")
 
 
 #-------------------------------------------
@@ -44,7 +39,7 @@ load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
 # cross-tab of groups for sample sizes
 table(a7592$agecat,a7592$mda)
 
-pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf",width=12,height=6)
+pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-analysis.pdf",width=12,height=6)
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cols <- cbPalette[c(7,6)]

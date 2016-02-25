@@ -15,8 +15,8 @@
 
 #-------------------------------------------
 # input files:
-#   mauke1974.dta
-#   mauke1992.dta
+#   mauke1975-public.csv
+#   mauke1992-public.csv
 #
 # output files:
 #   mauke-Wb123-analysis.RData
@@ -29,7 +29,6 @@
 #-------------------------------------------
 
 rm(list=ls())
-library(foreign)
 library(tmle)
 library(SuperLearner)
 
@@ -44,8 +43,8 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 # load the Mauke data from 1974(1975) and 1992
 #-------------------------------------------
 
-d75 <- read.dta("~/dropbox/mauke/data/final/mauke1974.dta")
-d92 <- read.dta("~/dropbox/mauke/data/final/mauke1992.dta")
+d75 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1975-public.csv")
+d92 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1992-public.csv")
 
 # drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
 a75 <- subset(d75,age>0)
@@ -65,8 +64,8 @@ a75$agecat2 <- cut(a75$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-
 a92$agecat2 <- cut(a92$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
 
 # create a standard ID variable before appending
-a75$id <- as.integer(a75$id74)
-a92$id <- ifelse(is.na(a92$id74),a92$id92,a92$id74)
+a75$id <- as.integer(a75$id75)
+a92$id <- ifelse(is.na(a92$id75),a92$id92,a92$id75)
 
 # identify the pre- vs. post-MDA measurements
 a75$mda <- 0
@@ -131,7 +130,7 @@ diff.maukekids2y <- sapply(agegrps2, function(x)
 # store results for later summary
 # and plotting
 #--------------------------------------
-save.image("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
+save.image("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-analysis.RData")
 
 
 

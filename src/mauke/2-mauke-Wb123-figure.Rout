@@ -1,5 +1,5 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -26,11 +26,7 @@ Type 'q()' to quit R.
 > # Ben Arnold
 > #
 > # Plot age-specific antibody curves from 
-> # Mauke and beeswarm plot of age-stratified
-> # means
-> #
-> # version 1 (19 oct 2015)
-> # 
+> # Mauke and age-stratified means
 > #
 > #-------------------------------------------
 > 
@@ -50,13 +46,12 @@ Type 'q()' to quit R.
 > rm(list=ls())
 > library(RColorBrewer)
 > library(scales)
-> library(beeswarm)
 > 
 > #-------------------------------------------
 > # load the Mauke analysis results
 > #-------------------------------------------
 > 
-> load("~/SLAbcurves/results/raw/mauke-Wb123-analysis.RData")
+> load("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-analysis.RData")
 > 
 > 
 > #-------------------------------------------
@@ -71,7 +66,7 @@ Type 'q()' to quit R.
   11-15 47 92
   16-20 28 78
 > 
-> pdf("~/SLAbcurves/results/figs/mauke-Wb123-analysis.pdf",width=12,height=6)
+> pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-analysis.pdf",width=12,height=6)
 > 
 > cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 > cols <- cbPalette[c(7,6)]
@@ -187,4 +182,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.618   0.047   0.757 
+  0.486   0.045   0.568 
