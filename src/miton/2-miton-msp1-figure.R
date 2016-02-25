@@ -4,8 +4,6 @@
 # Plot the age-specific antibody
 # curve for MSP1_19 in Miton, Haiti
 # 
-#
-# version 1 (21 nov 2015)
 #-------------------------------
 
 #-------------------------------
@@ -27,7 +25,7 @@ library(scales)
 #-------------------------------------------
 # load the Miton results
 #-------------------------------------------
-load("~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/miton-msp1-analysis.RData")
 
 #-------------------------------------------
 # plot curve and means
@@ -36,7 +34,7 @@ load("~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cols <- cbPalette[c(7,6)]
 
-pdf("~/SLAbcurves/results/figs/miton-msp1-analysis.pdf",width=12,height=6)
+pdf("~/dropbox/articles/antibody-curves/results/figs/miton-msp1-analysis.pdf",width=12,height=6)
 
 lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE),widths=c(1,0.75))
 

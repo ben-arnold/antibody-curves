@@ -38,7 +38,7 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 # load the Miton data
 #-------------------------------------------
 
-d <- read.dta("~/dropbox/haiti2/data/final/haiti2-malaria-miton.dta")
+d <- read.csv("~/dropbox/articles/antibody-curves/data/miton/haiti2-malaria-miton-public.csv")
 
 d$msp1 <- d$msp13d7
 
@@ -67,7 +67,7 @@ msp1.EYx <- sapply(agegrps, function(x)
 #-------------------------------------------
 # save results
 #-------------------------------------------
-save.image(file="~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
+save.image(file="~/dropbox/articles/antibody-curves/results/raw/miton-msp1-analysis.RData")
 
 
 

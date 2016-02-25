@@ -17,6 +17,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > #-------------------------------
 > # 1-miton-msp1-analysis
 > #
@@ -74,7 +76,7 @@ The following object is masked from ‘package:SuperLearner’:
 > # load the Miton data
 > #-------------------------------------------
 > 
-> d <- read.dta("~/dropbox/haiti2/data/final/haiti2-malaria-miton.dta")
+> d <- read.csv("~/dropbox/articles/antibody-curves/data/miton/haiti2-malaria-miton-public.csv")
 > 
 > d$msp1 <- d$msp13d7
 > 
@@ -111,21 +113,18 @@ Loading required package: glmnet
 Loaded glmnet 2.0-2
 
 
-Call:  
-SuperLearner(Y = fitd$Y, X = data.frame(fitd$Age, rep(1, nrow(fitd))), SL.library = SLlib,  
-    id = fitd$id) 
+Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                             Risk       Coef
-SL.mean_All              1.531987 0.00000000
-SL.glm_All               1.317388 0.00000000
-SL.bayesglm_All          1.317388 0.02728461
-SL.loess_All             1.181798 0.87560411
-SL.gam_All               1.211633 0.00000000
-SL.gam.3_All             1.187901 0.00000000
-SL.glmnet_All            1.317331 0.00000000
-SL.randomForest.ns15_All 1.269232 0.09711128
-There were 33 warnings (use warnings() to see them)
+                             Risk      Coef
+SL.mean_All              1.531384 0.0000000
+SL.glm_All               1.316628 0.0000000
+SL.bayesglm_All          1.316628 0.0000000
+SL.loess_All             1.184867 0.5911060
+SL.gam_All               1.207213 0.0000000
+SL.gam.3_All             1.185035 0.2923792
+SL.glmnet_All            1.316356 0.0000000
+SL.randomForest.ns35_All 1.266848 0.1165148
 > 
 > #-------------------------------------------
 > # estimate age-adjusted means E(Y_x)
@@ -159,7 +158,7 @@ There were 33 warnings (use warnings() to see them)
 > #-------------------------------------------
 > # save results
 > #-------------------------------------------
-> save.image(file="~/SLAbcurves/results/raw/miton-msp1-analysis.RData")
+> save.image(file="~/dropbox/articles/antibody-curves/results/raw/miton-msp1-analysis.RData")
 > 
 > 
 > 
@@ -167,4 +166,4 @@ There were 33 warnings (use warnings() to see them)
 > 
 > proc.time()
    user  system elapsed 
- 12.778   0.169  12.995 
+ 14.950   0.199  15.268 
