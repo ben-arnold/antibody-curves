@@ -46,39 +46,50 @@ SLAb.curve <-function(Y,Age,W=NULL,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm",
 	# id  : ID variable for individuals in the dataset (for repeated observations)
 	# SLlib : SuperLearner algorithm library (if different from the default, above)
 	# 
-	# the function returns a data frame with Y, Age, id, and pY (SL predictions)
+	# the function returns a data frame with id, Y, Age, W, and pY (SL predictions of marginally averaged Y at A=a)
 	
 	require(SuperLearner)
   
   
 	# if W is null, create a row of 1s so that the SL.glmnet algorithm will run
-	# this will make the SL.glm module throw warnings 
-	#   (due to a rank-deficient model). this is not a problem
+	# this will make the SL.glm library throw warnings (due to a rank-deficient model). this is not a problem
+  # create a warning handler to muffle that specific warning
+  muffw <- function(w) if( any( grepl( "prediction from a rank-deficient fit may be misleading", w) ) ) invokeRestart( "muffleWarning" )
 	if (is.null(W)) {
 	  W <- rep(1,length(Y))
 	}
   	
 	# restrict dataset to non-missing observations
-	fitd <- data.frame(Y,Age,W,id)
+	fitd <- data.frame(id,Y,Age,W)
 	fitd <- fitd[complete.cases(fitd),]
+	X <- subset(fitd,select=-c(1:2) )
 	
   # If randomForest is included in the library, 
   # select optimal node size (tree depth) using cross-validated risk
   # and then update the ensemble library to include the optimal node size
   if (grep("SL.randomForest",SLlib)>0) {
-    cvRF <- SLAb.cvRF(Y=fitd$Y,X=data.frame(fitd$Age,fitd$W),id=fitd$id,SLlib=SLlib)
+    cvRF <- SLAb.cvRF(Y=fitd$Y,X=X,id=fitd$id,SLlib=SLlib)
     SLlib <- cvRF$SLlib
   }
 	
 	# Fit SuperLearner
-	SL.fit <-SuperLearner(Y=fitd$Y,X=data.frame(fitd$Age,rep(1,nrow(fitd))),SL.library=SLlib,id=fitd$id)
+	SL.fit <- withCallingHandlers( SuperLearner(Y=fitd$Y,X=X,id=fitd$id,SL.library=SLlib), warning = muffw)
 	print(SL.fit)
 	
-	# return predicted values of Y at A=a:  E(Y|A=a, X=x) with X=x implied by
+	# obtain marginally averaged values of Y at A=a:  E_W[E(Y|A=a, X=x, W)] with X=x implied by
 	# the subset of data used to fit the function
-	fitd$pY <- predict(SL.fit)$pred
-  fitd <- fitd[order(fitd$Age),]
-	return(fitd)
+	As <- unique(X$Age)
+	pY <- rep(NA,length(As))
+	for(i in 1:length(As)) {
+	  X$Age <- As[i]
+	  pYs <- withCallingHandlers( predict(SL.fit,newdata=X)$pred, warning = muffw)
+	  pY[i] <- mean(pYs)
+	}
+	
+	# merge the marginal predictions back to the full dataset and return results
+	res <- merge(fitd,data.frame(Age=As,pY=pY),by="Age",all.x=T,all.y=T)
+  res <- res[order(res$Age),]
+	return(res)
 }
 
 
