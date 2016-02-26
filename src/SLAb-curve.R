@@ -4,8 +4,10 @@
 # ben arnold (benarnold@berkeley.edu)
 #
 # general wrapper function
-# to estimate a machine learning
-# prediction using the SuperLearner
+# to estimate a age-dependent 
+# antibody response curves 
+# using machine learning
+# prediction with the SuperLearner
 # ensemble machine learning algorithm
 #
 #-------------------------------
@@ -25,8 +27,6 @@ create.SL.gam <- function(deg.gam = c(3, 4)) {
 }
 
 create.SL.gam()
-
-
 
 #-------------------------------
 # Wrapper function:
@@ -50,13 +50,14 @@ SLAb.curve <-function(Y,Age,W=NULL,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm",
 	
 	require(SuperLearner)
   
-  
 	# if W is null, create a row of 1s so that the SL.glmnet algorithm will run
 	# this will make the SL.glm library throw warnings (due to a rank-deficient model). this is not a problem
   # create a warning handler to muffle that specific warning
   muffw <- function(w) if( any( grepl( "prediction from a rank-deficient fit may be misleading", w) ) ) invokeRestart( "muffleWarning" )
+  nullW <- FALSE
 	if (is.null(W)) {
 	  W <- rep(1,length(Y))
+	  nullW <- TRUE
 	}
   	
 	# restrict dataset to non-missing observations
@@ -76,18 +77,26 @@ SLAb.curve <-function(Y,Age,W=NULL,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm",
 	SL.fit <- withCallingHandlers( SuperLearner(Y=fitd$Y,X=X,id=fitd$id,SL.library=SLlib), warning = muffw)
 	print(SL.fit)
 	
-	# obtain marginally averaged values of Y at A=a:  E_W[E(Y|A=a, X=x, W)] with X=x implied by
-	# the subset of data used to fit the function
-	As <- unique(X$Age)
-	pY <- rep(NA,length(As))
-	for(i in 1:length(As)) {
-	  X$Age <- As[i]
-	  pYs <- withCallingHandlers( predict(SL.fit,newdata=X)$pred, warning = muffw)
-	  pY[i] <- mean(pYs)
+	# obtain marginally averaged values of Y at A=a:  E_W[E(Y|A=a, X=x, W)] 
+	# with X=x implied by the subset of data used to fit the function
+	# this parsing below is just to speed up computation in the case of
+	# no adjustment covariates W=NULL
+	# if W is not null, then need to do marginal averaging at each age
+	# and merge that back to the analysis data frame, which is slower
+	if(nullW==TRUE) {
+	  res <- fitd
+	  res$pY <- withCallingHandlers(predict(SL.fit)$pred, warning = muffw)
+	} else{
+	  As <- unique(X$Age)
+	  pY <- rep(NA,length(As))
+	  for(i in 1:length(As)) {
+	    X$Age <- As[i]
+	    pYs <- withCallingHandlers( predict(SL.fit,newdata=X)$pred, warning = muffw)
+	    pY[i] <- mean(pYs)
+	  }
+	  res <- merge(fitd,data.frame(Age=As,pY=pY),by="Age",all.x=T,all.y=T)
 	}
 	
-	# merge the marginal predictions back to the full dataset and return results
-	res <- merge(fitd,data.frame(Age=As,pY=pY),by="Age",all.x=T,all.y=T)
   res <- res[order(res$Age),]
 	return(res)
 }
