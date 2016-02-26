@@ -19,7 +19,7 @@ library(scales)
 #--------------------------------------
 # load the enterics analysis output
 #--------------------------------------
-load("~/SLAbcurves/results/raw/haiti2-usa-enterics-analysis.RData")
+load("~/dropbox/articles/antibody-curves/results/raw/haiti2-usa-enterics-analysis.RData")
 
 
 #-------------------------------
@@ -135,7 +135,7 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 
 
 
-pdf("~/SLAbcurves/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,width=10)
+pdf("~/dropbox/articles/antibody-curves/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,width=10)
 lo <- layout(mat=matrix(1:16,nrow=4,ncol=4,byrow=TRUE),widths=c(1,0.2,1,0.2))
 # lo <- layout(mat=matrix(1:2,nrow=1,ncol=2),widths=c(1,0.2))
 

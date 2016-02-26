@@ -5,21 +5,13 @@
 # fit enterics luminex reponse by
 # age and country
 #
-# version 2 (9 oct 2015)
-# cleaned up code
-# separated out plotting script
-#
-# version 2 (19 oct 2015)
-# updated pointer to base functions
-#
-# version 1 (23 sep 2015)
 #-------------------------------
 
 
 #-------------------------------
 # input files:
-#   haiti2-long.dta
-#   milwaukee2011.csv
+#   haiti-enterics-public.csv
+#   usa-enterics-public.csv
 #
 # output files:
 #   haiti2-usa-enterics-analysis.RData
@@ -30,11 +22,8 @@
 #-------------------------------
 
 rm(list=ls())
-library(foreign)
 library(SuperLearner)
 library(tmle)
-library(RColorBrewer)
-library(scales)
 
 # source the base functions for
 # SL fits of age-antibody curves
@@ -49,11 +38,9 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 # load the datasets for analysis
 #-------------------------------
 
-d.usa <- read.csv("~/dropbox/haiti2/data/final/milwaukee2011.csv")
-d.haiti <- read.dta("~/dropbox/haiti2/data/final/haiti2-long.dta")
+d.usa <- read.csv("~/dropbox/articles/antibody-curves/data/enterics/usa-enterics-public.csv")
+d.haiti <- read.csv("~/dropbox/articles/antibody-curves/data/enterics/haiti-enterics-public.csv")
 
-# add sequential ids for USA
-d.usa$id2 <- 1:nrow(d.usa)
 
 #-------------------------------
 # recode ages by adding 1/2 year
@@ -77,9 +64,7 @@ d.hai  <- subset(d.haiti,agey<=5.5)
 # data to calculate differences 
 # in means
 #-------------------------------
-d.usa$id <- d.usa$id2
 d.usa$agey <- d.usa$age
-d.usa$salb <- d.usa$sallpsb
 d.usa$haiti <- 0
 d.hai$haiti <- 1
 common.vars <- c("haiti","id","agey","cp17","cp23","vsp5","leca","etec","salb","norogi","norogii")
@@ -224,7 +209,7 @@ diff.norogii      <- SLAb.tmle(Y=log10(d.all$norogii+1),Age=d.all$agey,id=d.all$
 # save down results for later
 # plotting
 #-------------------------------
-save.image(file="~/SLAbcurves/results/raw/haiti2-usa-enterics-analysis.RData")
+save.image(file="~/dropbox/articles/antibody-curves/results/raw/haiti2-usa-enterics-analysis.RData")
 
 
 
