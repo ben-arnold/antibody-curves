@@ -1,0 +1,183 @@
+---
+title: "SuperLearner ensemble machine learning to fit age-dependent antibody curves from quantitative antibody responses, along with TMLE comparisons of marginally adjusted means"
+fontsize: 12pt
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+### Overview
+
+This document includes an example vignette for how to estimate age-dependent antibody curves using machine learning and summary differences between the curves using targeted maximum likelihood estimation (TMLE). Please see the article _Age dependent antibody curves: a general approach to measuring infectious disease transmission intensity_ (Arnold et al.) for details about the methodology. This document provides an example of how to use R functions provided in this directory.  
+
+
+### Required software
+
+The software is written in the open source R statistical software. We also recommend the free [RStudio](https://www.rstudio.com/) computing environment. There two R packages required: SuperLearner and tmle, which can be downloaded from the [CRAN repository](https://cran.r-project.org/). Gruber and van der Laan (2012) includes a helpful overview of the tmle package, and the [SuperLearner GitHub page](https://github.com/ecpolley/SuperLearner) includes additional resources beyond the R package and the original article (van der Laan et al. 2007). In addition to these R packages, there are 3 base functions that tailor the SuperLearner() and tmle() software to the present analysis. We are considering further development of this software into a full R package to make it even easier to use and more robust.
+
+* SLAb-curve.R
+    + This script includes the SLAb.curve() function along with a few internal functions. SLAb.curve() uses the ensemble SuperLearner algorithm to estimate age-dependent antibody curves by age ($a$) and group ($x$): $E(Y_{a,x})$
+* SLAb-tmle.R
+    + This script includes the SLAb.tmle() function along with a few internal functions. SLAb.tmle() uses TMLE to estimate marginally adjusted means $E(Y_x)$ and differences in means $E(Y_1) - E(Y_0)$, along with 95% confidence intervals and p-values.
+* SLAb-cvRF.R
+    + If RandomForest is included in the algorithm library, then SLAb-curve.R and SLAb-tmle.R draw on this function to first select cross-validated tuning parameters for RandomForest to avoid over-fitting the data.
+
+The preamble of an analysis script should load the software (note: your directory statement for the user-written functions may differ):
+```{r preamble,collapse=TRUE}
+require(SuperLearner)
+require(tmle)
+source("~/SLAbcurves/src/SLAb-curve.R")
+source("~/SLAbcurves/src/SLAb-tmle.R")
+source("~/SLAbcurves/src/SLAb-cvRF.R")
+```
+
+
+
+### Example Data
+
+For this example, we draw on the [publically available](http://garkiproject.nd.edu) Garki project data, which includes IFA antibody titres to _Plasmodium falciparum_ measured repeatedly in individuals living in 6 intervention villages and 2 control villages (Molineaux et. al 1980, Cornille-Brogger et al. 1978). A formatted version of the data is included in the garki-sero.csv file, located in the data/garki/final. To simplify the exposition, we will focus only on the data collected in the fifth survey, which took place after 70 weeks of intervention. The following R code loads the dataset, and subsets it to the fifth survey (again, your directory path may differ from this example):
+
+```{r read data}
+d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+d <- subset(d,serosvy==5)
+# subset the data by group and survey round for convenience
+d.c <- d[d$tr=="Control" ,]
+d.i <- d[d$tr=="Intervention",]
+
+```
+
+
+### Estimating marginally adjusted age-dependent antibody curves using SLAb.curve()
+
+The SLAb.curve() function has four arguments:
+
+* Y : the outcome of interest, measured in individuals
+* Age : age of the individual at the time of measurement
+* W : a data.frame of adjustment covariates (optional)
+* id : individual ID (can accommodate repeated measures)
+* SLlib : library of algorithms to include in the ensemble. 
+    + The default is c("SL.mean","SL.glm","SL.bayesglm","SL.loess", "SL.gam","SL.gam.3","SL.glmnet","SL.randomForest")
+
+The parameter of interest is $E(Y_{a,x}) = E_W[E(Y|A=a, X=x, W)]$.  Note that at this time, the SLAb.curve() function does not separately stratify by $X$, and so it functionally estimates $E(Y_{a}) = E_W[E(Y|A=a, W)]$, with stratification by group ($X$) achieved by estimating the curve on the stratified datasets.  Here is an example:
+
+```{r algorithm libraries,include=FALSE}
+# load other algorithm packages to clean up the output for SLAb.curve(), below
+require(randomForest)
+require(arm)
+require(gam)
+require(glmnet)
+```
+
+```{r fit EYax,collapse=TRUE,cache=TRUE}
+set.seed(625234)
+# Control villages (X=0), fitted curve
+p.c <- SLAb.curve(Y=log10(d.c$ifatpftitre+1),Age=d.c$ageyrs,id=d.c$id)
+# Intervention villages (X=1), fitted curve
+p.i <- SLAb.curve(Y=log10(d.i$ifatpftitre+1),Age=d.i$ageyrs,id=d.i$id)
+```
+Since the SuperLearner algorithm splits the data randomly by id for cross-validation, setting a seed before estimation ensures that you obtain perfectly replicated results. The printed output from SLAb.curve() is the cross-validated risk of each algorithm included in the library (column 1) along with the weight given to the algorithm in the final prediction (column 2). "Risk" in this sense is not the epidemiologic concept of risk but instead the loss function -- in this application, the loss function is the mean squared error of the predicted antibody levels compared with the actual antibody levels. In this particular example, LOESS and RandomForest (minimum node size=20) are the only algorithms used in the prediction. The weights represent the optimal combination of the algorithm predictions with respect to the cross-validated risk. The SLAb.curve() function generates a data.frame, with a marginally adjusted, predicted antibody level (pY) for each observation in the analysis dataset. 
+```{r EYax curves, collapse=TRUE}
+head(p.c)
+```
+At this time, there is no default plotting routine for SLAb.curve() output. Simple plots are easy, for example:
+```{r}
+cols <- cbPalette <- c("#D55E00","#0072B2")
+plot(p.c$Age,p.c$pY,type="l",col=cols[1],lwd=2,
+    xlim=c(0,70),xlab="Age, years",
+    ylim=c(0,4),ylab="Log10 P. Falciparum IFA antibody titre",
+    bty="n",las=1)
+lines(p.i$Age,p.i$pY,col=cols[2],lty=2,lwd=2)
+legend("topleft",legend=c("Control","Intervention"),col=cols,lty=c(1,2),lwd=2,bty="n",horiz=T)
+```
+
+Refer to the figure generating scripts in the main analysis files for examples of more refined renditions of the same output.
+
+The example so far has not included any adjustment covariates, following the main paper. If there were concern about confounding between intervention and control villages, then it is straightforward to marginally adjust the curves over the empirical distribution of those potential confounders. For example, we can marginally adjust the curves for village of residence and sex:
+
+```{r fit adj EYax,collapse=TRUE,cache=TRUE}
+# convert the two variables of interest to factor variables (to ensure correct handling):
+d.c$sex <- as.factor(d.c$sex)
+d.c$village <- as.factor(d.c$village)
+d.i$sex <- as.factor(d.i$sex)
+d.i$village <- as.factor(d.i$village)
+
+# now re-estimate the curves, marginally adjusting for sex and village
+p.c.W  <- SLAb.curve(Y=log10(d.c$ifatpftitre+1),Age=d.c$ageyrs,id=d.c$id,W=d.c[,c("sex","village")])
+p.i.W <- SLAb.curve(Y=log10(d.i$ifatpftitre+1),Age=d.i$ageyrs,id=d.i$id,W=d.i[,c("sex","village")])
+
+```
+
+Below is a plot of the marginally adjusted age-antibody curves with the unadjusted curves from the previous figure (solid black lines) for reference.  The adjusted and unadjusted curves are very similar suggesting that age and village of residence do not confound the observed differences between _P. falciparum_ antibody response in control and intervention villages.
+```{r EYax adjusted curves,echo=FALSE}
+cols <- cbPalette <- c("#D55E00","#0072B2")
+plot(p.c$Age,p.c$pY,type="l",col="black",lwd=1,
+    xlim=c(0,70),xlab="Age, years",
+    ylim=c(0,4),ylab="Log10 P. Falciparum IFA antibody titre",
+    bty="n",las=1)
+lines(p.i$Age,p.i$pY,col="black",lty=1,lwd=1)
+lines(p.c.W$Age,p.c.W$pY,col=cols[1],lty=1,lwd=2)
+lines(p.i.W$Age,p.i.W$pY,col=cols[2],lty=2,lwd=2)
+legend("topleft",legend=c("Control","Intervention"),col=cols,lty=c(1,2),lwd=2,bty="n",horiz=T)
+```
+
+### Estimating targeted means and mean differences between curves using SLAb.tmle()
+
+Fitting age-antibody curves provides a visual comparison between groups, but the nonparametric fits do not provide statistical inference for differences between the curves. Group means are a smooth functional of the curve, which allows for asymptotically normally distributed and efficient estimators. One such estimator is targeted maximum likelihood estimation (TMLE) (van der Laan and Rubin 2006, van der Laan and Rose 2011). Here, the parameter of interest is the group mean or difference in means, marginally averaged over age and potentially other covariates: $E(Y_x) = E_{A,W}[E(Y|X=x,A,W)]$.
+
+The SLAb.tmle() function has identical arguments to SLAb.curve(), but with two additions (X, diff):
+
+* Y : the outcome of interest, measured in individuals
+* Age : age of the individual at the time of measurement
+* X : comparison group indicator (must be binary, 0/1) (optional)
+* W : a data.frame of adjustment covariates (optional)
+* id : individual ID (can accommodate repeated measures)
+* SLlib : library of algorithms to include in the ensemble. 
+    + The default is c("SL.mean","SL.glm","SL.bayesglm","SL.loess", "SL.gam","SL.gam.3","SL.glmnet","SL.randomForest")
+* diff: logical. calculate the difference between treatment groups? 
+    + If FALSE (default), it returns the mean. 
+    + If TRUE, it returns the difference in means between groups defined by $X$
+
+Below, we estimate the means by group:
+
+```{r EYx estimates,collapse=TRUE}
+EYx.c <- SLAb.tmle(Y=log10(d.c$ifatpftitre+1),Age=d.c$ageyrs,id=d.c$id)
+EYx.i <- SLAb.tmle(Y=log10(d.i$ifatpftitre+1),Age=d.i$ageyrs,id=d.i$id)
+```
+
+Then estimate the difference in means:
+```{r EY1-EY0 estimates,collapse=TRUE}
+# create a numeric 0/1 exposure variable
+d$tr01 <- ifelse(d$tr=="Control",0,1)
+diff.EYx <- SLAb.tmle(Y=log10(d$ifatpftitre+1),Age=d$ageyrs,id=d$id,X=d$tr01,diff=TRUE)
+```
+
+The differences are highly significant at the 95% confidence level. Note that the standard errors account for repeated measures within individuals identified using the id variable.
+
+### Comment about work flow used in the example
+
+Note that the difference is estimated using the full dataset (d), not the stratified control (d.c) and intervention datasets (d.i). In this example, we created stratified datasets for parsimony to illustrate how to fit the age-antibody curves (last section). That can sometimes be easier for work flow in an analysis. However, the age-antibody curves (and their summary means) can be estimated on the full data just as easily by subsetting the function input to the rows of the dataset for the group of interest. For example, this alternate syntax for fitting the age-antibody curves produces identical fits to those above, but is run on the full dataset:
+
+```{r alt EYax example,collapse=TRUE}
+set.seed(625234)
+# Control villages (X=0), fitted curve
+p.c <- SLAb.curve(Y=log10(d$ifatpftitre[d$tr=="Control"]+1),Age=d$ageyrs[d$tr=="Control"],id=d$id[d$tr=="Control"])
+# Intervention villages (X=1), fitted curve
+p.i <- SLAb.curve(Y=log10(d$ifatpftitre[d$tr=="Intervention"]+1),Age=d$ageyrs[d$tr=="Intervention"],id=d$id[d$tr=="Intervention"])
+```
+
+
+### References
+
+Cornille-Brögger, R., H. M. Mathews, J. Storey, T. S. Ashkar, S. Brögger, and L. Molineaux. 1978. “Changing Patterns in the Humoral Immune Response to Malaria Before, During, and after the Application of Control Measures: A Longitudinal Study in the West African Savanna.” _Bulletin of the World Health Organization_ 56 (4): 579–600.
+
+Gruber, S, and M. J. van der Laan. 2012. “tmle: An R Package for Targeted Maximum Likelihood Estimation.” Journal of Statistical Software 51 (13): 1–35.
+
+Molineaux, L., and G. Gramiccia. 1980. “The Garki Project.” World Health Organization. http://garkiproject.nd.edu/static/documents/garkiproject.pdf.
+
+van der Laan, M. J., and D. Rubin. 2006. “Targeted Maximum Likelihood Learning.” The International Journal of Biostatistics 2 (1): 1–38.
+
+van der Laan, M. J., E. C. Polley, and A. E. Hubbard. 2007. “Super Learner.” Statistical Applications in Genetics and Molecular Biology 6 (1): 1544–6115.
+
+van der Laan, M. J., and S. Rose. 2011. Targeted Learning: Causal Inference for Observational and Experimental Data. Springer Series in Statistics.
+
