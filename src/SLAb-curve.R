@@ -56,12 +56,15 @@ SLAb.curve <-function(Y,Age,W=NULL,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm",
   muffw <- function(w) if( any( grepl( "prediction from a rank-deficient fit may be misleading", w) ) ) invokeRestart( "muffleWarning" )
   nullW <- FALSE
 	if (is.null(W)) {
-	  W <- rep(1,length(Y))
+	  Wdesign <- rep(1,length(Y))
 	  nullW <- TRUE
+	} else{
+	  # convert W into a design matrix (SuperLearner does not acommodate factor variables)
+	  Wdesign <- design.matrix(W)
 	}
-  	
+  
 	# restrict dataset to non-missing observations
-	fitd <- data.frame(id,Y,Age,W)
+	fitd <- data.frame(id,Y,Age,Wdesign)
 	fitd <- fitd[complete.cases(fitd),]
 	X <- subset(fitd,select=-c(1:2) )
 	
@@ -84,7 +87,7 @@ SLAb.curve <-function(Y,Age,W=NULL,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm",
 	# if W is not null, then need to do marginal averaging at each age
 	# and merge that back to the analysis data frame, which is slower
 	if(nullW==TRUE) {
-	  res <- fitd
+	  res <- fitd[,1:3]
 	  res$pY <- withCallingHandlers(predict(SL.fit)$pred, warning = muffw)
 	} else{
 	  As <- unique(X$Age)
@@ -103,5 +106,41 @@ SLAb.curve <-function(Y,Age,W=NULL,id,SLlib= c("SL.mean","SL.glm","SL.bayesglm",
 
 
 
+# --------------------------------------
+# automatic transform of a covariate
+# data.frame with factors into one
+# with indicator variables (and an 
+# ommitted category)
+# --------------------------------------
+design.matrix <- function(W) {
+  # W : data frame of covariates that might include factors
+  if(class(W)!="matrix" & class(W)!="data.frame"){
+    #cat("\n-----------------------------------------\nThe design matrix you supplied is not a matrix or a data.frame\nAssuming that it is a single variable\n-----------------------------------------\n")
+    W <- data.frame(W)
+  }
+  ncolW <- ncol(W)
+  flist <- numeric()
+  for(i in 1:ncolW) {
+    if(class(W[,i])!="factor"){
+      next
+    } else {
+      flist <- c(flist,i)
+      # strip out extra levels
+      W[,i] <- factor(W[,i])
+      # create a design matrix, remove the first level
+      mm <- model.matrix(~-1+W[,i])
+      mW <- mm[,-c(1)]
+      # format the names of the indicator variables
+      # and add them to the design matrix
+      levs <- gsub(" ","",levels(W[,i]) )[-c(1)]
+      if(length(levs)<2) mW <- matrix(mW,ncol=1)
+      colnames(mW) <- paste(names(W)[i],levs,sep="")
+      W <- data.frame(W,mW)
+    }
+  }
+  # now drop the factors that have been replaced by indicators
+  W <- W[,-c(flist)]
+  return(W)
+}
 
 
