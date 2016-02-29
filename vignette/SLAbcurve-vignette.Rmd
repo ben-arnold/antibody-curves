@@ -1,5 +1,5 @@
 ---
-title: "SuperLearner ensemble machine learning to fit age-dependent antibody curves from quantitative antibody responses, along with TMLE comparisons of marginally adjusted means"
+title: "Ensemble machine learning to fit age-dependent antibody curves from quantitative antibody responses, along with TMLE comparisons of marginally adjusted means"
 fontsize: 12pt
 output: html_document
 ---
@@ -14,7 +14,7 @@ This document includes an example vignette for how to estimate age-dependent ant
 
 ### Required software
 
-The software is written in the open source R statistical software. We also recommend the free [RStudio](https://www.rstudio.com/) computing environment. There two R packages required: SuperLearner and tmle, which can be downloaded from the [CRAN repository](https://cran.r-project.org/). Gruber and van der Laan (2012) includes a helpful overview of the tmle package, and the [SuperLearner GitHub page](https://github.com/ecpolley/SuperLearner) includes additional resources beyond the R package and the original article (van der Laan et al. 2007). In addition to these R packages, there are 3 base functions that tailor the SuperLearner() and tmle() software to the present analysis. We are considering further development of this software into a full R package to make it even easier to use and more robust.
+The software is written in the open source R statistical software. We also recommend the free [RStudio](https://www.rstudio.com/) computing environment. There two R packages required: SuperLearner and tmle, which can be downloaded from the [CRAN repository](https://cran.r-project.org/). Gruber and van der Laan (2012) includes a helpful overview of the tmle package, and the [SuperLearner GitHub page](https://github.com/ecpolley/SuperLearner) includes additional resources beyond the R package and the original article (van der Laan et al. 2007). In addition to these R packages, there are 3 base functions that tailor the SuperLearner() and tmle() software to the present analysis. We hope to further develop this software into a full R package to make it even easier to use and more robust, and will update the OSF project page if a package is available. The "SLAb" prefix in the functions below is short for SuperLearner (SL) Antibody (Ab).
 
 * SLAb-curve.R
     + This script includes the SLAb.curve() function along with a few internal functions. SLAb.curve() uses the ensemble SuperLearner algorithm to estimate age-dependent antibody curves by age ($a$) and group ($x$): $E(Y_{a,x})$
@@ -36,7 +36,7 @@ source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 ### Example Data
 
-For this example, we draw on the [publically available](http://garkiproject.nd.edu) Garki project data, which includes IFA antibody titres to _Plasmodium falciparum_ measured repeatedly in individuals living in 6 intervention villages and 2 control villages (Molineaux et. al 1980, Cornille-Brogger et al. 1978). A formatted version of the data is included in the garki-sero.csv file, located in the data/garki/final. To simplify the exposition, we will focus only on the data collected in the fifth survey, which took place after 70 weeks of intervention. The following R code loads the dataset, and subsets it to the fifth survey (again, your directory path may differ from this example):
+For this example, we draw on the [publically available](http://garkiproject.nd.edu) Garki project data, which includes IFA antibody titres to _Plasmodium falciparum_ measured repeatedly in individuals living in 6 intervention villages and 2 control villages (Molineaux et. al 1980, Cornille-Brogger et al. 1978). A formatted version of the data is included in the garki-sero.csv file, located in the data/garki/final project directory. To simplify the exposition, we will focus only on the data collected in the fifth survey, which took place after 70 weeks of intervention. The following R code loads the dataset, and subsets it to the fifth survey (again, your directory path may differ from this example):
 
 ```{r read data}
 d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
@@ -108,7 +108,7 @@ p.i.W <- SLAb.curve(Y=log10(d.i$ifatpftitre+1),Age=d.i$ageyrs,id=d.i$id,W=d.i[,c
 
 ```
 
-Below is a plot of the marginally adjusted age-antibody curves with the unadjusted curves from the previous figure (solid black lines) for reference.  The adjusted and unadjusted curves are very similar suggesting that age and village of residence do not confound the observed differences between _P. falciparum_ antibody response in control and intervention villages.
+Below is a plot of the marginally adjusted age-antibody curves with the unadjusted curves from the previous figure (solid black lines) for reference.  The adjusted and unadjusted curves are very similar suggesting that sex and village of residence do not confound the observed differences between _P. falciparum_ antibody response in control and intervention villages.
 ```{r EYax adjusted curves,echo=FALSE}
 cols <- cbPalette <- c("#D55E00","#0072B2")
 plot(p.c$Age,p.c$pY,type="l",col="black",lwd=1,
@@ -138,14 +138,14 @@ The SLAb.tmle() function has identical arguments to SLAb.curve(), but with two a
     + If FALSE (default), it returns the mean. 
     + If TRUE, it returns the difference in means between groups defined by $X$
 
-Below, we estimate the means by group:
+This is an example of how to estimate the means by group:
 
 ```{r EYx estimates,collapse=TRUE}
 EYx.c <- SLAb.tmle(Y=log10(d.c$ifatpftitre+1),Age=d.c$ageyrs,id=d.c$id)
 EYx.i <- SLAb.tmle(Y=log10(d.i$ifatpftitre+1),Age=d.i$ageyrs,id=d.i$id)
 ```
 
-Then estimate the difference in means:
+And, this is an example of how to estimate the difference in means:
 ```{r EY1-EY0 estimates,collapse=TRUE}
 # create a numeric 0/1 exposure variable
 d$tr01 <- ifelse(d$tr=="Control",0,1)
@@ -169,15 +169,15 @@ p.i <- SLAb.curve(Y=log10(d$ifatpftitre[d$tr=="Intervention"]+1),Age=d$ageyrs[d$
 
 ### References
 
-Cornille-Brögger, R., H. M. Mathews, J. Storey, T. S. Ashkar, S. Brögger, and L. Molineaux. 1978. “Changing Patterns in the Humoral Immune Response to Malaria Before, During, and after the Application of Control Measures: A Longitudinal Study in the West African Savanna.” _Bulletin of the World Health Organization_ 56 (4): 579–600.
+Cornille-Brögger, R., H. M. Mathews, J. Storey, T. S. Ashkar, S. Brögger, and L. Molineaux. 1978. Changing Patterns in the Humoral Immune Response to Malaria Before, During, and after the Application of Control Measures: A Longitudinal Study in the West African Savanna. _Bulletin of the World Health Organization_ 56(4): 579–600.
 
-Gruber, S, and M. J. van der Laan. 2012. “tmle: An R Package for Targeted Maximum Likelihood Estimation.” Journal of Statistical Software 51 (13): 1–35.
+Gruber, S, and M. J. van der Laan. 2012. tmle: An R Package for Targeted Maximum Likelihood Estimation. _Journal of Statistical Software_ 51(13): 1–35.
 
-Molineaux, L., and G. Gramiccia. 1980. “The Garki Project.” World Health Organization. http://garkiproject.nd.edu/static/documents/garkiproject.pdf.
+Molineaux, L., and G. Gramiccia. 1980. The Garki Project. World Health Organization. http://garkiproject.nd.edu/static/documents/garkiproject.pdf.
 
-van der Laan, M. J., and D. Rubin. 2006. “Targeted Maximum Likelihood Learning.” The International Journal of Biostatistics 2 (1): 1–38.
+van der Laan, M. J., and D. Rubin. 2006. Targeted Maximum Likelihood Learning. _International Journal of Biostatistics_ 2(1): 1–38.
 
-van der Laan, M. J., E. C. Polley, and A. E. Hubbard. 2007. “Super Learner.” Statistical Applications in Genetics and Molecular Biology 6 (1): 1544–6115.
+van der Laan, M. J., E. C. Polley, and A. E. Hubbard. 2007. Super Learner. _Statistical Applications in Genetics and Molecular Biology_ 6(1): 1544–6115.
 
-van der Laan, M. J., and S. Rose. 2011. Targeted Learning: Causal Inference for Observational and Experimental Data. Springer Series in Statistics.
+van der Laan, M. J., and S. Rose. 2011. _Targeted Learning: Causal Inference for Observational and Experimental Data_. Springer Series in Statistics.
 
