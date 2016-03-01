@@ -74,7 +74,7 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
 	
 	# Axis labels
-	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
+	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (light units)")),side=2,line=3,cex=1.25)
 	mtext("Age, years",side=1,line=3,cex=1.5)
 	mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
 	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
@@ -126,7 +126,7 @@ axis(side=2,at=ytics,labels=c(
 )
 # X labels and line segments
 mtext(levels(a7592$agecat),side=1,line=1,at=1:4,cex=1.5)
-mtext("Age Category, Years",side=1,line=3,cex=1.5)
+mtext("Age category, years",side=1,line=3,cex=1.5)
 
 # Y label
 mtext("b",line=1,at=-0.3,adj=0,font=2,cex=2)

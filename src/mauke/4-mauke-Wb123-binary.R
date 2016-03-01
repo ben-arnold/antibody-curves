@@ -169,7 +169,7 @@ rug.hgh <- ifelse(mauke75$Y[mauke75$Age<=70.5]==1,1,mauke75$Y[mauke75$Age<=70.5]
 segments(x0=jitter(mauke75$Age[mauke75$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col=cols[1])
 
 # Axis labels
-mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
+mtext(expression(paste(italic('W. bancrofti')," Wb123 seroprevalence (%)")),side=2,line=3,cex=1.25)
 # mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),") in 1975 (pre-MDA)")),line=1,cex=1.5)
@@ -219,7 +219,7 @@ lines(mauke75$Age,mauke75$pY,col=cols[1],lwd=2)
 lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
 
 # Axis labels
-mtext(expression(paste(italic('W. bancrofti')," Wb123 Seroprevalence (%)")),side=2,line=3,cex=1.25)
+mtext(expression(paste(italic('W. bancrofti')," Wb123 seroprevalence (%)")),side=2,line=3,cex=1.25)
 mtext("Age, years",side=1,line=3,cex=1.5)
 mtext("c",line=1,at=-10,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
@@ -242,10 +242,10 @@ plot(1:4,1:4,type="n",
 axis(2,at=ytics,labels=seq(0,100,by=10), las=1,cex.axis=1.5)
 # labels and line segments
 mtext(levels(a7592$agecat),side=1,line=1,at=1:4,cex=1.5)
-mtext("Age Category, Years",side=1,line=3,cex=1.5)
+mtext("Age category, years",side=1,line=3,cex=1.5)
 
 # Y label
-mtext("d",line=1,at=-0.3,adj=0,font=2,cex=2)
+mtext("d",line=1,at=-0.07,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
 # mtext(c("1975","1992"),at=c(1,2),col=cols[1:2],side=3,line=-0.5)
 

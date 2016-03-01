@@ -61,7 +61,7 @@ SLAb.plotLong <- function(Ab1,Ab2,mu1,mu2,diff,labels=c("Ab-","Ab-"),letter="",y
   # axes
   mtext(labels,side=3,line=0.5,at=xs,col=cols[1:2])
   mtext(c("1975","1992"),side=1,line=0,at=xs,col=cols[1:2])
-  if (ylabel==TRUE) mtext(expression(paste(italic('W. bancrofti'), " Wb123 (Light Units)")),side=2,line=3.5,cex=1.25)
+  if (ylabel==TRUE) mtext(expression(paste(italic('W. bancrofti'), " Wb123 (light units)")),side=2,line=3.5,cex=1.25)
   axis(2,at=2:6,labels=c(
     # expression(10^-1),
     # expression(10^0),

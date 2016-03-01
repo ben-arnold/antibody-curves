@@ -1,5 +1,5 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -47,10 +47,8 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmle)
 Welcome to the tmle package, version 1.2.0-2
@@ -137,7 +135,7 @@ The following object is masked from ‘package:SuperLearner’:
 + 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971]
 + 	)
 Loading required package: randomForest
-randomForest 4.6-10
+randomForest 4.6-12
 Type rfNews() to see new features/changes/bug fixes.
 Loading required package: arm
 Loading required package: MASS
@@ -168,14 +166,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                               Risk      Coef
-SL.mean_All              0.2301414 0.0000000
-SL.glm_All               0.2295111 0.0000000
-SL.bayesglm_All          0.2295101 0.0000000
-SL.loess_All             0.2139743 0.6354216
-SL.gam_All               0.2222486 0.0000000
-SL.gam.3_All             0.2176895 0.0000000
-SL.glmnet_All            0.2319802 0.0000000
-SL.randomForest.ns30_All 0.2166683 0.3645784
+SL.mean_All              0.2284520 0.0000000
+SL.glm_All               0.2288412 0.0000000
+SL.bayesglm_All          0.2288409 0.0000000
+SL.loess_All             0.2232336 0.1495932
+SL.gam_All               0.2214185 0.0000000
+SL.gam.3_All             0.2180982 0.4766269
+SL.glmnet_All            0.2294561 0.0000000
+SL.randomForest.ns35_All 0.2188458 0.3737799
 There were 50 or more warnings (use warnings() to see the first 50)
 > ajura.1972.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1972]+1),
@@ -186,15 +184,15 @@ There were 50 or more warnings (use warnings() to see the first 50)
 Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.2441052 0.0000000
-SL.glm_All               0.2340155 0.0000000
-SL.bayesglm_All          0.2340160 0.0000000
-SL.loess_All             0.2008997 0.7088613
-SL.gam_All               0.2227311 0.0000000
-SL.gam.3_All             0.2155626 0.0000000
-SL.glmnet_All            0.2338542 0.0000000
-SL.randomForest.ns40_All 0.2080620 0.2911387
+                              Risk       Coef
+SL.mean_All              0.2431460 0.04330316
+SL.glm_All               0.2359857 0.00000000
+SL.bayesglm_All          0.2359848 0.00000000
+SL.loess_All             0.1924921 0.95669684
+SL.gam_All               0.2212631 0.00000000
+SL.gam.3_All             0.2119307 0.00000000
+SL.glmnet_All            0.2362580 0.00000000
+SL.randomForest.ns15_All 0.2072867 0.00000000
 > ajura.1973.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1973]+1),
 + 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1973],
@@ -205,14 +203,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                               Risk      Coef
-SL.mean_All              0.5556666 0.0000000
-SL.glm_All               0.5341850 0.0000000
-SL.bayesglm_All          0.5341844 0.0000000
-SL.loess_All             0.4461395 0.7064957
-SL.gam_All               0.4971858 0.0000000
-SL.gam.3_All             0.4768319 0.0000000
-SL.glmnet_All            0.5328718 0.0000000
-SL.randomForest.ns25_All 0.4620004 0.2935043
+SL.mean_All              0.5581894 0.0000000
+SL.glm_All               0.5310775 0.0000000
+SL.bayesglm_All          0.5310758 0.0000000
+SL.loess_All             0.4291423 0.8596424
+SL.gam_All               0.4907222 0.0000000
+SL.gam.3_All             0.4685544 0.0000000
+SL.glmnet_All            0.5307091 0.0000000
+SL.randomForest.ns30_All 0.4545713 0.1403576
 > 
 > rafin.1971.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1971]+1),
@@ -223,15 +221,15 @@ SL.randomForest.ns25_All 0.4620004 0.2935043
 Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.3024786 0.0000000
-SL.glm_All               0.2946094 0.0000000
-SL.bayesglm_All          0.2946076 0.0000000
-SL.loess_All             0.2831391 0.3387519
-SL.gam_All               0.2887001 0.0000000
-SL.gam.3_All             0.2831751 0.0000000
-SL.glmnet_All            0.2990314 0.0000000
-SL.randomForest.ns30_All 0.2758485 0.6612481
+                              Risk       Coef
+SL.mean_All              0.3026113 0.00000000
+SL.glm_All               0.2951500 0.00000000
+SL.bayesglm_All          0.2951493 0.00000000
+SL.loess_All             0.2920478 0.05441951
+SL.gam_All               0.2899745 0.00000000
+SL.gam.3_All             0.2872259 0.42210350
+SL.glmnet_All            0.2950987 0.00000000
+SL.randomForest.ns40_All 0.2862331 0.52347699
 There were 14 warnings (use warnings() to see them)
 > rafin.1972.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1972]+1),
@@ -243,14 +241,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                               Risk      Coef
-SL.mean_All              0.8879689 0.0000000
-SL.glm_All               0.7322316 0.0000000
-SL.bayesglm_All          0.7322304 0.0000000
-SL.loess_All             0.4979686 0.6625622
-SL.gam_All               0.5755170 0.0000000
-SL.gam.3_All             0.5234774 0.0000000
-SL.glmnet_All            0.7334838 0.0000000
-SL.randomForest.ns20_All 0.5443500 0.3374378
+SL.mean_All              0.8798533 0.0000000
+SL.glm_All               0.7306504 0.0000000
+SL.bayesglm_All          0.7306486 0.0000000
+SL.loess_All             0.5051545 0.6238385
+SL.gam_All               0.5743086 0.0000000
+SL.gam.3_All             0.5240923 0.0000000
+SL.glmnet_All            0.7306867 0.0000000
+SL.randomForest.ns25_All 0.5409009 0.3761615
 > rafin.1973.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1973]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1973],
@@ -261,14 +259,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                               Risk      Coef
-SL.mean_All              1.2945635 0.0000000
-SL.glm_All               0.8628188 0.0000000
-SL.bayesglm_All          0.8628168 0.0000000
-SL.loess_All             0.4902831 0.7767946
-SL.gam_All               0.6062409 0.0000000
-SL.gam.3_All             0.5275745 0.0000000
-SL.glmnet_All            0.8625702 0.0000000
-SL.randomForest.ns20_All 0.6385411 0.2232054
+SL.mean_All              1.2770013 0.0000000
+SL.glm_All               0.8478621 0.0000000
+SL.bayesglm_All          0.8478607 0.0000000
+SL.loess_All             0.4791807 0.7803902
+SL.gam_All               0.5976082 0.0000000
+SL.gam.3_All             0.5244612 0.0000000
+SL.glmnet_All            0.8482495 0.0000000
+SL.randomForest.ns25_All 0.6315359 0.2196098
 > rafin.1974.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1974]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1974],
@@ -279,14 +277,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                              Risk      Coef
-SL.mean_All              1.627967 0.0000000
-SL.glm_All               1.393562 0.0000000
-SL.bayesglm_All          1.393559 0.0000000
-SL.loess_All             1.080864 0.4308148
-SL.gam_All               1.134822 0.0000000
-SL.gam.3_All             1.072488 0.3547515
-SL.glmnet_All            1.397347 0.0000000
-SL.randomForest.ns20_All 1.161897 0.2144337
+SL.mean_All              1.605892 0.0000000
+SL.glm_All               1.371690 0.0000000
+SL.bayesglm_All          1.371687 0.0000000
+SL.loess_All             1.083389 0.2977177
+SL.gam_All               1.121440 0.0000000
+SL.gam.3_All             1.063443 0.5231987
+SL.glmnet_All            1.370847 0.0000000
+SL.randomForest.ns40_All 1.156818 0.1790836
 > rafin.1975.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1975]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1975],
@@ -296,15 +294,15 @@ SL.randomForest.ns20_All 1.161897 0.2144337
 Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              1.2945624 0.0000000
-SL.glm_All               1.1467757 0.0000000
-SL.bayesglm_All          1.1467648 0.0000000
-SL.loess_All             0.9681819 0.0000000
-SL.gam_All               0.9620393 0.0000000
-SL.gam.3_All             0.9342499 0.7806071
-SL.glmnet_All            1.1468326 0.0000000
-SL.randomForest.ns20_All 1.0145988 0.2193929
+                              Risk     Coef
+SL.mean_All              1.2737657 0.000000
+SL.glm_All               1.0872318 0.000000
+SL.bayesglm_All          1.0872297 0.000000
+SL.loess_All             0.9354051 0.000000
+SL.gam_All               0.9311350 0.000000
+SL.gam.3_All             0.8991624 0.727521
+SL.glmnet_All            1.0812624 0.000000
+SL.randomForest.ns15_All 0.9588212 0.272479
 > 
 > nasak.1971.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1971]+1),
@@ -316,14 +314,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                               Risk      Coef
-SL.mean_All              0.1537679 0.6441938
-SL.glm_All               0.1545321 0.3558062
-SL.bayesglm_All          0.1545322 0.0000000
-SL.loess_All             0.1670293 0.0000000
-SL.gam_All               0.1564497 0.0000000
-SL.gam.3_All             0.1601086 0.0000000
-SL.glmnet_All            0.1570246 0.0000000
-SL.randomForest.ns20_All 0.1562139 0.0000000
+SL.mean_All              0.1539970 0.8092094
+SL.glm_All               0.1554236 0.0000000
+SL.bayesglm_All          0.1554233 0.1907906
+SL.loess_All             0.1669586 0.0000000
+SL.gam_All               0.1576687 0.0000000
+SL.gam.3_All             0.1605681 0.0000000
+SL.glmnet_All            0.1577835 0.0000000
+SL.randomForest.ns40_All 0.1569191 0.0000000
 There were 50 or more warnings (use warnings() to see the first 50)
 > nasak.1972.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1972]+1),
@@ -334,15 +332,15 @@ There were 50 or more warnings (use warnings() to see the first 50)
 Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              0.5118781 0.0000000
-SL.glm_All               0.4441788 0.0000000
-SL.bayesglm_All          0.4441788 0.0000000
-SL.loess_All             0.3469323 0.7856866
-SL.gam_All               0.4068165 0.0000000
-SL.gam.3_All             0.3819198 0.0000000
-SL.glmnet_All            0.4441444 0.0000000
-SL.randomForest.ns15_All 0.3776159 0.2143134
+                              Risk     Coef
+SL.mean_All              0.5147277 0.000000
+SL.glm_All               0.4482886 0.000000
+SL.bayesglm_All          0.4482882 0.000000
+SL.loess_All             0.3400331 0.808378
+SL.gam_All               0.4087072 0.000000
+SL.gam.3_All             0.3802305 0.000000
+SL.glmnet_All            0.4476616 0.000000
+SL.randomForest.ns30_All 0.3728610 0.191622
 > nasak.1973.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1973]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1973],
@@ -352,15 +350,15 @@ SL.randomForest.ns15_All 0.3776159 0.2143134
 Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk       Coef
-SL.mean_All              1.2912469 0.00000000
-SL.glm_All               0.8474301 0.00000000
-SL.bayesglm_All          0.8474288 0.00000000
-SL.loess_All             0.5034072 0.91333568
-SL.gam_All               0.6632551 0.00000000
-SL.gam.3_All             0.5942188 0.00000000
-SL.glmnet_All            0.8456123 0.00000000
-SL.randomForest.ns15_All 0.6961504 0.08666432
+                              Risk      Coef
+SL.mean_All              1.2890427 0.0000000
+SL.glm_All               0.8410357 0.0000000
+SL.bayesglm_All          0.8410347 0.0000000
+SL.loess_All             0.5213018 0.8633205
+SL.gam_All               0.6604762 0.0000000
+SL.gam.3_All             0.5945677 0.0000000
+SL.glmnet_All            0.8392919 0.0000000
+SL.randomForest.ns15_All 0.6887141 0.1366795
 > nasak.1974.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1974]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1974],
@@ -370,15 +368,15 @@ SL.randomForest.ns15_All 0.6961504 0.08666432
 Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
 
 
-                              Risk      Coef
-SL.mean_All              1.7353316 0.0000000
-SL.glm_All               1.3694075 0.0000000
-SL.bayesglm_All          1.3694045 0.0280395
-SL.loess_All             0.9575108 0.7478980
-SL.gam_All               1.1317252 0.0000000
-SL.gam.3_All             1.0119146 0.2240625
-SL.glmnet_All            1.3724079 0.0000000
-SL.randomForest.ns15_All 1.1389550 0.0000000
+                              Risk        Coef
+SL.mean_All              1.7135939 0.000000000
+SL.glm_All               1.3518136 0.000000000
+SL.bayesglm_All          1.3518107 0.009431821
+SL.loess_All             0.9061318 0.848016387
+SL.gam_All               1.1038993 0.059172984
+SL.gam.3_All             0.9835564 0.083378808
+SL.glmnet_All            1.3482758 0.000000000
+SL.randomForest.ns20_All 1.1257197 0.000000000
 > nasak.1975.SL <- SLAb.curve(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1975]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1975],
@@ -389,14 +387,14 @@ Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id)
 
 
                               Risk      Coef
-SL.mean_All              1.0872511 0.0000000
-SL.glm_All               0.9117336 0.0000000
-SL.bayesglm_All          0.9117280 0.0000000
-SL.loess_All             0.5814585 0.7507575
-SL.gam_All               0.7548246 0.0000000
-SL.gam.3_All             0.6892388 0.0000000
-SL.glmnet_All            0.9118886 0.0000000
-SL.randomForest.ns40_All 0.6594417 0.2492425
+SL.mean_All              1.1012084 0.0000000
+SL.glm_All               0.9379400 0.0000000
+SL.bayesglm_All          0.9379343 0.0000000
+SL.loess_All             0.6219903 0.7010982
+SL.gam_All               0.7952408 0.0000000
+SL.gam.3_All             0.7386443 0.0000000
+SL.glmnet_All            0.9360809 0.0000000
+SL.randomForest.ns20_All 0.6865623 0.2989018
 > 
 > #-------------------------------
 > # TMLE estimates of age-adjusted
@@ -569,9 +567,9 @@ sample estimates:
 + 		las=1,cex.axis=1.25
 + 	)
 >   mtext("d",adj=1,line=0.5,at=-0.4,font=2,cex=2)
-> 	mtext("Wet Season Village Geometric Mean",side=2,line=4,cex=1.25)
+> 	mtext("Wet season village geometric mean",side=2,line=4,cex=1.25)
 >   mtext(expression(paste(italic('P. falciparum')," IFA antibody titre, ", italic(E(Y[x])) )) ,side=2,line=2.5,cex=1.25)
-> 	mtext("Entomological Inoculation Rate\n(Cumulative Wet Season Infectious Bites per Person)",side=1,line=3.5,cex=1.25)
+> 	mtext("Entomological Inoculation Rate\n(cumulative wet season infectious bites per person)",side=1,line=3.5,cex=1.25)
 > 	text(2,1,rho.text,adj=1,cex=1.25)
 > 	
 > 	# Ajura
@@ -621,4 +619,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
- 88.913   1.415  92.286 
+ 79.890   0.774  82.966 

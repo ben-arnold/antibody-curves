@@ -65,10 +65,10 @@ axis(side=2,at=ytics,labels=c(
 )
 # X labels 
 mtext(levels(a7592$agecat2),side=1,line=3.5,at=1:5,cex=1.5)
-mtext("Age Category, Years",side=1,line=5.5,cex=1.5)
+mtext("Age category, years",side=1,line=5.5,cex=1.5)
 
 # Y label
-mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (Light Units)")),side=2,line=3,cex=1.25)
+mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (light units)")),side=2,line=3,cex=1.25)
 
 # header
 mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)

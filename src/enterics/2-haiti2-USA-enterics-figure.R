@@ -61,7 +61,7 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	
 	# axes
 	if (xlabel==TRUE) mtext("Age, years",side=1,line=3,cex=1.5)
-	if (ylabel==TRUE) mtext("Luminex Response (MFI-Background)",side=2,line=3.5,cex=1.25)
+	if (ylabel==TRUE) mtext("Luminex response (MFI-background)",side=2,line=3.5,cex=1.25)
 	axis(1,at=xtics,cex.axis=1.5)
 	axis(2,at=0:5,labels=c(
 		# expression(10^-1),
