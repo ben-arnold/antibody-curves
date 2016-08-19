@@ -40,16 +40,16 @@ SL.yman2016 <- function(Y,X,newX=NULL) {
   # close out if X is more than 1 dimension
   X <- data.frame(X)
   if(ncol(X)>1) {
-    stop("For the SL.yman2016 model, X can only include one variable (age)\n")
+    warning("For the SL.yman2016 model, X can only include one variable (age)\n")
   }
   
   # ML fit given X and Y
-  mlfit <- optim(c(0.1,0.01,1),fn=LL,X=X$X,Y=Y)
+  mlfit <- optim(c(0.1,0.01,1),fn=LL,X=X[,1],Y=Y)
   fit <- list(object = mlfit)
   class(fit) <- "SL.yman2016"
   
   # predicted values
-  if(is.null(newX)) newX <- X
+  if(is.null(newX)) newX <- X[,1]
   pred <- predict(fit,newdata=newX)
  
   # return results
