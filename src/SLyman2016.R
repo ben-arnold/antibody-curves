@@ -48,6 +48,7 @@ SL.yman2016 <- function(Y,X,newX=NULL,...) {
   
   # ML fit of L(theta | X, Y)
   mlfit <- optim(c(0.1,0.01,1),fn=LL,Age=X,logAb=Y)
+
   fit <- list(object = mlfit)
   class(fit) <- "SL.yman2016"
   
