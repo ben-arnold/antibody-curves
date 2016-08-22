@@ -75,13 +75,18 @@ lines(d.tr5$ageyrs[order(d.tr5$ageyrs)],ymanfit2$pred[order(d.tr5$ageyrs)],lty=2
 # fit cross-validated SL
 #-------------------------------
 
-SL.library <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess", "SL.gam","SL.glmnet","SL.randomForest","SL.yman2016")
+SL.library <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess", "SL.gam","SL.randomForest","SL.yman2016")
+# "SL.glmnet"
 
-SL.library <- c("SL.glm","SL.loess","SL.yman2016")
+cfit <- SuperLearner(Y=log10(d.c5$ifatpftitre+1),
+                     X=data.frame(Age=d.c5$ageyrs,
+                                  dummy=rep(1,length(d.c5$ifatpftitre))),
+                     SL.library=SL.library)
 
-cfit <- SuperLearner(Y=log10(d.c5$ifatpftitre+1),X=data.frame(Age=d.c5$ageyrs,Age2=d.c5$ageyrs^2),SL.library=SL.library)
-
-tfit <- SuperLearner(Y=log10(d.tr5$ifatpftitre+1),X=data.frame(Age=d.tr5$ageyrs),SL.library=SL.library)
+tfit <- SuperLearner(Y=log10(d.tr5$ifatpftitre+1),
+                     X=data.frame(Age=d.tr5$ageyrs,
+                                  dummy=rep(1,length(d.tr5$ifatpftitre))),
+                     SL.library=SL.library)
 
 
 lines(d.c5$ageyrs[order(d.c5$ageyrs)],cfit$SL.predict[order(d.c5$ageyrs)],col="blue")
@@ -90,9 +95,19 @@ lines(d.tr5$ageyrs[order(d.tr5$ageyrs)],tfit$SL.predict[order(d.tr5$ageyrs)],col
 
 # fit the super learner 
 set.seed(23752)
-cfit <- slab_cvSL(Y=log10(d.c5$ifatpftitre+1),Age=d.c5$ageyrs,id=d.c5$id,SL.library=SL.library)
+# cfit <- slab_cvSL(Y=log10(d.c5$ifatpftitre+1),Age=d.c5$ageyrs,id=d.c5$id,SL.library=SL.library)
 
+cv.cfit <- CV.SuperLearner(Y=log10(d.c5$ifatpftitre+1),
+                        X=data.frame(Age=d.c5$ageyrs),
+                        V=10,
+                        family=gaussian(),
+                        SL.library=SL.library)
 
+cv.tfit <- CV.SuperLearner(Y=log10(d.tr5$ifatpftitre+1),
+                           X=data.frame(Age=d.tr5$ageyrs),
+                           V=10,
+                           family=gaussian(),
+                           SL.library=SL.library)
 
 
 
