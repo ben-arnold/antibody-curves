@@ -1,0 +1,218 @@
+
+R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # 8-garki-cvSL.R
+> #
+> # Compute the cross-validated
+> # risk for the super leaner
+> # and its constituent algorithms
+> #
+> # do calculations for survey 5
+> # for both control and intervention
+> # groups
+> #
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> rm(list=ls())
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-15
+Package created on 2014-07-16
+
+Use SuperLearnerNews() to see changes from previous versions and latest news
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> 
+> # source the base functions for
+> # SL fits of age-antibody curves
+> # and TMLE estimates of mean differences
+> source("~/SLAbcurves/src/SLAb-curve.R")
+> source("~/SLAbcurves/src/SLAb-tmle.R")
+> source("~/SLAbcurves/src/SLAb-cvRF.R")
+> source("~/SLAbcurves/src/SL.Yman2016.R")
+> source("~/SLAbcurves/src/slab_cvSL.R")
+> 
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> 
+> # add 2 control village names
+> d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
+> d$vname[d$village==552] <- "Nabanawa"
+> d$vname[d$village==553] <- "Ajura"
+> d$vname <- factor(d$vname)
+> 
+> # set sex to factor
+> d$sex <- as.factor(d$sex)
+> 
+> # for age exactly equal to 0, set it equal to 0.001
+> # to prevent the Yman 2016 model from blowing up
+> d$ageyrs[d$ageyrs<=0] <- 0.001
+> 
+> 
+> #-------------------------------
+> # Serological survey timing:
+> # 1-2 : pre-intervention
+> # 3-5 : intervention period
+> # 6-8 : post-intervention
+> #-------------------------------
+> 
+> # subset the data by group and survey round for convenience
+> # limit to survey round 5 (end of intervention period)
+> d.c5 <- d[d$tr=="Control" & d$serosvy==5,]
+>   d.c5 <- subset(d.c5,!is.na(d.c5$ageyrs) & !is.na(d.c5$ifatpftitre))
+> d.tr5 <- d[d$tr=="Intervention" & d$serosvy==5,]
+>   d.tr5 <- subset(d.tr5,!is.na(d.tr5$ageyrs) & !is.na(d.tr5$ifatpftitre))
+> 
+>   
+> #-------------------------------
+> # fit cross-validated SL
+> #-------------------------------
+> 
+> SL.library <- c("SL.mean","SL.glm","SL.loess","SL.gam","SL.randomForest","SL.Yman2016")
+> # "SL.glmnet"
+> 
+> 
+> # fit the cross-validated super learner, with just Age as the predictor (in Round 5)
+> set.seed(23752)
+> cv.cfit <- slab_cvSL(Y=log10(d.c5$ifatpftitre+1),Age=d.c5$ageyrs,family=gaussian(),V=10,SL.library=SL.library)
+Loading required package: randomForest
+randomForest 4.6-10
+Type rfNews() to see new features/changes/bug fixes.
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+There were 50 or more warnings (use warnings() to see the first 50)
+> cv.tfit <- slab_cvSL(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,family=gaussian(),V=10,SL.library=SL.library)
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> 
+> # fit the cross-validated super learner, across all post-intervention survey rounds (3-5)
+> # accounting for other covariates
+> Y <- d$ifatpftitre[d$serosvy>=3|d$serosvy<=5]
+> Age <- d$ageyrs[d$serosvy>=3|d$serosvy<=5]
+> W <- d[d$serosvy>=3|d$serosvy<=5,c("tr","wetseason","sex","vname")]
+> cv.mfit <- slab_cvSL(Y=log10(Y+1),Age=Age,W=W,family=gaussian(),V=10,SL.library=SL.library)
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> 
+> #------------------------------
+> # print results to log
+> #------------------------------
+> # round 5, control villages, age only
+> summary(cv.cfit)
+
+Call:  
+CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family, SL.library = SL.library,  
+    id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min    Max
+            Super Learner 0.40622 0.062465 0.16928 1.0446
+              Discrete SL 0.42512 0.062354 0.18171 1.0369
+              SL.mean_All 0.56620 0.097700 0.21018 1.4775
+               SL.glm_All 0.52948 0.089000 0.18762 1.3756
+             SL.loess_All 0.42313 0.065759 0.14853 1.0964
+               SL.gam_All 0.47789 0.081262 0.14614 1.2819
+ SL.randomForest.ns30_All 0.41667 0.060955 0.18171 1.0369
+          SL.Yman2016_All 0.52085 0.087893 0.11285 1.3269
+> 
+> # round 5, intervention villages, age only
+> summary(cv.tfit)
+
+Call:  
+CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family, SL.library = SL.library,  
+    id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min     Max
+            Super Learner 0.40728 0.038517 0.34079 0.55895
+              Discrete SL 0.40859 0.040130 0.33975 0.57267
+              SL.mean_All 1.31569 0.056732 1.03838 1.57455
+               SL.glm_All 0.88967 0.038337 0.69199 1.03059
+             SL.loess_All 0.52625 0.034122 0.42613 0.62700
+               SL.gam_All 0.64910 0.031947 0.57131 0.71406
+ SL.randomForest.ns40_All 0.40859 0.040130 0.33975 0.57267
+          SL.Yman2016_All 0.92855 0.090755 0.54726 1.62569
+> 
+> # rounds 3-5, intervention + control villages, multivariate
+> summary(cv.mfit)
+
+Call:  
+CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family, SL.library = SL.library,  
+    id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min     Max
+            Super Learner 0.63871 0.014476 0.58271 0.70883
+              Discrete SL 0.63871 0.014531 0.58278 0.70884
+              SL.mean_All 1.15552 0.026315 1.05027 1.31107
+               SL.glm_All 0.91286 0.019107 0.83349 1.01078
+             SL.loess_All 0.79786 0.015856 0.73121 0.89191
+               SL.gam_All 0.79210 0.016472 0.72107 0.88714
+ SL.randomForest.ns35_All 0.63871 0.014531 0.58278 0.70884
+          SL.Yman2016_All 1.00135 0.026360 0.88972 1.11124
+> 
+> #-------------------------------
+> # save down the results
+> #-------------------------------
+> save(cv.cfit,cv.tfit,cv.mfit,file="~/dropbox/articles/antibody-curves/results/raw/garki-cvSL.RData")
+> 
+> 
+> 
+> 
+> proc.time()
+    user   system  elapsed 
+1043.330    8.454 1056.858 

@@ -72,7 +72,7 @@ d.tr5 <- d[d$tr=="Intervention" & d$serosvy==5,]
 # fit cross-validated SL
 #-------------------------------
 
-SL.library <- c("SL.mean","SL.glm","SL.bayesglm","SL.loess","SL.gam","SL.randomForest","SL.Yman2016")
+SL.library <- c("SL.mean","SL.glm","SL.loess","SL.gam","SL.randomForest","SL.Yman2016")
 # "SL.glmnet"
 
 

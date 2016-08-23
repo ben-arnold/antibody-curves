@@ -6,10 +6,8 @@
 # risk for the super leaner
 # and its constituent algorithms
 #
-# do calculations for survey 5
-# for both control and intervention
-# groups
-#
+# in the Miton Haiti survey
+# (low transmission P. falciparum MSP-1)
 #-------------------------------
 
 

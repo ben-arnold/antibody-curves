@@ -7,6 +7,9 @@
 
 plot_slab_cvSL <- function(x,col='blue',title=NULL,xlim=NULL) {
   
+  # load ggplot2
+  require(ggplot2)
+  
   # summarize the object
   sumx <- summary(x)
   
@@ -29,7 +32,8 @@ plot_slab_cvSL <- function(x,col='blue',title=NULL,xlim=NULL) {
   # sort algorithm by CV risk
   # always put Super Learner at the top
   sumx$Table$Algorithm <- reorder(sumx$Table$Algorithm, -sumx$Table$Ave)
-  if(levels(sumx$Table$Algorithm)[8]!="Super Learner") {
+  nalg <- length(levels(sumx$Table$Algorithm))
+  if(levels(sumx$Table$Algorithm)[nalg]!="Super Learner") {
     levels(sumx$Table$Algorithm) <- c(levels(sumx$Table$Algorithm)[-grep("Super Learner",levels(sumx$Table$Algorithm))],"Super Learner")
     
   }
@@ -43,7 +47,6 @@ plot_slab_cvSL <- function(x,col='blue',title=NULL,xlim=NULL) {
   assign("d", data.frame(Y = Mean, X = sumx$Table$Algorithm, 
                          Lower = Lower, Upper = Upper))
   
-  # .SLAb.require("ggplot2")
   p <- ggplot(d, aes_string(x = "X", y = "Y", ymin = "Lower",  ymax = "Upper")) + 
     geom_linerange(color=col,alpha=0.5) + geom_point(color=col,size=4,alpha=0.5) + coord_flip() + 
     ylab("V-fold CV Risk Estimate") + xlab("Method") + 

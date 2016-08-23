@@ -12,6 +12,8 @@
 # preamble
 #-------------------------------
 rm(list=ls())
+library(SuperLearner)
+# library(ggplot2)
 library(RColorBrewer)
 
 source("~/SLAbcurves/src/plot_slab_cvSL.R")
@@ -33,10 +35,10 @@ summary(cv.tfit)
 summary(cv.mfit)
 
 # plot the estimates
-pdf("~/dropbox/articles/antibody-curves/results/figs/miton-cvSL-age.pdf")
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvSL-age.pdf")
 plot_slab_cvSL(cv.tfit,title="P. falciparum, high transmission (age only)")
 dev.off()
-pdf("~/dropbox/articles/antibody-curves/results/figs/miton-cvSL-mv.pdf")
+pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvSL-mv.pdf")
 plot_slab_cvSL(cv.mfit,title="P. falciparum, high transmission (multivariate)")
 dev.off()
 
