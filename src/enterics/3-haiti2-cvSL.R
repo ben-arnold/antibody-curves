@@ -1,6 +1,6 @@
 
 #-------------------------------
-# 8-haiti2-cvSL.R
+# 3-haiti2-cvSL.R
 #
 # Compute the cross-validated
 # risk for the super leaner
@@ -17,18 +17,10 @@
 # preamble
 #-------------------------------
 rm(list=ls())
-library(SuperLearner)
-library(tmle)
-
-# source the base functions for
-# SL fits of age-antibody curves
-# and TMLE estimates of mean differences
-source("~/SLAbcurves/src/SLAb-curve.R")
-source("~/SLAbcurves/src/SLAb-tmle.R")
-source("~/SLAbcurves/src/SLAb-cvRF.R")
-source("~/SLAbcurves/src/SL.Yman2016.R")
-source("~/SLAbcurves/src/slab_cvSL.R")
-source("~/SLAbcurves/src/plot_slab_cvSL.R")
+# library(SuperLearner)
+# library(tmle)
+library(SLAb)
+library(scales)
 
 
 #-------------------------------
@@ -57,8 +49,8 @@ d.hai  <- subset(d.haiti,agey<=5.5)
 
 
 #-------------------------------
-# append the Haiti and USA 
-# data to calculate differences 
+# append the Haiti and USA
+# data to calculate differences
 # in means
 #-------------------------------
 d.usa$agey <- d.usa$age
@@ -73,12 +65,13 @@ d.all <- rbind(subset(d.hai,select=common.vars),subset(d.usa,select=common.vars)
 #-------------------------------
 
 SL.library <- c("SL.mean","SL.glm","SL.loess","SL.gam","SL.randomForest","SL.Yman2016")
-# "SL.glmnet"
 
 
 # crypto
 set.seed(56234)
 CVcp23 <- slab_cvSL(Y=log10(d.hai$cp23+1),Age=d.hai$agey,id=d.hai$id,family=gaussian(),V=10,SL.library=SL.library)
+
+temp <- r2weight(list(CVcp23),X=data.frame(Age=d.hai$agey))
 
 # giardia
 CVvsp5 <- slab_cvSL(Y=log10(d.hai$vsp5+1),Age=d.hai$agey,id=d.hai$id,family=gaussian(),V=10,SL.library=SL.library)
@@ -107,17 +100,20 @@ summary(CVnorogii)
 #-------------------------------
 # plot the estimates
 #-------------------------------
+cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cols <- cbPalette[c(1:4,6:8)]
+
 pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvSL-cp23.pdf")
-plot_slab_cvSL(CVcp23,title="Cryptosporidium parvum Cp23, Haiti")
+slab_plot_cvSL(CVcp23,loss="MSE",title="Cryptosporidium parvum Cp23, Haiti",col=alpha(cols,alpha=0.7),xlim=c(0.4,1.4))
 dev.off()
 pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvSL-vsp5.pdf")
-plot_slab_cvSL(CVvsp5,title="Giardia intestinalis VSP-5, Haiti")
+slab_plot_cvSL(CVvsp5,loss="MSE",title="Giardia intestinalis VSP-5, Haiti",col=alpha(cols,alpha=0.7),xlim=c(0.4,1.4))
 dev.off()
 pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvSL-salB.pdf")
-plot_slab_cvSL(CVsalB,title="Salmonella sp. LPS Group B, Haiti")
+slab_plot_cvSL(CVsalB,loss="MSE",title="Salmonella sp. LPS Group B, Haiti",col=alpha(cols,alpha=0.7),xlim=c(0.4,1.4))
 dev.off()
 pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvSL-ngii.pdf")
-plot_slab_cvSL(CVnorogii,title="Norovirus GII.4 NO, Haiti")
+slab_plot_cvSL(CVnorogii,loss="MSE",title="Norovirus GII.4 NO, Haiti",col=alpha(cols,alpha=0.7),xlim=c(0.4,1.4))
 dev.off()
 
 
