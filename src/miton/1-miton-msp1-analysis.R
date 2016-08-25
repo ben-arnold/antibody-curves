@@ -10,7 +10,7 @@
 
 #-------------------------------
 # input files:
-#   haiti2-malaria-miton.dta
+#   haiti2-malaria-miton-public.csv
 #
 # output files:
 #   miton-msp1-analysis.RData
@@ -22,17 +22,10 @@
 #-------------------------------
 
 rm(list=ls())
-library(SuperLearner)
-library(tmle)
-library(foreign)
+# library(SuperLearner)
+# library(tmle)
+library(SLAb)
 
-
-# source the base functions for
-# SL fits of age-antibody curves
-# and TMLE estimates of mean differences
-source("~/SLAbcurves/src/SLAb-curve.R")
-source("~/SLAbcurves/src/SLAb-tmle.R")
-source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 #-------------------------------------------
 # load the Miton data
@@ -42,7 +35,7 @@ d <- read.csv("~/dropbox/articles/antibody-curves/data/miton/haiti2-malaria-mito
 
 d$msp1 <- d$msp13d7
 
-# for 6 negative MSP_1 values, replace as 0
+# for 6 negative MSP_1 values, replace as 0.001
 d$msp1[d$msp1<0] <- 0
 
 # create age categories for stratified analyses
@@ -50,19 +43,25 @@ d$msp1[d$msp1<0] <- 0
 d$agecat <- cut(d$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
 
 #-------------------------------------------
+# set the library of models / algorithms
+#-------------------------------------------
+SL.library <- c("SL.mean","SL.glm","SL.loess","SL.gam","SL.randomForest","SL.Yman2016")
+
+#-------------------------------------------
 # estimate a marginal Ab curve E(Y_x,a)
 #-------------------------------------------
 set.seed(25234)
-msp1.EYxa <- SLAb.curve(Y=log10(d$msp1+1),Age=d$age,id=d$id)
+msp1_EYxa <- slab_curve(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.library=SL.library)
 
 #-------------------------------------------
 # estimate age-adjusted means E(Y_x)
 # by 5 year age category
 #-------------------------------------------
-agegrps <-c("1-5","6-10","11-15","16-20") 
-msp1.EYx <- sapply(agegrps, function(x) 
-  SLAb.tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=d$age[d$agecat==x],id=d$id[d$agecat==x]) 
+agegrps <-c("1-5","6-10","11-15","16-20")
+msp1_EYx <- sapply(agegrps, function(x)
+  slab_tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=data.frame(Age=d$age[d$agecat==x]),SL.library=SL.library,family="gaussian")
 )
+
 
 #-------------------------------------------
 # save results
