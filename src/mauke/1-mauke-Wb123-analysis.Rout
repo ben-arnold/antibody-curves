@@ -1,6 +1,6 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -30,8 +30,6 @@ Type 'q()' to quit R.
 > # MDA, and TMLE estimates of geometric mean
 > # (area under the curve) of antibody responses
 > #
-> #
-> # version 1 (15 oct 2015)
 > #-------------------------------------------
 > 
 > #-------------------------------------------
@@ -70,13 +68,10 @@ The following object is masked from ‘package:SuperLearner’:
     SL.glm.interaction
 
 > library(SuperLearner)
+> library(tmleAb)
+Welcome to the tmleAb package
+Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > 
-> # source the base functions for
-> # SL fits of age-antibody curves
-> # and TMLE estimates of mean differences
-> source("~/SLAbcurves/src/SLAb-curve.R")
-> source("~/SLAbcurves/src/SLAb-tmle.R")
-> source("~/SLAbcurves/src/SLAb-cvRF.R")
 > 
 > #-------------------------------------------
 > # load the Mauke data from 1974(1975) and 1992
@@ -85,8 +80,7 @@ The following object is masked from ‘package:SuperLearner’:
 > d75 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1975-public.csv")
 > d92 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1992-public.csv")
 > 
-> # drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
-> a75 <- subset(d75,age>0)
+> a75 <- d75
 > a92 <- d92
 > 
 > # add 0.5 years to age to remove bias (on average) due to rounding to year
@@ -95,12 +89,12 @@ The following object is masked from ‘package:SuperLearner’:
 > 
 > # create age categories for stratified analyses
 > # 5 year age categories (1-20 y)
-> a75$agecat <- cut(a75$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
-> a92$agecat <- cut(a92$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
+> a75$agecat <- cut(a75$ager,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
+> a92$agecat <- cut(a92$ager,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
 > 
 > # 2 year age categories (1-10 y)
-> a75$agecat2 <- cut(a75$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
-> a92$agecat2 <- cut(a92$age,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
+> a75$agecat2 <- cut(a75$ager,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
+> a92$agecat2 <- cut(a92$ager,breaks=c(0,2,4,6,8,10),labels=c("1-2","3-4","5-6","7-8","9-10"))
 > 
 > # create a standard ID variable before appending
 > a75$id <- as.integer(a75$id75)
@@ -114,69 +108,56 @@ The following object is masked from ‘package:SuperLearner’:
 > common.vars <- c("id","ager","agecat","agecat2","wb123","mda")
 > a7592 <- rbind(subset(a75,select=common.vars),subset(a92,select=common.vars))
 > 
+> 
 > #--------------------------------------
 > # All Ages
 > #--------------------------------------
+> # SL library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+> 
 > set.seed(0237234)
 > 
 > # SuperLearner fits of antibody levels
-> mauke75 <- SLAb.curve(Y=log10(a75$wb123),Age=a75$ager,id=a75$id)
-Loading required package: randomForest
-randomForest 4.6-10
-Type rfNews() to see new features/changes/bug fixes.
-Loading required package: arm
-Loading required package: MASS
-Loading required package: Matrix
-Loading required package: lme4
-
-arm (Version 1.8-6, built: 2015-7-7)
-
-Working directory is /Users/benarnold/SLAbcurves/src/mauke
-
+> mauke75 <- ab_agecurve(Y=log10(a75$wb123),Age=a75$ager,id=a75$id,SL.library=SL.library)
 Loading required package: gam
 Loading required package: splines
 Loading required package: foreach
 Loaded gam 1.12
 
-Loading required package: glmnet
-Loaded glmnet 2.0-2
+
+Call:  
+SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
+    method = "method.NNLS", id = fitd$id) 
 
 
-Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
+                     Risk      Coef
+SL.mean_All     0.7249176 0.0000000
+SL.glm_All      0.6629960 0.0332514
+SL.Yman2016_All 0.7455860 0.0000000
+SL.gam.df3_All  0.6209314 0.3808696
+SL.loess_All    0.6210124 0.5858790
+> mauke92 <- ab_agecurve(Y=log10(a92$wb123),Age=a92$ager,id=a92$id,SL.library=SL.library)
+
+Call:  
+SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
+    method = "method.NNLS", id = fitd$id) 
 
 
-                              Risk       Coef
-SL.mean_All              0.7363814 0.03250905
-SL.glm_All               0.6748554 0.00000000
-SL.bayesglm_All          0.6748551 0.00000000
-SL.loess_All             0.6230172 0.54652575
-SL.gam_All               0.6300701 0.00000000
-SL.gam.3_All             0.6228179 0.42096521
-SL.glmnet_All            0.6747190 0.00000000
-SL.randomForest.ns30_All 0.6574827 0.00000000
-> mauke92 <- SLAb.curve(Y=log10(a92$wb123),Age=a92$ager,id=a92$id)
-
-Call:  SuperLearner(Y = fitd$Y, X = X, SL.library = SLlib, id = fitd$id) 
-
-
-                              Risk       Coef
-SL.mean_All              1.0705979 0.00000000
-SL.glm_All               0.9374125 0.00000000
-SL.bayesglm_All          0.9374125 0.00000000
-SL.loess_All             0.8990743 0.57044484
-SL.gam_All               0.9043601 0.00000000
-SL.gam.3_All             0.8991713 0.34330990
-SL.glmnet_All            0.9372963 0.00000000
-SL.randomForest.ns35_All 0.9469009 0.08624527
+                     Risk       Coef
+SL.mean_All     1.0732749 0.01858059
+SL.glm_All      0.9411312 0.05558417
+SL.Yman2016_All 0.9062421 0.24799798
+SL.gam.df6_All  0.8967197 0.67783726
+SL.loess_All    0.9014882 0.00000000
 > 
 > # estimate group means
-> EYx.mauke75 <- SLAb.tmle(Y=log10(a75$wb123),Age=a75$ager,id=a75$id)
+> EYx.mauke75 <- ab_tmle(Y=log10(a75$wb123),Age=a75$ager,id=a75$id,SL.library=SL.library)
  Population Mean
-   Parameter Estimate:  4.9219
-   Estimated Variance:  0.0020232
+   Parameter Estimate:  4.925
+   Estimated Variance:  0.0019574
               p-value:  <2e-16
-    95% Conf Interval: (4.8338, 5.0101) 
-> EYx.mauke92 <- SLAb.tmle(Y=log10(a92$wb123),Age=a92$ager,id=a92$id)
+    95% Conf Interval: (4.8383, 5.0118) 
+> EYx.mauke92 <- ab_tmle(Y=log10(a92$wb123),Age=a92$ager,id=a92$id,SL.library=SL.library)
  Population Mean
    Parameter Estimate:  4.2452
    Estimated Variance:  0.0021474
@@ -184,12 +165,12 @@ SL.randomForest.ns35_All 0.9469009 0.08624527
     95% Conf Interval: (4.1544, 4.336) 
 > 
 > # estimate difference in means
-> diff.mauke  <- SLAb.tmle(Y=log10(a7592$wb123),Age=a7592$ager,id=a7592$id,X=a7592$mda,diff=TRUE)
+> diff.mauke  <- ab_tmle(Y=log10(a7592$wb123),Age=a7592$ager,id=a7592$id,X=a7592$mda,SL.library=SL.library,diff=TRUE)
  Additive Effect
-   Parameter Estimate:  -0.68858
-   Estimated Variance:  0.003533
+   Parameter Estimate:  -0.70356
+   Estimated Variance:  0.00099147
               p-value:  <2e-16
-    95% Conf Interval: (-0.80508, -0.57208) 
+    95% Conf Interval: (-0.76528, -0.64185) 
 > 
 > 
 > #--------------------------------------
@@ -199,166 +180,74 @@ SL.randomForest.ns35_All 0.9469009 0.08624527
 > #--------------------------------------
 > agegrps <-c("1-5","6-10","11-15","16-20") 
 > EYx.mauke75kids <- sapply(agegrps, function(x) 
-+ 	SLAb.tmle(Y=log10(a75$wb123[a75$agecat==x]),Age=a75$ager[a75$agecat==x],id=a75$id[a75$agecat==x]) 
++ 	ab_tmle(Y=log10(a75$wb123[a75$agecat==x]),Age=a75$ager[a75$agecat==x],id=a75$id[a75$agecat==x],SL.library=SL.library) 
 + 	)
  Population Mean
-   Parameter Estimate:  4.2653
-   Estimated Variance:  0.027909
+   Parameter Estimate:  4.452
+   Estimated Variance:  0.024302
               p-value:  <2e-16
-    95% Conf Interval: (3.9379, 4.5927) 
+    95% Conf Interval: (4.1465, 4.7576) 
  Population Mean
-   Parameter Estimate:  4.5088
-   Estimated Variance:  0.027812
+   Parameter Estimate:  4.4649
+   Estimated Variance:  0.032006
               p-value:  <2e-16
-    95% Conf Interval: (4.1819, 4.8356) 
+    95% Conf Interval: (4.1143, 4.8155) 
  Population Mean
-   Parameter Estimate:  4.8427
-   Estimated Variance:  0.016968
+   Parameter Estimate:  4.7149
+   Estimated Variance:  0.019007
               p-value:  <2e-16
-    95% Conf Interval: (4.5874, 5.098) 
+    95% Conf Interval: (4.4447, 4.9851) 
  Population Mean
-   Parameter Estimate:  5.0706
-   Estimated Variance:  0.011094
+   Parameter Estimate:  5.0789
+   Estimated Variance:  0.01053
               p-value:  <2e-16
-    95% Conf Interval: (4.8642, 5.2771) 
+    95% Conf Interval: (4.8778, 5.28) 
 > EYx.mauke92kids <- sapply(agegrps, function(x) 
-+ 	SLAb.tmle(Y=log10(a92$wb123[a92$agecat==x]),Age=a92$ager[a92$agecat==x],id=a92$id[a92$agecat==x]) 
++ 	ab_tmle(Y=log10(a92$wb123[a92$agecat==x]),Age=a92$ager[a92$agecat==x],id=a92$id[a92$agecat==x],SL.library=SL.library) 
 + 	)
  Population Mean
-   Parameter Estimate:  3.2263
-   Estimated Variance:  0.011864
+   Parameter Estimate:  3.2697
+   Estimated Variance:  0.023292
               p-value:  <2e-16
-    95% Conf Interval: (3.0128, 3.4397) 
+    95% Conf Interval: (2.9706, 3.5689) 
  Population Mean
-   Parameter Estimate:  3.8842
-   Estimated Variance:  0.01973
+   Parameter Estimate:  3.7673
+   Estimated Variance:  0.017201
               p-value:  <2e-16
-    95% Conf Interval: (3.6089, 4.1595) 
+    95% Conf Interval: (3.5102, 4.0244) 
  Population Mean
-   Parameter Estimate:  3.9843
-   Estimated Variance:  0.010646
+   Parameter Estimate:  3.9324
+   Estimated Variance:  0.014278
               p-value:  <2e-16
-    95% Conf Interval: (3.782, 4.1865) 
+    95% Conf Interval: (3.6982, 4.1666) 
  Population Mean
-   Parameter Estimate:  4.1951
-   Estimated Variance:  0.012418
+   Parameter Estimate:  4.1139
+   Estimated Variance:  0.0098785
               p-value:  <2e-16
-    95% Conf Interval: (3.9767, 4.4135) 
+    95% Conf Interval: (3.9191, 4.3087) 
 > diff.maukekids <- sapply(agegrps, function(x) 
-+ 	SLAb.tmle(Y=log10(a7592$wb123[a7592$agecat==x]), Age=a7592$ager[a7592$agecat==x], id=a7592$id[a7592$agecat==x], X=a7592$mda[a7592$agecat==x], diff=TRUE) 
++ 	ab_tmle(Y=log10(a7592$wb123[a7592$agecat==x]), Age=a7592$ager[a7592$agecat==x], id=a7592$id[a7592$agecat==x], X=a7592$mda[a7592$agecat==x],SL.library=SL.library, diff=TRUE) 
 + 	)
  Additive Effect
-   Parameter Estimate:  -1.0499
-   Estimated Variance:  0.045775
-              p-value:  9.2323e-07
-    95% Conf Interval: (-1.4693, -0.63059) 
+   Parameter Estimate:  -1.9852
+   Estimated Variance:  0.012768
+              p-value:  <2e-16
+    95% Conf Interval: (-2.2066, -1.7637) 
  Additive Effect
-   Parameter Estimate:  -0.63665
-   Estimated Variance:  0.041956
-              p-value:  0.0018827
-    95% Conf Interval: (-1.0381, -0.23518) 
+   Parameter Estimate:  -2.0787
+   Estimated Variance:  0.011862
+              p-value:  <2e-16
+    95% Conf Interval: (-2.2922, -1.8652) 
  Additive Effect
-   Parameter Estimate:  -0.84817
-   Estimated Variance:  0.025037
-              p-value:  8.3083e-08
-    95% Conf Interval: (-1.1583, -0.53803) 
+   Parameter Estimate:  -2.0664
+   Estimated Variance:  0.0094274
+              p-value:  <2e-16
+    95% Conf Interval: (-2.2567, -1.8761) 
  Additive Effect
-   Parameter Estimate:  -0.8764
-   Estimated Variance:  0.023665
-              p-value:  1.2189e-08
-    95% Conf Interval: (-1.1779, -0.57488) 
-> 
-> 
-> #--------------------------------------
-> # Estimate means and differences between
-> # time points in
-> # 2 year age bands from ages 1-10
-> #-------------------------------------- 
-> agegrps2 <-c("1-2","3-4","5-6","7-8","9-10")
-> EYx.mauke75kids2y <- sapply(agegrps2, function(x) 
-+ 	SLAb.tmle(Y=log10(a75$wb123[a75$agecat2==x]),Age=a75$ager[a75$agecat2==x],id=a75$id[a75$agecat2==x]) 
-+ 	)
- Population Mean
-   Parameter Estimate:  4.067
-   Estimated Variance:  0.055926
+   Parameter Estimate:  -1.036
+   Estimated Variance:  0.0064979
               p-value:  <2e-16
-    95% Conf Interval: (3.6035, 4.5306) 
- Population Mean
-   Parameter Estimate:  4.6327
-   Estimated Variance:  0.062982
-              p-value:  <2e-16
-    95% Conf Interval: (4.1409, 5.1246) 
- Population Mean
-   Parameter Estimate:  4.0608
-   Estimated Variance:  0.11487
-              p-value:  <2e-16
-    95% Conf Interval: (3.3965, 4.7251) 
- Population Mean
-   Parameter Estimate:  4.7357
-   Estimated Variance:  0.045159
-              p-value:  <2e-16
-    95% Conf Interval: (4.3192, 5.1522) 
- Population Mean
-   Parameter Estimate:  4.5001
-   Estimated Variance:  0.064281
-              p-value:  <2e-16
-    95% Conf Interval: (4.0032, 4.9971) 
-> EYx.mauke92kids2y <- sapply(agegrps2, function(x) 
-+ 	SLAb.tmle(Y=log10(a92$wb123[a92$agecat2==x]),Age=a92$ager[a92$agecat2==x],id=a92$id[a92$agecat2==x]) 
-+ 	)
- Population Mean
-   Parameter Estimate:  3.2305
-   Estimated Variance:  0.044863
-              p-value:  <2e-16
-    95% Conf Interval: (2.8153, 3.6456) 
- Population Mean
-   Parameter Estimate:  3.2985
-   Estimated Variance:  0.048454
-              p-value:  <2e-16
-    95% Conf Interval: (2.8671, 3.73) 
- Population Mean
-   Parameter Estimate:  3.3434
-   Estimated Variance:  0.018044
-              p-value:  <2e-16
-    95% Conf Interval: (3.0801, 3.6067) 
- Population Mean
-   Parameter Estimate:  3.8943
-   Estimated Variance:  0.055437
-              p-value:  <2e-16
-    95% Conf Interval: (3.4328, 4.3558) 
- Population Mean
-   Parameter Estimate:  4.0441
-   Estimated Variance:  0.047623
-              p-value:  <2e-16
-    95% Conf Interval: (3.6164, 4.4719) 
-> diff.maukekids2y <- sapply(agegrps2, function(x) 
-+ 	SLAb.tmle(Y=log10(a7592$wb123[a7592$agecat2==x]), Age=a7592$ager[a7592$agecat2==x], id=a7592$id[a7592$agecat2==x], X=a7592$mda[a7592$agecat2==x], diff=TRUE) 
-+ 	)
- Additive Effect
-   Parameter Estimate:  -0.93164
-   Estimated Variance:  0.10131
-              p-value:  0.0034218
-    95% Conf Interval: (-1.5555, -0.3078) 
- Additive Effect
-   Parameter Estimate:  -1.3342
-   Estimated Variance:  0.10798
-              p-value:  4.8991e-05
-    95% Conf Interval: (-1.9783, -0.69018) 
- Additive Effect
-   Parameter Estimate:  -0.67149
-   Estimated Variance:  0.1315
-              p-value:  0.064059
-    95% Conf Interval: (-1.3822, 0.039248) 
- Additive Effect
-   Parameter Estimate:  -0.82597
-   Estimated Variance:  0.07182
-              p-value:  0.0020558
-    95% Conf Interval: (-1.3512, -0.3007) 
- Additive Effect
-   Parameter Estimate:  -0.4524
-   Estimated Variance:  0.099427
-              p-value:  0.15136
-    95% Conf Interval: (-1.0704, 0.16563) 
+    95% Conf Interval: (-1.194, -0.87797) 
 > 
 > 
 > #--------------------------------------
@@ -373,4 +262,4 @@ SL.randomForest.ns35_All 0.9469009 0.08624527
 > 
 > proc.time()
    user  system elapsed 
- 78.680   1.038  80.382 
+ 14.485   0.206  14.865 

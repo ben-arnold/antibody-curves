@@ -77,8 +77,8 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	# plot data (points and fitted lines)
 	points(SLfit0$Age, SLfit0$Y,col=alpha(cols[1],alpha=0.6), pch=16,cex=0.7)
 	points(SLfit1$Age, SLfit1$Y,col=alpha(cols[2],alpha=0.6), pch=16,cex=0.7)
-	lines(SLfit0$Age,SLfit0$pY,col=cols[1],lwd=2)
-	lines(SLfit1$Age,SLfit1$pY,col=cols[2],lwd=2)
+	lines(SLfit0$pYframe$Age,SLfit0$pYframe$pY,col=cols[1],lwd=2)
+	lines(SLfit1$pYframe$Age,SLfit1$pYframe$pY,col=cols[2],lwd=2)
 	
 	# country labels
 	mtext("USA",side=4,line=1,adj=1,at=SLfit0$pY[length(SLfit0$pY)], col=cols[1],cex=1.25,las=1)
@@ -135,8 +135,8 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 
 
 
-pdf("~/dropbox/articles/antibody-curves/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=20,width=10)
-lo <- layout(mat=matrix(1:16,nrow=4,ncol=4,byrow=TRUE),widths=c(1,0.2,1,0.2))
+pdf("~/dropbox/articles/antibody-curves/results/figs/haiti2-USA-enterics-SL-curves.pdf",height=10,width=20)
+lo <- layout(mat=matrix(1:16,nrow=2,ncol=8,byrow=TRUE),widths=rep(c(1,0.2),4))
 # lo <- layout(mat=matrix(1:2,nrow=1,ncol=2),widths=c(1,0.2))
 
 SLAb.plotEYax(usa.cp17,haiti.cp17,expression(paste(italic('Cryptosporidium parvum'), " Cp17")),"a",ylabel=T)
@@ -145,16 +145,16 @@ SLAb.plotEYx(EYx.usa.cp17,EYx.haiti.cp17,diff.cp17)
 SLAb.plotEYax(usa.cp23,haiti.cp23,expression(paste(italic('Cryptosporidium parvum'), " Cp23")),"b")
 SLAb.plotEYx(EYx.usa.cp23,EYx.haiti.cp23,diff.cp23) 
 
-SLAb.plotEYax(usa.giar,haiti.giar,expression(paste(italic('Giardia intestinalis'), " VSP-5")),"c",ylabel=T)
+SLAb.plotEYax(usa.giar,haiti.giar,expression(paste(italic('Giardia intestinalis'), " VSP-5")),"c")
 SLAb.plotEYx(EYx.usa.giar,EYx.haiti.giar,diff.giar) 
 
 SLAb.plotEYax(usa.leca,haiti.leca,expression(paste(italic('Entamoeba histolytica'), " LecA")),"d")
 SLAb.plotEYx(EYx.usa.leca,EYx.haiti.leca,diff.leca) 
 
-SLAb.plotEYax(usa.etec,haiti.etec,expression(paste("ETEC heat labile toxin ",beta," subunit")),"e",ylabel=T)
+SLAb.plotEYax(usa.etec,haiti.etec,expression(paste("ETEC heat labile toxin ",beta," subunit")),"e",ylabel=T,xlabel=T)
 SLAb.plotEYx(EYx.usa.etec,EYx.haiti.etec,diff.etec) 
 
-SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group B")),"f")
+SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group B")),"f",xlabel=T)
 SLAb.plotEYx(EYx.usa.salb,EYx.haiti.salb,diff.salb) 
 
 SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus GI.4","g",ylabel=T,xlabel=T)

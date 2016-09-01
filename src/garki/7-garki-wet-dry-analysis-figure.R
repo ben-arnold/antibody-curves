@@ -38,14 +38,14 @@ Ns
 # since main comparison is the
 # pattern in  ages 0-4 vs older
 # also, the Ns in the 10-14 age
-# category are very small (<25), 
+# category are very small (<25),
 # so not very well-estimated
 # compared to younger ages, which
 # have between 84-119 obs
 #-------------------------------
 
 #-------------------------------
-# grab p-values for test of 
+# grab p-values for test of
 # differences between rounds
 # correct the P-values for
 # 8 comparisons (4 comparisons
@@ -82,7 +82,7 @@ lo <- layout(mat=matrix(1:3,nrow=1,ncol=3),widths=c(0.6,0.6,1))
 
 # Antibody curves, E(Y_x,a) by survey round (season)
 op <- par(mar=c(4,5,7,1)+0.1,xpd=F)
-plot(p.c1$Age,p.c1$pY,type="n",lwd=2,
+plot(p.c1$pYframe$Age,p.c1$pYframe$pY,type="n",lwd=2,
      ylim=c(0.5,4),ylab="",yaxt="n",
      xlim=range(xtics),xlab="",xaxt="n",
      bty="n",las=1
@@ -100,14 +100,14 @@ axis(2,at=1:4,labels=c(
   ), las=1,cex.axis=1.25
 )
 axis(1,at=xtics,cex.axis=1.5)
-lines(p.c1$Age,p.c1$pY,col=cols[1])
-lines(p.c2$Age,p.c2$pY,col=cols[2])
+lines(p.c1$pYframe$Age,p.c1$pYframe$pY,col=cols[1])
+lines(p.c2$pYframe$Age,p.c2$pYframe$pY,col=cols[2])
 
 text(1,3.4,"1971 wet",cex=1,adj=0,font=1,col=cols[1])
 text(3.5,2.9,"1972 dry season",cex=1,adj=0,font=1,col=cols[2])
 
 
-plot(p.c3$Age,p.c3$pY,type="n",lwd=2,
+plot(p.c3$pYframe$Age,p.c3$pYframe$pY,type="n",lwd=2,
      ylim=c(0.5,4),ylab="",yaxt="n",
      xlim=range(xtics),xlab="",xaxt="n",
      bty="n",las=1
@@ -125,9 +125,9 @@ axis(2,at=1:4,labels=c(
   ), las=1,cex.axis=1.25
 )
 axis(1,at=xtics,cex.axis=1.5)
-lines(p.c3$Age,p.c3$pY,col=cols[3])
-lines(p.c4$Age,p.c4$pY,col=cols[4])
-lines(p.c5$Age,p.c5$pY,col=cols[5])
+lines(p.c3$pYframe$Age,p.c3$pYframe$pY,col=cols[3])
+lines(p.c4$pYframe$Age,p.c4$pYframe$pY,col=cols[4])
+lines(p.c5$pYframe$Age,p.c5$pYframe$pY,col=cols[5])
 
 segments(x0=1.3,y0=2.9,y1=3.2,col="gray50",lty=2)
 text(1.3,3.3,"1972 wet",cex=1,adj=1,font=1,col=cols[3])
@@ -161,7 +161,7 @@ mtext(expression(paste(italic(E),"(",italic(Y[x]),"), stratified by child age an
 mtext(c("<5","5 to 10"),side=1,line=1,at=1:2,cex=1.25)
 mtext("Age category, years",side=1,line=2.75,cex=1.25)
 
-# children ages 0-4 
+# children ages 0-4
 arrows(x0=xs.0to4,y0=unlist(mu.0to4[3,1:5]), y1=unlist(mu.0to4[4,1:5]),lwd=1,col=cols,length=0.05,angle=90,code=3)
 points(xs.0to4,mu.0to4[1,1:5], pch=21,cex=1.5, lwd=1,bg=cols,col=cols)
 

@@ -22,9 +22,9 @@
 #-------------------------------
 
 rm(list=ls())
-# library(SuperLearner)
-# library(tmle)
-library(SLAb)
+library(SuperLearner)
+library(tmle)
+library(tmleAb)
 
 
 #-------------------------------------------
@@ -45,13 +45,13 @@ d$agecat <- cut(d$age,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-2
 #-------------------------------------------
 # set the library of models / algorithms
 #-------------------------------------------
-SL.library <- c("SL.mean","SL.glm","SL.loess","SL.gam","SL.randomForest","SL.Yman2016")
+SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 
 #-------------------------------------------
 # estimate a marginal Ab curve E(Y_x,a)
 #-------------------------------------------
 set.seed(25234)
-msp1_EYxa <- slab_curve(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.library=SL.library)
+msp1_EYxa <- ab_agecurve(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.library=SL.library)
 
 #-------------------------------------------
 # estimate age-adjusted means E(Y_x)
@@ -59,7 +59,7 @@ msp1_EYxa <- slab_curve(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.library
 #-------------------------------------------
 agegrps <-c("1-5","6-10","11-15","16-20")
 msp1_EYx <- sapply(agegrps, function(x)
-  slab_tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=data.frame(Age=d$age[d$agecat==x]),SL.library=SL.library,family="gaussian")
+  ab_tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=data.frame(Age=d$age[d$agecat==x]),SL.library=SL.library)
 )
 
 

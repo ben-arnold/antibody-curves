@@ -70,8 +70,8 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	points(jitter(mauke75$Age),mauke75$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha=0.6))
 	points(jitter(mauke92$Age),mauke92$Y,cex=0.45,pch=16,col=alpha(cols[2],alpha=0.6))
 	
-	lines(mauke75$Age,mauke75$pY,col=cols[1],lwd=2)
-	lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
+	lines(mauke75$pYframe$Age,mauke75$pYframe$pY,col=cols[1],lwd=2)
+	lines(mauke92$pYframe$Age,mauke92$pYframe$pY,col=cols[2],lwd=2)
 	
 	# Axis labels
 	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (light units)")),side=2,line=3,cex=1.25)

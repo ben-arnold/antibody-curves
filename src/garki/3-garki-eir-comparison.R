@@ -25,15 +25,7 @@ library(RColorBrewer)
 library(scales)
 library(SuperLearner)
 library(tmle)
-
-
-# source the base functions for
-# SL fits of age-antibody curves
-# and TMLE estimates of mean differences
-source("~/SLAbcurves/src/SLAb-curve.R")
-source("~/SLAbcurves/src/SLAb-tmle.R")
-source("~/SLAbcurves/src/SLAb-cvRF.R")
-
+library(tmleAb)
 
 
 #-------------------------------
@@ -87,73 +79,90 @@ table(ad$vname,ad$wetseason)
 # SuperLearner curve fits
 #-------------------------------
 
+# SL library
+SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+
+
 set.seed(2343242)
-ajura.1971.SL <- SLAb.curve(
+ajura.1971.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1971]+1),
 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1971],
-		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971]
+		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971],
+		SL.library=SL.library
 	)
-ajura.1972.SL <- SLAb.curve(
+ajura.1972.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1972]+1),
 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1972],
-		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1972]
+		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1972],
+		SL.library=SL.library
 	)
-ajura.1973.SL <- SLAb.curve(
+ajura.1973.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1973]+1),
 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1973],
-		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1973]
+		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1973],
+		SL.library=SL.library
 	)	
 
-rafin.1971.SL <- SLAb.curve(
+rafin.1971.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1971]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1971],
-		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1971]
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1971],
+		SL.library=SL.library
 	)
-rafin.1972.SL <- SLAb.curve(
+rafin.1972.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1972]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1972],
-		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1972]
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1972],
+		SL.library=SL.library
 	)
-rafin.1973.SL <- SLAb.curve(
+rafin.1973.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1973]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1973],
-		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1973]
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1973],
+		SL.library=SL.library
 	)
-rafin.1974.SL <- SLAb.curve(
+rafin.1974.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1974]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1974],
-		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1974]
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1974],
+		SL.library=SL.library
 	)
-rafin.1975.SL <- SLAb.curve(
+rafin.1975.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1975]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1975],
-		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1975]
+		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1975],
+		SL.library=SL.library
 	)
 
-nasak.1971.SL <- SLAb.curve(
+nasak.1971.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1971]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1971],
-		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1971]
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1971],
+		SL.library=SL.library
 	)
-nasak.1972.SL <- SLAb.curve(
+nasak.1972.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1972]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1972],
-		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1972]
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1972],
+		SL.library=SL.library
 	)
-nasak.1973.SL <- SLAb.curve(
+nasak.1973.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1973]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1973],
-		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1973]
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1973],
+		SL.library=SL.library
 	)
-nasak.1974.SL <- SLAb.curve(
+nasak.1974.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1974]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1974],
-		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1974]
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1974],
+		SL.library=SL.library
 	)
-nasak.1975.SL <- SLAb.curve(
+nasak.1975.SL <- ab_agecurve(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1975]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1975],
-		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1975]
+		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1975],
+		SL.library=SL.library
 	)
 
 #-------------------------------
@@ -163,22 +172,25 @@ nasak.1975.SL <- SLAb.curve(
 #-------------------------------
 
 set.seed(5463452)
-ajura.tmle <- sapply(c(1971,1972,1973),function(x) SLAb.tmle(
+ajura.tmle <- sapply(c(1971,1972,1973),function(x) ab_tmle(
   Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==x]+1),
   Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x],
-  id=ad$id[ad$vname=="Ajura" & ad$wetseason==x])
+  id=ad$id[ad$vname=="Ajura" & ad$wetseason==x],
+  SL.library=SL.library)
   )
 
-rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) SLAb.tmle(
+rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) ab_tmle(
   Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==x]+1),
   Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x],
-  id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==x])
+  id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==x],
+  SL.library=SL.library)
 )
 
-nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) SLAb.tmle(
+nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) ab_tmle(
   Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==x]+1),
   Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x],
-  id=ad$id[ad$vname=="Nasakar" & ad$wetseason==x])
+  id=ad$id[ad$vname=="Nasakar" & ad$wetseason==x],
+  SL.library=SL.library)
 )
 
 #-------------------------------

@@ -28,13 +28,8 @@
 rm(list=ls())
 library(tmle)
 library(SuperLearner)
+library(tmleAb)
 
-# source the base functions for
-# SL fits of age-antibody curves
-# and TMLE estimates of mean differences
-source("~/SLAbcurves/src/SLAb-curve.R")
-source("~/SLAbcurves/src/SLAb-tmle.R")
-source("~/SLAbcurves/src/SLAb-cvRF.R")
 
 #-------------------------------------------
 # load the Mauke data from 1974(1975) and 1992
@@ -44,8 +39,8 @@ d75 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1975-public.
 d92 <- read.csv("~/dropbox/articles/antibody-curves/data/mauke/mauke1992-public.csv")
 
 
-# drop 7 children aged 0 (all Wb123+) in 1975 due to maternal antibodies
-a75 <- subset(d75,age>0,select=c("id75","age","CAg","wb123"))
+# create an appended dataset (long format)
+a75 <- subset(d75,select=c("id75","age","CAg","wb123"))
   names(a75) <- c("id","age","CAg","wb123")
 a75$mda <- 0
 a92 <- subset(d92,select=c("id75","age","CAg","wb123"))
@@ -53,7 +48,7 @@ a92 <- subset(d92,select=c("id75","age","CAg","wb123"))
 a92$id <- paste(a92$id)
 a92$mda <- 1
 
-# create an appended dataset (long format)
+
 d7592 <- rbind(a75,a92)
 
 # create a merged dataset (wide format)
@@ -90,13 +85,13 @@ a7592 <- merge(a7592,subset(d,select=c("id","Abstatus")),by="id",all.x=T)
 set.seed(2194543)
 Abstatus <- c("Neg-Neg","Pos-Neg","Pos-Pos")
 EYx.75.Abstatus <- sapply(Abstatus, function(x) 
-	SLAb.tmle(Y=log10(d$wb123.75[d$Abstatus==x]),Age=d$age.75[d$Abstatus==x],id=d$id[d$Abstatus==x]) 
+	ab_tmle(Y=log10(d$wb123.75[d$Abstatus==x]),Age=d$age.75[d$Abstatus==x],id=d$id[d$Abstatus==x]) 
 	)
 EYx.92.Abstatus <- sapply(Abstatus, function(x) 
-	SLAb.tmle(Y=log10(d$wb123.92[d$Abstatus==x]),Age=d$age.92[d$Abstatus==x],id=d$id[d$Abstatus==x]) 
+	ab_tmle(Y=log10(d$wb123.92[d$Abstatus==x]),Age=d$age.92[d$Abstatus==x],id=d$id[d$Abstatus==x]) 
 	)
 diff.Abstatus <- sapply(Abstatus, function(x) 
-	SLAb.tmle(Y=log10(a7592$wb123[a7592$Abstatus==x]), Age=a7592$age[a7592$Abstatus==x], id=a7592$id[a7592$Abstatus==x], X=a7592$mda[a7592$Abstatus==x], diff=TRUE) 
+	ab_tmle(Y=log10(a7592$wb123[a7592$Abstatus==x]), Age=a7592$age[a7592$Abstatus==x], id=a7592$id[a7592$Abstatus==x], X=a7592$mda[a7592$Abstatus==x], diff=TRUE) 
 	)
 
 

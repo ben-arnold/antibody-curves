@@ -1,6 +1,6 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -48,11 +48,12 @@ Type 'q()' to quit R.
 > 
 > # general plotting parameters
 > ytics <- seq(0,4,by=1)
-> xtics <- seq(0,70,by=10)
+> xtics <- seq(0,20,by=5)
 > # i.cols <- c(brewer.pal(9,"YlGnBu")[7:6],brewer.pal(9,"BuPu")[9:7],brewer.pal(9,"YlOrRd")[6:8])
 > # c.cols <- brewer.pal(8,"Dark2")[8]
 > # c.cols <- "black"
 > cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+> # i.cols <- cbPalette[c(6,4,8,6,4,8,6,4)]
 > i.cols <- rep(cbPalette[6],8)
 > c.cols <- cbPalette[7]
 > 
@@ -60,30 +61,31 @@ Type 'q()' to quit R.
 > 
 > # Panel A: Pre-intervention age-antibody curves
 > op <- par(mar=c(4,5,7,1)+0.1,xpd=T)
-> plot(p.c12$Age,p.c12$pY,type="l",lwd=2,col=c.cols,
-+ 	ylim=c(0.5,4),ylab="",yaxt="n",
-+ 	xlim=c(0,71),xlab="",xaxt="n",
+> plot(p.c12$pYframe$Age,p.c12$pYframe$pY,type="l",lwd=2,col=c.cols,
++ 	ylim=c(0,4),ylab="",yaxt="n",
++ 	xlim=c(0,max(xtics)+1),xlab="",xaxt="n",
 + 	bty="n",las=1
 + 	)
 > 	mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
-> 	mtext("a",adj=1,line=3,at=-5,font=2,cex=1.75)
+> 	mtext("a",adj=1,line=3,at=-2,font=2,cex=1.75)
 > 	mtext("Pre-Intervention Period",adj=0,line=3,at=0,cex=1.5)
 > 	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 > 	mtext("Age, years",side=1,line=2.5)
-> 	axis(2,at=1:4,labels=c(
-+ 		expression(10^1),
-+ 		expression(10^2),
-+ 		expression(10^3),
-+ 		expression(10^4)
-+ 		), las=1,cex.axis=1.25
+> 	axis(2,at=0:4,labels=c(
++ 	  expression(10^0),
++ 	  expression(10^1),
++ 	  expression(10^2),
++ 	  expression(10^3),
++ 	  expression(10^4)
++ 	), las=1,cex.axis=1.25
 + 	)
 > 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 > 	axis(1,at=xtics,cex.axis=1.5)
-> 	lines(p.tr1$Age,p.tr1$pY,col=i.cols[1])
-> 	lines(p.tr2$Age,p.tr2$pY,col=i.cols[2])
+> 	lines(p.tr1$pYframe$Age,p.tr1$pYframe$pY,col=i.cols[1])
+> 	lines(p.tr2$pYframe$Age,p.tr2$pYframe$pY,col=i.cols[2])
 > 	
-> 	text(70,3.1,"Control",cex=1,adj=1,font=2,col=c.cols)
-> 	text(70,3.6,"Intervention\n(survey 1, 2)",cex=1,adj=1,font=1,col=i.cols[1])
+> 	text(20,3.1,"Control",cex=1,adj=1,font=2,col=c.cols)
+> 	text(20,3.9,"Intervention\n(survey 1, 2)",cex=1,adj=1,font=1,col=i.cols[1])
 > 	text(3,3.4,"1",cex=0.75,col=i.cols[1])
 > 	text(10,3.6,"2",cex=0.75,col=i.cols[2])
 > 	
@@ -91,7 +93,7 @@ Type 'q()' to quit R.
 > op <- par(mar=c(4,0,7,4)+0.1)
 > plot(1:3,1:3,type="n",
 + 	xlim=c(0.5,3.5),xaxt="n",xlab="",
-+ 	ylim=c(0.5,4),ylab="",yaxt="n",
++ 	ylim=c(0,4),ylab="",yaxt="n",
 + 	las=1,bty="n"
 + )
 > # axis(4,at=1:4,labels=c(
@@ -114,40 +116,41 @@ Type 'q()' to quit R.
 > 
 > # Panel B: Active Intervention  age-antibody curves
 > op <- par(mar=c(4,5,7,1)+0.1)
-> plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
-+ 	ylim=c(0.5,4),ylab="",yaxt="n",
-+ 	xlim=c(0,71),xlab="",xaxt="n",
+> plot(p.c345$pYframe$Age,p.c345$pYframe$pY,type="l",lwd=2,col=c.cols,
++ 	ylim=c(0,4),ylab="",yaxt="n",
++ 	xlim=c(0,max(xtics)+1),xlab="",xaxt="n",
 + 	bty="n",las=1
 + 	)
 > 	# mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
-> 	mtext("b",adj=1,line=3,at=-5,font=2,cex=1.75)
+> 	mtext("b",adj=1,line=3,at=-2,font=2,cex=1.75)
 > 	mtext("Active Intervention Period",adj=0,line=3,at=0,cex=1.5)
 > 	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 > 	mtext("Age, years",side=1,line=2.5)
-> 	axis(2,at=1:4,labels=c(
-+ 		expression(10^1),
-+ 		expression(10^2),
-+ 		expression(10^3),
-+ 		expression(10^4)
-+ 		), las=1,cex.axis=1.25
+> 	axis(2,at=0:4,labels=c(
++ 	  expression(10^0),
++ 	  expression(10^1),
++ 	  expression(10^2),
++ 	  expression(10^3),
++ 	  expression(10^4)
++ 	), las=1,cex.axis=1.25
 + 	)
 > 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 > 	axis(1,at=xtics,cex.axis=1.5)
-> 	lines(p.tr3$Age,p.tr3$pY,col=i.cols[3])
-> 	lines(p.tr4$Age,p.tr4$pY,col=i.cols[4])
-> 	lines(p.tr5$Age,p.tr5$pY,col=i.cols[5])
+> 	lines(p.tr3$pYframe$Age,p.tr3$pYframe$pY,col=i.cols[3])
+> 	lines(p.tr4$pYframe$Age,p.tr4$pYframe$pY,col=i.cols[4])
+> 	lines(p.tr5$pYframe$Age,p.tr5$pYframe$pY,col=i.cols[5])
 > 	
-> 	text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
-> 	text(70,2.5,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[1])
-> 	text(11,3.0,"3",cex=0.75,col=i.cols[3])
-> 	text(14,2.85,"4",cex=0.75,col=i.cols[4])
-> 	text(19,2.6,"5",cex=0.75,col=i.cols[5],adj=0)
+> 	text(20,3.6,"Control",cex=1,adj=1,font=2,col=c.cols)
+> 	text(20,2.5,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[1])
+> 	text(7,2.9,"3",cex=0.75,col=i.cols[3])
+> 	text(9,2.65,"4",cex=0.75,col=i.cols[4])
+> 	text(10.5,2.3,"5",cex=0.75,col=i.cols[5],adj=0)
 > 	
 > # Active intervention  mean estimates
 > op <- par(mar=c(4,0,7,4)+0.1)
 > plot(1:3,1:3,type="n",
 + 	xlim=c(0.5,3.5),xaxt="n",xlab="",
-+ 	ylim=c(0.5,4),ylab="",yaxt="n",
++ 	ylim=c(0,4),ylab="",yaxt="n",
 + 	las=1,bty="n"
 + )
 > # axis(4,at=1:4,labels=c(
@@ -167,21 +170,22 @@ Type 'q()' to quit R.
 > 	arrows(x0=1:3,y0=unlist(mu.i[3,3:5]), y1=unlist(mu.i[4,3:5]),lwd=1,col=i.cols[3:5],length=0.05,angle=90,code=3)
 > 	points(1:3,mu.i[1,3:5], pch=21,bg="white",cex=1.5,lwd=1, col=i.cols[3:5])
 > # mark periods with P<0.01 with Bonferroni corrected pvalues
-> 	text(1:3,0.6,"*",cex=2)
+> 	# text(1:3,0.1,"*",cex=2)
 > 
 > # Panel C: Post-Intervention  age-antibody curves
 > op <- par(mar=c(4,5,7,1)+0.1)
-> plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
-+ 	ylim=c(0.5,4),ylab="",yaxt="n",
-+ 	xlim=c(0,71),xlab="",xaxt="n",
+> plot(p.c78$pYframe$Age,p.c78$pYframe$pY,type="l",lwd=2,col=c.cols,
++ 	ylim=c(0,4),ylab="",yaxt="n",
++ 	xlim=c(0,max(xtics)+1),xlab="",xaxt="n",
 + 	bty="n",las=1
 + 	)
 > 	# mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
-> 	mtext("c",adj=1,line=3,at=-5,font=2,cex=1.75)
+> 	mtext("c",adj=1,line=3,at=-2,font=2,cex=1.75)
 > 	mtext("Post Intervention Period",adj=0,line=3,at=0,cex=1.5)
 > 	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 > 	mtext("Age, years",side=1,line=2.5)
-> 	axis(2,at=1:4,labels=c(
+> 	axis(2,at=0:4,labels=c(
++ 	  expression(10^0),
 + 		expression(10^1),
 + 		expression(10^2),
 + 		expression(10^3),
@@ -190,21 +194,21 @@ Type 'q()' to quit R.
 + 	)
 > 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 > 	axis(1,at=xtics,cex.axis=1.5)
-> 	lines(p.tr6$Age,p.tr6$pY,col=i.cols[6])
-> 	lines(p.tr7$Age,p.tr7$pY,col=i.cols[7])
-> 	lines(p.tr8$Age,p.tr8$pY,col=i.cols[8])
+> 	lines(p.tr6$pYframe$Age,p.tr6$pYframe$pY,col=i.cols[6])
+> 	lines(p.tr7$pYframe$Age,p.tr7$pYframe$pY,col=i.cols[7])
+> 	lines(p.tr8$pYframe$Age,p.tr8$pYframe$pY,col=i.cols[8])
 > 	
-> 	text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
-> 	text(70,2.5,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[1])
-> 	text(20,2.7,"6",cex=0.75,col=i.cols[6])
-> 	text(12,3.1,"7",cex=0.75,col=i.cols[7])
-> 	text(15,2.9,"8",cex=0.75,col=i.cols[8],adj=0)
+> 	text(20,3.7,"Control",cex=1,adj=1,font=2,col=c.cols)
+> 	text(20,2.5,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[1])
+> 	text(5,1.2,"6",cex=0.75,col=i.cols[6])
+> 	text(4,2.0,"7",cex=0.75,col=i.cols[7])
+> 	text(3,2.8,"8",cex=0.75,col=i.cols[8],adj=0)
 > 
 > # Post-intervention  mean estimates
 > op <- par(mar=c(4,0,7,4)+0.1)
 > plot(1:3,1:3,type="n",
 + 	xlim=c(0.5,3.5),xaxt="n",xlab="",
-+ 	ylim=c(0.5,4),ylab="",yaxt="n",
++ 	ylim=c(0,4),ylab="",yaxt="n",
 + 	las=1,bty="n"
 + )
 > # axis(4,at=1:4,labels=c(
@@ -224,7 +228,7 @@ Type 'q()' to quit R.
 > 	arrows(x0=1:3,y0=unlist(mu.i[3,6:8]), y1=unlist(mu.i[4,6:8]),lwd=1,col=i.cols[6:8],length=0.05,angle=90,code=3)
 > 	points(1:3,mu.i[1,6:8], pch=21,bg="white",cex=1.5,lwd=1, col=i.cols[6:8])
 > # mark periods with P<0.01 with Bonferroni corrected pvalues
-> 	text(2:3,0.6,"*",cex=2)
+> 	# text(2:3,0.1,"*",cex=2)
 > 
 > par(op)
 > 
@@ -238,4 +242,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  0.617   0.058   0.717 
+  9.971   0.812  11.176 

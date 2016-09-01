@@ -41,7 +41,7 @@ lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE),widths=c(1,0.75))
 op <- par(mar=c(5,5,3,4)+0.1)
 ytics <- 0:5
 xtics <- seq(0,70,by=10)
-plot(msp1.EYxa$Age,msp1.EYxa$Y,type="n",
+plot(msp1_EYxa$Age,msp1_EYxa$Y,type="n",
      xlab="",xaxt="n",xlim=c(0,70),
      ylab="",yaxt="n",ylim=range(ytics),
      main="",
@@ -58,8 +58,8 @@ axis(2,at=ytics,labels=c(
   ), las=1,cex.axis=1.5
 )
 set.seed(243) # jitter age slightly for better display
-points(jitter(msp1.EYxa$Age),msp1.EYxa$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha=0.5))
-lines(msp1.EYxa$Age,msp1.EYxa$pY,col=cols[1],lwd=2)
+points(jitter(msp1_EYxa$Age),msp1_EYxa$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha=0.5))
+lines(msp1_EYxa$pYframe$Age,msp1_EYxa$pYframe$pY,col=cols[1],lwd=2)
 
 # Axis labels
 mtext("a",line=1,at=-11,adj=0,font=2,cex=2)
@@ -94,8 +94,8 @@ mtext("b",line=1,at=-0.3,adj=0,font=2,cex=2)
 mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
 
 # add in geometric means
-arrows(x0=c(1:4), y0=unlist(msp1.EYx[3,]), y1=unlist(msp1.EYx[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
-points(c(1:4),unlist(msp1.EYx[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+arrows(x0=c(1:4), y0=unlist(msp1_EYx[3,]), y1=unlist(msp1_EYx[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
+points(c(1:4),unlist(msp1_EYx[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
 
 
 par(op)

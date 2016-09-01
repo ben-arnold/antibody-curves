@@ -1,6 +1,6 @@
 
 #-------------------------------
-# 2-garki-main-analysis.R
+# 1-garki-main-analysis.R
 #
 # Calculate age-adjusted mean
 # IFA antibody titres by
@@ -8,26 +8,19 @@
 #
 #-------------------------------
 
-
-
 #-------------------------------
 # preamble
 #-------------------------------
 rm(list=ls())
 library(SuperLearner)
 library(tmle)
-
-# source the base functions for
-# SL fits of age-antibody curves
-# and TMLE estimates of mean differences
-source("~/SLAbcurves/src/SLAb-curve.R")
-source("~/SLAbcurves/src/SLAb-tmle.R")
-source("~/SLAbcurves/src/SLAb-cvRF.R")
+library(tmleAb)
 
 #-------------------------------
 # load the serology dataset
 #-------------------------------
-d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+# d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+d <- garki_sero
 
 d$mdate <- as.Date(d$mdate,"%d %b %Y")
 
@@ -37,6 +30,17 @@ d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
 d$vname[d$village==552] <- "Nabanawa"
 d$vname[d$village==553] <- "Ajura"
 d$vname <- factor(d$vname)
+
+# for age exactly equal to 0, set it equal to 0.001
+# to prevent the Yman 2016 model from blowing up
+# (model is undefined at age=0)
+d$ageyrs[d$ageyrs<=0] <- 0.001
+
+# subset to observations with non-missing Ab + age measures
+d <- subset(d,!is.na(d$ifatpftitre) & !is.na(d$ageyrs))
+
+# subset to ages 0-20
+d <- subset(d,ageyrs<=20)
 
 #-------------------------------
 # Serological survey timing:
@@ -66,25 +70,30 @@ d.tr8 <- d[d$tr=="Intervention" & d$serosvy==8,]
 # curves
 #-------------------------------
 
-set.seed(23752)
+# SL library
+SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+
 
 # Pre-intervention period fitted curves
-p.c12 <- SLAb.curve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id)
-p.tr1 <- SLAb.curve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id)
-p.tr2 <- SLAb.curve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id)
+set.seed(23752)
+p.c12 <- ab_agecurve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id,SL.library=SL.library)
+p.tr1 <- ab_agecurve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id,SL.library=SL.library)
+p.tr2 <- ab_agecurve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id,SL.library=SL.library)
 
 # Intervention phase fitted curves
-p.c345 <- SLAb.curve(Y=log10(d.c345$ifatpftitre+1),Age=d.c345$ageyrs,id=d.c345$id)
-p.tr3 <- SLAb.curve(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id)
-p.tr4 <- SLAb.curve(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id)
-p.tr5 <- SLAb.curve(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id)
+set.seed(2436)
+p.c345 <- ab_agecurve(Y=log10(d.c345$ifatpftitre+1),Age=d.c345$ageyrs,id=d.c345$id,SL.library=SL.library)
+p.tr3 <- ab_agecurve(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id,SL.library=SL.library)
+p.tr4 <- ab_agecurve(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id,SL.library=SL.library)
+p.tr5 <- ab_agecurve(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id,SL.library=SL.library)
 
 # post intervention period fitted curves
 # note: no control measurement in round 6
-p.c78 <- SLAb.curve(Y=log10(d.c78$ifatpftitre+1),Age=d.c78$ageyrs,id=d.c78$id)
-p.tr6 <- SLAb.curve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id)
-p.tr7 <- SLAb.curve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id)
-p.tr8 <- SLAb.curve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id)
+set.seed(45234)
+p.c78 <- ab_agecurve(Y=log10(d.c78$ifatpftitre+1),Age=d.c78$ageyrs,id=d.c78$id,SL.library=SL.library)
+p.tr6 <- ab_agecurve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id,SL.library=SL.library)
+p.tr7 <- ab_agecurve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id,SL.library=SL.library)
+p.tr8 <- ab_agecurve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id,SL.library=SL.library)
 
 
 #-------------------------------
@@ -104,18 +113,20 @@ set.seed(5463452)
 ## Control Villages 
 # Nabanawa + Ajura
 # (no measurement in survey round 6)
-mu.c <- sapply(c(1:5,7:8),function(x) SLAb.tmle(
+mu.c <- sapply(c(1:5,7:8),function(x) ab_tmle(
 	Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
 	Age=d$ageyrs[d$tr=="Control" & d$serosvy==x],
-	id=d$id[d$tr=="Control" & d$serosvy==x]
+	id=d$id[d$tr=="Control" & d$serosvy==x],
+	SL.library=SL.library
 	)
 )
 
 ### Intervention Villages - Spraying (Propoxur) + MDA
-mu.i <- sapply(1:8,function(x) SLAb.tmle(
+mu.i <- sapply(1:8,function(x) ab_tmle(
 	Y=log10(d$ifatpftitre[d$tr=="Intervention" & d$serosvy==x]+1),
 	Age=d$ageyrs[d$tr=="Intervention" & d$serosvy==x],
-	id=d$id[d$tr=="Intervention" & d$serosvy==x]
+	id=d$id[d$tr=="Intervention" & d$serosvy==x],
+	SL.library=SL.library
 	)
 )
 
@@ -123,16 +134,17 @@ mu.i <- sapply(1:8,function(x) SLAb.tmle(
 #-------------------------------
 # Estimate difference between
 # control and intervention villages in
-# IFAT P. falciparm
+# IFA P. falciparm
 # titre by survey round
 #-------------------------------
 
 set.seed(79287234)
-diff.psi <- sapply(c(1:5,7:8),function(x) SLAb.tmle(
+diff.psi <- sapply(c(1:5,7:8),function(x) ab_tmle(
 	Y=log10(d$ifatpftitre[d$serosvy==x]+1),
 	Age=d$ageyrs[d$serosvy==x],
 	id=d$id[d$serosvy==x],
 	X=d$tr01[d$serosvy==x],
+	SL.library=SL.library,
 	diff=TRUE
 	)
 )
