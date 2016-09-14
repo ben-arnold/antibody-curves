@@ -85,44 +85,27 @@ d.2 <- d[d$serosvy==2,]
 # model / algorithm library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 
-set.seed(65452)
+set.seed(35234)
 
 # Pre-intervention period fitted curves
 # stratified by season, averaged over control + intervention
-p.1 <-ab_agecurve(Y=log10(d.1$ifatpftitre+1),Age=d.1$ageyrs,id=d.1$id,SL.library=SL.library)
-p.2 <-ab_agecurve(Y=log10(d.2$ifatpftitre+1),Age=d.2$ageyrs,id=d.2$id,SL.library=SL.library)
+p.1 <-agecurveAb(Y=log10(d.1$ifatpftitre+1),Age=d.1$ageyrs,id=d.1$id,SL.library=SL.library)
+p.2 <-agecurveAb(Y=log10(d.2$ifatpftitre+1),Age=d.2$ageyrs,id=d.2$id,SL.library=SL.library)
 
 # surveys 1-2 stratified by intervention assignment and season
 # doing this extra leg work to confirm that there
 # is no difference between assignment
-p.c1 <- ab_agecurve(Y=log10(d.c1$ifatpftitre+1),Age=d.c1$ageyrs,id=d.c1$id,SL.library=SL.library)
-p.c2 <- ab_agecurve(Y=log10(d.c2$ifatpftitre+1),Age=d.c2$ageyrs,id=d.c2$id,SL.library=SL.library)
-p.tr1 <- ab_agecurve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id,SL.library=SL.library)
-p.tr2 <- ab_agecurve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id,SL.library=SL.library)
+p.c1 <- agecurveAb(Y=log10(d.c1$ifatpftitre+1),Age=d.c1$ageyrs,id=d.c1$id,SL.library=SL.library)
+p.c2 <- agecurveAb(Y=log10(d.c2$ifatpftitre+1),Age=d.c2$ageyrs,id=d.c2$id,SL.library=SL.library)
+p.tr1 <- agecurveAb(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id,SL.library=SL.library)
+p.tr2 <- agecurveAb(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id,SL.library=SL.library)
 
 # control village fitted curves for surveys 3,4,5,7,8 (wet, dry, wet, wet, dry)
-p.c3 <- ab_agecurve(Y=log10(d.c3$ifatpftitre+1),Age=d.c3$ageyrs,id=d.c3$id,SL.library=SL.library)
-p.c4 <- ab_agecurve(Y=log10(d.c4$ifatpftitre+1),Age=d.c4$ageyrs,id=d.c4$id,SL.library=SL.library)
-p.c5 <- ab_agecurve(Y=log10(d.c5$ifatpftitre+1),Age=d.c5$ageyrs,id=d.c5$id,SL.library=SL.library)
-p.c7 <- ab_agecurve(Y=log10(d.c7$ifatpftitre+1),Age=d.c7$ageyrs,id=d.c7$id,SL.library=SL.library)
-p.c8 <- ab_agecurve(Y=log10(d.c8$ifatpftitre+1),Age=d.c8$ageyrs,id=d.c8$id,SL.library=SL.library)
-
-
-
-
-# temp code to look at curves
-# lo <- layout(mat=matrix(1:3,nrow=3,ncol=1))
-# cols <- rainbow(n=7,v=0.7)
-# plot(p.c1$pYframe$Age,p.c1$pYframe$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[1])
-# lines(p.c2$pYframe$Age,p.c2$pYframe$pY,col=cols[2])
-#
-# plot(p.c3$pYframe$Age,p.c3$pYframe$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[3])
-# lines(p.c4$pYframe$Age,p.c4$pYframe$pY,col=cols[4])
-# lines(p.c5$pYframe$Age,p.c5$pYframe$pY,col=cols[5])
-#
-# plot(p.c7$pYframe$Age,p.c7$pYframe$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[6])
-# lines(p.c8$pYframe$Age,p.c8$pYframe$pY,col=cols[7])
-
+p.c3 <- agecurveAb(Y=log10(d.c3$ifatpftitre+1),Age=d.c3$ageyrs,id=d.c3$id,SL.library=SL.library)
+p.c4 <- agecurveAb(Y=log10(d.c4$ifatpftitre+1),Age=d.c4$ageyrs,id=d.c4$id,SL.library=SL.library)
+p.c5 <- agecurveAb(Y=log10(d.c5$ifatpftitre+1),Age=d.c5$ageyrs,id=d.c5$id,SL.library=SL.library)
+p.c7 <- agecurveAb(Y=log10(d.c7$ifatpftitre+1),Age=d.c7$ageyrs,id=d.c7$id,SL.library=SL.library)
+p.c8 <- agecurveAb(Y=log10(d.c8$ifatpftitre+1),Age=d.c8$ageyrs,id=d.c8$id,SL.library=SL.library)
 
 
 #-------------------------------
@@ -134,50 +117,50 @@ p.c8 <- ab_agecurve(Y=log10(d.c8$ifatpftitre+1),Age=d.c8$ageyrs,id=d.c8$id,SL.li
 set.seed(8969754)
 
 ## All villages, rounds 1-2
-mu12.0to4 <- sapply(c(1:2),function(x) ab_tmle(
+mu12.0to4 <- sapply(c(1:2),function(x) tmleAb(
 	Y=log10(d$ifatpftitre[d$agecat=="0-4" & d$serosvy==x]+1),
-	Age=d$ageyrs[d$agecat=="0-4" & d$serosvy==x],
+	W=data.frame(Age=d$ageyrs[d$agecat=="0-4" & d$serosvy==x]),
 	id=d$id[d$agecat=="0-4" & d$serosvy==x],
 	SL.library=SL.library
-	)
+	)[c("psi","se","lb","ub","p")]
 )
-mu12.5to9 <- sapply(c(1:2),function(x) ab_tmle(
+mu12.5to9 <- sapply(c(1:2),function(x) tmleAb(
   Y=log10(d$ifatpftitre[d$agecat=="5-9" & d$serosvy==x]+1),
-  Age=d$ageyrs[d$agecat=="5-9" & d$serosvy==x],
+  W=data.frame(Age=d$ageyrs[d$agecat=="5-9" & d$serosvy==x]),
   id=d$id[d$agecat=="5-9" & d$serosvy==x],
   SL.library=SL.library
-  )
+  )[c("psi","se","lb","ub","p")]
 )
-mu12.10to14 <- sapply(c(1:2),function(x) ab_tmle(
+mu12.10to14 <- sapply(c(1:2),function(x) tmleAb(
   Y=log10(d$ifatpftitre[d$agecat=="10-14" & d$serosvy==x]+1),
-  Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x],
+  W=data.frame(Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x]),
   id=d$id[d$agecat=="10-14" & d$serosvy==x],
   SL.library=SL.library
-  )
+  )[c("psi","se","lb","ub","p")]
 )
 
 
 # Control villages only, round 3-5,7,8
-mu.0to4 <- sapply(c(1:5,7,8),function(x) ab_tmle(
+mu.0to4 <- sapply(c(1:5,7,8),function(x) tmleAb(
   Y=log10(d$ifatpftitre[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x]+1),
-  Age=d$ageyrs[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x],
+  W=data.frame(Age=d$ageyrs[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x]),
   id=d$id[d$agecat=="0-4" & d$tr=="Control" & d$serosvy==x],
   SL.library=SL.library
-  )
+  )[c("psi","se","lb","ub","p")]
 )
-mu.5to9 <- sapply(c(1:5,7,8),function(x) ab_tmle(
+mu.5to9 <- sapply(c(1:5,7,8),function(x) tmleAb(
   Y=log10(d$ifatpftitre[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x]+1),
-  Age=d$ageyrs[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x],
+  W=data.frame(Age=d$ageyrs[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x]),
   id=d$id[d$agecat=="5-9" & d$tr=="Control" & d$serosvy==x],
   SL.library=SL.library
-  )
+  )[c("psi","se","lb","ub","p")]
 )
-mu.10to14 <- sapply(c(1:5,7,8),function(x) ab_tmle(
+mu.10to14 <- sapply(c(1:5,7,8),function(x) tmleAb(
   Y=log10(d$ifatpftitre[d$agecat=="10-14" & d$serosvy==x]+1),
-  Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x],
+  W=data.frame(Age=d$ageyrs[d$agecat=="10-14" & d$serosvy==x]),
   id=d$id[d$agecat=="10-14" & d$serosvy==x],
   SL.library=SL.library
-  )
+  )[c("psi","se","lb","ub","p")]
 )
 
 #-------------------------------
@@ -191,22 +174,20 @@ mu.10to14 <- sapply(c(1:5,7,8),function(x) ab_tmle(
 
 set.seed(8234234)
 ages <- levels(d$agecat)
-tc.diff.psi1 <- sapply(ages,function(x) ab_tmle(
+tc.diff.psi1 <- sapply(ages,function(x) tmleAb(
 	Y=log10(d$ifatpftitre[d$serosvy==1 & d$agecat==x]+1),
-	Age=d$ageyrs[d$serosvy==1 & d$agecat==x],
-	id=d$id[d$serosvy==1 & d$agecat==x],
 	X=d$tr01[d$serosvy==1 & d$agecat==x],
-	SL.library=SL.library,
-	diff=TRUE
+	W=data.frame(Age=d$ageyrs[d$serosvy==1 & d$agecat==x]),
+	id=d$id[d$serosvy==1 & d$agecat==x],
+	SL.library=SL.library
 	)
 )
-tc.diff.psi2 <- sapply(ages,function(x) ab_tmle(
+tc.diff.psi2 <- sapply(ages,function(x) tmleAb(
   Y=log10(d$ifatpftitre[d$serosvy==2 & d$agecat==x]+1),
-  Age=d$ageyrs[d$serosvy==2 & d$agecat==x],
-  id=d$id[d$serosvy==2 & d$agecat==x],
   X=d$tr01[d$serosvy==2 & d$agecat==x],
-  SL.library=SL.library,
-  diff=TRUE
+  W=data.frame(Age=d$ageyrs[d$serosvy==2 & d$agecat==x]),
+  id=d$id[d$serosvy==2 & d$agecat==x],
+  SL.library=SL.library
   )
 )
 
@@ -225,14 +206,13 @@ sprintf("%1.4f",unlist(tc.diff.psi2[5,])*6)
 # for wet v. dry, stratified by child age
 tmle.wrap <- function(d) {
   ages <- levels(d$agecat)
-  diffs <- sapply(ages,function(x) ab_tmle(
+  diffs <- sapply(ages,function(x) tmleAb(
     Y=log10(d$ifatpftitre[d$agecat==x]+1),
-    Age=d$ageyrs[d$agecat==x],
-    id=d$id[d$agecat==x],
     X=d$wet[d$agecat==x],
-    SL.library=SL.library,
-    diff=TRUE
-    )
+    W=data.frame(Age=d$ageyrs[d$agecat==x]),
+    id=d$id[d$agecat==x],
+    SL.library=SL.library
+    )[c("psi","se","lb","ub","p")]
   )
   return(diffs)
 }

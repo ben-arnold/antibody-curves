@@ -77,13 +77,13 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomF
 # fit the cross-validated super learner
 # with just Age as the predictor
 set.seed(62522)
-CVcfit <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+CVcfit <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
   
 # fit the cross-validated super learner
 # accounting for other covariates
 Wc <- dc[,c("sex","wetseason","vname")]
 set.seed(62522)
-CVcfitm <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,W=Wc,family=gaussian(),V=10,SL.library=SL.library)
+CVcfitm <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs,Wc),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
   
 # fit cross-validated SL
 # with a restricted library
@@ -93,12 +93,12 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 # fit the cross-validated super learner
 # with just Age as the predictor
 set.seed(62522)
-CVcfitr <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+CVcfitr <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
   
 # fit the cross-validated super learner
 # accounting for other covariates
 set.seed(62522)
-CVcfitrm <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,W=Wc,family=gaussian(),V=10,SL.library=SL.library)
+CVcfitrm <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs,Wc),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
 
 #-------------------------------
 # Intervention Villages
@@ -111,13 +111,13 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomF
 # fit the cross-validated super learner
 # with just Age as the predictor
 set.seed(62522)
-CVtfit <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+CVtfit <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 
 # fit the cross-validated super learner
 # accounting for other covariates
 Wt <- dt[,c("sex","wetseason","vname")]
 set.seed(62522)
-CVtfitm <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,W=Wt,family=gaussian(),V=10,SL.library=SL.library)
+CVtfitm <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs,Wt),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 
 # fit cross-validated SL
 # with a restricted library
@@ -127,12 +127,12 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 # fit the cross-validated super learner
 # with just Age as the predictor
 set.seed(62522)
-CVtfitr <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+CVtfitr <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 
 # fit the cross-validated super learner
 # accounting for other covariates
 set.seed(62522)
-CVtfitrm <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,W=Wt,family=gaussian(),V=10,SL.library=SL.library)
+CVtfitrm <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs,Wt),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 
 #------------------------------
 # print results to log

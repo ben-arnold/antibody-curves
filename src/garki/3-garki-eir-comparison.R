@@ -47,9 +47,14 @@ deir <- data.frame(village,vname,wetseason,eirdates,eir)
 #-------------------------------
 # load the serology dataset
 #-------------------------------
-d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+# d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+data("garki_sero")
+d <- garki_sero
 
 d$mdate <- as.Date(d$mdate,"%d %b %Y")
+
+# drop observations with missing outcome or age information
+d <- subset(d,!is.na(d$ifatpftitre) & !is.na(d$ageyrs))
 
 #-------------------------------
 # subset the dataset to
@@ -84,81 +89,81 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 
 
 set.seed(2343242)
-ajura.1971.SL <- ab_agecurve(
+ajura.1971.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1971]+1),
 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1971],
 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971],
 		SL.library=SL.library
 	)
-ajura.1972.SL <- ab_agecurve(
+ajura.1972.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1972]+1),
 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1972],
 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1972],
 		SL.library=SL.library
 	)
-ajura.1973.SL <- ab_agecurve(
+ajura.1973.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1973]+1),
 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1973],
 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1973],
 		SL.library=SL.library
 	)	
 
-rafin.1971.SL <- ab_agecurve(
+rafin.1971.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1971]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1971],
 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1971],
 		SL.library=SL.library
 	)
-rafin.1972.SL <- ab_agecurve(
+rafin.1972.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1972]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1972],
 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1972],
 		SL.library=SL.library
 	)
-rafin.1973.SL <- ab_agecurve(
+rafin.1973.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1973]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1973],
 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1973],
 		SL.library=SL.library
 	)
-rafin.1974.SL <- ab_agecurve(
+rafin.1974.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1974]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1974],
 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1974],
 		SL.library=SL.library
 	)
-rafin.1975.SL <- ab_agecurve(
+rafin.1975.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1975]+1),
 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1975],
 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1975],
 		SL.library=SL.library
 	)
 
-nasak.1971.SL <- ab_agecurve(
+nasak.1971.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1971]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1971],
 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1971],
 		SL.library=SL.library
 	)
-nasak.1972.SL <- ab_agecurve(
+nasak.1972.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1972]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1972],
 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1972],
 		SL.library=SL.library
 	)
-nasak.1973.SL <- ab_agecurve(
+nasak.1973.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1973]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1973],
 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1973],
 		SL.library=SL.library
 	)
-nasak.1974.SL <- ab_agecurve(
+nasak.1974.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1974]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1974],
 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1974],
 		SL.library=SL.library
 	)
-nasak.1975.SL <- ab_agecurve(
+nasak.1975.SL <- agecurveAb(
 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1975]+1),
 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1975],
 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1975],
@@ -172,25 +177,25 @@ nasak.1975.SL <- ab_agecurve(
 #-------------------------------
 
 set.seed(5463452)
-ajura.tmle <- sapply(c(1971,1972,1973),function(x) ab_tmle(
+ajura.tmle <- sapply(c(1971,1972,1973),function(x) tmleAb(
   Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==x]+1),
-  Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x],
+  W=data.frame(Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x]),
   id=ad$id[ad$vname=="Ajura" & ad$wetseason==x],
-  SL.library=SL.library)
+  SL.library=SL.library)[c("psi","se","lb","ub","p")]
   )
 
-rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) ab_tmle(
+rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) tmleAb(
   Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==x]+1),
-  Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x],
+  W=data.frame(Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x]),
   id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==x],
-  SL.library=SL.library)
+  SL.library=SL.library)[c("psi","se","lb","ub","p")]
 )
 
-nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) ab_tmle(
+nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) tmleAb(
   Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==x]+1),
-  Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x],
+  W=data.frame(Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x]),
   id=ad$id[ad$vname=="Nasakar" & ad$wetseason==x],
-  SL.library=SL.library)
+  SL.library=SL.library)[c("psi","se","lb","ub","p")]
 )
 
 #-------------------------------

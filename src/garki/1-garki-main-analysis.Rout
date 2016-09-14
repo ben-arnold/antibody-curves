@@ -1,6 +1,6 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -36,10 +36,8 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmle)
 Welcome to the tmle package, version 1.2.0-2
@@ -54,7 +52,13 @@ The following object is masked from ‘package:SuperLearner’:
 
 > library(tmleAb)
 Welcome to the tmleAb package
-Targeted maximum likelihood estimation for antibody (Ab) measurements.
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
 > 
 > #-------------------------------
 > # load the serology dataset
@@ -116,45 +120,39 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > 
 > # Pre-intervention period fitted curves
 > set.seed(23752)
-> p.c12 <- ab_agecurve(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id,SL.library=SL.library)
+> p.c12 <- agecurveAb(Y=log10(d.c12$ifatpftitre+1),Age=d.c12$ageyrs,id=d.c12$id,SL.library=SL.library)
 Loading required package: gam
 Loading required package: splines
 Loading required package: foreach
 Loaded gam 1.12
 
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
+                  CV-Risk       Coef
 SL.mean_All     0.3369989 0.01529593
 SL.glm_All      0.2948169 0.04394021
 SL.Yman2016_All 0.3034834 0.00000000
 SL.gam.df7_All  0.2587914 0.00000000
 SL.loess_All    0.2572127 0.94076386
-> p.tr1 <- ab_agecurve(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id,SL.library=SL.library)
+> p.tr1 <- agecurveAb(Y=log10(d.tr1$ifatpftitre+1),Age=d.tr1$ageyrs,id=d.tr1$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
+                  CV-Risk       Coef
 SL.mean_All     0.2807134 0.00000000
 SL.glm_All      0.2719292 0.00000000
 SL.Yman2016_All 0.2725480 0.06386325
 SL.gam.df5_All  0.2634917 0.93613675
 SL.loess_All    0.2640698 0.00000000
-> p.tr2 <- ab_agecurve(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id,SL.library=SL.library)
+> p.tr2 <- agecurveAb(Y=log10(d.tr2$ifatpftitre+1),Age=d.tr2$ageyrs,id=d.tr2$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk        Coef
+                  CV-Risk        Coef
 SL.mean_All     0.4959944 0.012592618
 SL.glm_All      0.4173012 0.005925629
 SL.Yman2016_All 0.5424785 0.000000000
@@ -163,53 +161,45 @@ SL.loess_All    0.3479049 0.000000000
 > 
 > # Intervention phase fitted curves
 > set.seed(2436)
-> p.c345 <- ab_agecurve(Y=log10(d.c345$ifatpftitre+1),Age=d.c345$ageyrs,id=d.c345$id,SL.library=SL.library)
+> p.c345 <- agecurveAb(Y=log10(d.c345$ifatpftitre+1),Age=d.c345$ageyrs,id=d.c345$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk        Coef
+                  CV-Risk        Coef
 SL.mean_All     0.7553761 0.001863889
 SL.glm_All      0.6310864 0.000000000
 SL.Yman2016_All 0.6842681 0.000000000
 SL.gam.df10_All 0.5051835 0.998136111
 SL.loess_All    0.5277591 0.000000000
-> p.tr3 <- ab_agecurve(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id,SL.library=SL.library)
+> p.tr3 <- agecurveAb(Y=log10(d.tr3$ifatpftitre+1),Age=d.tr3$ageyrs,id=d.tr3$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
+                  CV-Risk Coef
 SL.mean_All     0.9005568    0
 SL.glm_All      0.6132087    0
 SL.Yman2016_All 0.7942347    0
 SL.gam.df10_All 0.4388123    1
 SL.loess_All    0.5014591    0
-> p.tr4 <- ab_agecurve(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id,SL.library=SL.library)
+> p.tr4 <- agecurveAb(Y=log10(d.tr4$ifatpftitre+1),Age=d.tr4$ageyrs,id=d.tr4$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
+                  CV-Risk Coef
 SL.mean_All     1.2820571    0
 SL.glm_All      0.7915804    0
 SL.Yman2016_All 1.3850542    0
 SL.gam.df10_All 0.5093662    1
 SL.loess_All    0.6277605    0
-> p.tr5 <- ab_agecurve(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id,SL.library=SL.library)
+> p.tr5 <- agecurveAb(Y=log10(d.tr5$ifatpftitre+1),Age=d.tr5$ageyrs,id=d.tr5$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
+                  CV-Risk Coef
 SL.mean_All     1.2487481    0
 SL.glm_All      0.7039408    0
 SL.Yman2016_All 1.0928159    0
@@ -219,53 +209,45 @@ SL.loess_All    0.5405036    0
 > # post intervention period fitted curves
 > # note: no control measurement in round 6
 > set.seed(45234)
-> p.c78 <- ab_agecurve(Y=log10(d.c78$ifatpftitre+1),Age=d.c78$ageyrs,id=d.c78$id,SL.library=SL.library)
+> p.c78 <- agecurveAb(Y=log10(d.c78$ifatpftitre+1),Age=d.c78$ageyrs,id=d.c78$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk        Coef
+                  CV-Risk        Coef
 SL.mean_All     0.5803018 0.017389913
 SL.glm_All      0.4846133 0.001080577
 SL.Yman2016_All 0.5091101 0.000000000
 SL.gam.df10_All 0.3894704 0.957725296
 SL.loess_All    0.3946922 0.023804214
-> p.tr6 <- ab_agecurve(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id,SL.library=SL.library)
+> p.tr6 <- agecurveAb(Y=log10(d.tr6$ifatpftitre+1),Age=d.tr6$ageyrs,id=d.tr6$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
+                  CV-Risk Coef
 SL.mean_All     1.3531233    0
 SL.glm_All      0.6475377    0
 SL.Yman2016_All 1.0151440    0
 SL.gam.df9_All  0.4511030    1
 SL.loess_All    0.4844976    0
-> p.tr7 <- ab_agecurve(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id,SL.library=SL.library)
+> p.tr7 <- agecurveAb(Y=log10(d.tr7$ifatpftitre+1),Age=d.tr7$ageyrs,id=d.tr7$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk        Coef
+                  CV-Risk        Coef
 SL.mean_All     1.6194789 0.004991703
 SL.glm_All      1.1403740 0.013653294
 SL.Yman2016_All 1.2968745 0.000000000
 SL.gam.df7_All  0.9920331 0.981355003
 SL.loess_All    0.9990254 0.000000000
-> p.tr8 <- ab_agecurve(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id,SL.library=SL.library)
+> p.tr8 <- agecurveAb(Y=log10(d.tr8$ifatpftitre+1),Age=d.tr8$ageyrs,id=d.tr8$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk        Coef
+                  CV-Risk        Coef
 SL.mean_All     1.2196331 0.000000000
 SL.glm_All      0.9414064 0.006440305
 SL.Yman2016_All 1.2945996 0.000000000
@@ -291,13 +273,10 @@ There were 11 warnings (use warnings() to see them)
 > ## Control Villages 
 > # Nabanawa + Ajura
 > # (no measurement in survey round 6)
-> mu.c <- sapply(c(1:5,7:8),function(x) ab_tmle(
-+ 	Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
-+ 	Age=d$ageyrs[d$tr=="Control" & d$serosvy==x],
-+ 	id=d$id[d$tr=="Control" & d$serosvy==x],
-+ 	SL.library=SL.library
-+ 	)
-+ )
+> mu_c <- sapply(c(1:5,7:8),function(x) tmleAb(Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
++                                              W=data.frame(Age=d$ageyrs[d$tr=="Control" & d$serosvy==x]),
++                                              id=d$id[d$tr=="Control" & d$serosvy==x],
++                                              SL.library=SL.library)[c("psi","se","lb","ub","p")] )
  Population Mean
    Parameter Estimate:  3.2068
    Estimated Variance:  0.0013173
@@ -334,14 +313,12 @@ There were 11 warnings (use warnings() to see them)
               p-value:  <2e-16
     95% Conf Interval: (2.7049, 2.9624) 
 > 
+> 
 > ### Intervention Villages - Spraying (Propoxur) + MDA
-> mu.i <- sapply(1:8,function(x) ab_tmle(
-+ 	Y=log10(d$ifatpftitre[d$tr=="Intervention" & d$serosvy==x]+1),
-+ 	Age=d$ageyrs[d$tr=="Intervention" & d$serosvy==x],
-+ 	id=d$id[d$tr=="Intervention" & d$serosvy==x],
-+ 	SL.library=SL.library
-+ 	)
-+ )
+> mu_i <- sapply(c(1:8),function(x) tmleAb(Y=log10(d$ifatpftitre[d$tr=="Intervention" & d$serosvy==x]+1),
++                                              W=data.frame(Age=d$ageyrs[d$tr=="Intervention" & d$serosvy==x]),
++                                              id=d$id[d$tr=="Intervention" & d$serosvy==x],
++                                              SL.library=SL.library)[c("psi","se","lb","ub","p")] )
  Population Mean
    Parameter Estimate:  3.3301
    Estimated Variance:  0.00067833
@@ -383,7 +360,6 @@ There were 11 warnings (use warnings() to see them)
               p-value:  <2e-16
     95% Conf Interval: (2.2273, 2.4803) 
 > 
-> 
 > #-------------------------------
 > # Estimate difference between
 > # control and intervention villages in
@@ -392,15 +368,11 @@ There were 11 warnings (use warnings() to see them)
 > #-------------------------------
 > 
 > set.seed(79287234)
-> diff.psi <- sapply(c(1:5,7:8),function(x) ab_tmle(
-+ 	Y=log10(d$ifatpftitre[d$serosvy==x]+1),
-+ 	Age=d$ageyrs[d$serosvy==x],
-+ 	id=d$id[d$serosvy==x],
-+ 	X=d$tr01[d$serosvy==x],
-+ 	SL.library=SL.library,
-+ 	diff=TRUE
-+ 	)
-+ )
+> diff_psi <- sapply(c(1:5,7:8),function(x) tmleAb(Y=log10(d$ifatpftitre[d$serosvy==x]+1),
++                                                  X=d$tr01[d$serosvy==x],
++                                                  W=data.frame(Age=d$ageyrs[d$serosvy==x]),
++                                                  id=d$id[d$serosvy==x],
++                                                  SL.library=SL.library)[c("psi","se","lb","ub","p")])
  Additive Effect
    Parameter Estimate:  0.22081
    Estimated Variance:  0.00043435
@@ -437,9 +409,8 @@ There were 11 warnings (use warnings() to see them)
               p-value:  <2e-16
     95% Conf Interval: (-0.54225, -0.38443) 
 > 
-> 
 > # P-values for differences in means, with Bonferroni correction for 7 tests
-> sprintf("%1.4f",unlist(diff.psi[5,])*7)
+> sprintf("%1.4f",unlist(diff_psi[5,])*7)
 [1] "0.0000" "0.0021" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
 > 
 > #-------------------------------
@@ -452,4 +423,4 @@ There were 11 warnings (use warnings() to see them)
 > 
 > proc.time()
    user  system elapsed 
- 55.166   0.533  56.456 
+ 72.209   0.583  73.282 

@@ -1,6 +1,6 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -40,10 +40,8 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmle)
 Welcome to the tmle package, version 1.2.0-2
@@ -58,7 +56,13 @@ The following object is masked from ‘package:SuperLearner’:
 
 > library(tmleAb)
 Welcome to the tmleAb package
-Targeted maximum likelihood estimation for antibody (Ab) measurements.
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
 > 
 > 
 > #-------------------------------
@@ -69,6 +73,8 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > 
 > d$mdate <- as.Date(d$mdate,"%d %b %Y")
 > 
+> # drop observations without outcome or age measurements
+> d <- subset(d,!is.na(d$ifatpftitre) & !is.na(d$ageyrs))
 > 
 > # add 2 control village names
 > d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
@@ -95,19 +101,19 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > 
 > 
 > # small wrapper function to call
-> # ab_agecurve() by village
+> # agecurveAb() by village
 > # and by survey round
 > SLAb.wrap <- function(svy,vil,d) {
 +   # svy : survey round
 +   # vil : village number
 +   # d   : dataset
-+   return( ab_agecurve(Y=log10(d$ifatpftitre[d$village==vil & d$serosvy==svy]+1),Age=d$ageyrs[d$village==vil & d$serosvy==svy],id=d$id[d$village==vil & d$serosvy==svy],SL.library=SL.library) )
++   return( agecurveAb(Y=log10(d$ifatpftitre[d$village==vil & d$serosvy==svy]+1),Age=d$ageyrs[d$village==vil & d$serosvy==svy],id=d$id[d$village==vil & d$serosvy==svy],SL.library=SL.library) )
 + }
 > 
 > # Control Villages 
 > # Nabanawa + Ajura
 > # (not using wrapper fn above because need to combine across svy rounds)
-> c12.EYxa <- ab_agecurve(
+> c12.EYxa <- agecurveAb(
 +   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2]+1),
 +   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2],
 +   id=d$id[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2],
@@ -119,624 +125,444 @@ Loading required package: foreach
 Loaded gam 1.12
 
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     0.3345227 0.02156170
-SL.glm_All      0.2929486 0.02797152
-SL.Yman2016_All 0.3005111 0.00000000
-SL.gam.df5_All  0.2570754 0.00000000
-SL.loess_All    0.2559327 0.95046678
+                  CV-Risk        Coef
+SL.mean_All     0.3358305 0.031339189
+SL.glm_All      0.2949853 0.002908454
+SL.Yman2016_All 0.3028164 0.000000000
+SL.gam.df5_All  0.2582245 0.000000000
+SL.loess_All    0.2567488 0.965752357
 Warning message:
-In ab_agecurve(Y = log10(d$ifatpftitre[d$tr == "Control" & d$serosvy >=  :
-  448 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 926 observations,
- but ab_agecurve is fitting the curve using 478 observations.
-> c345.EYxa <- ab_agecurve(
+In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
+> c345.EYxa <- agecurveAb(
 +   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5]+1),
 +   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5],
 +   id=d$id[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5],
 +   SL.library=SL.library
 + )
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
-SL.mean_All     0.7535932    0
-SL.glm_All      0.6314908    0
-SL.Yman2016_All 0.6828540    0
-SL.gam.df6_All  0.5171191    1
-SL.loess_All    0.5243852    0
-Warning message:
-In ab_agecurve(Y = log10(d$ifatpftitre[d$tr == "Control" & d$serosvy >=  :
-  569 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1306 observations,
- but ab_agecurve is fitting the curve using 737 observations.
-> c678.EYxa <- ab_agecurve(
+                  CV-Risk Coef
+SL.mean_All     0.7528519    0
+SL.glm_All      0.6277593    0
+SL.Yman2016_All 0.6764378    0
+SL.gam.df10_All 0.4956114    1
+SL.loess_All    0.5203423    0
+> c678.EYxa <- agecurveAb(
 +   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8]+1),
 +   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8],
 +   id=d$id[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8],
 +   SL.library=SL.library
 + )
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk         Coef
-SL.mean_All     0.5781992 0.0007307395
-SL.glm_All      0.4860225 0.0000000000
-SL.Yman2016_All 0.5136415 0.0000000000
-SL.gam.df6_All  0.3906179 0.9992692605
-SL.loess_All    0.3933313 0.0000000000
-Warning message:
-In ab_agecurve(Y = log10(d$ifatpftitre[d$tr == "Control" & d$serosvy >=  :
-  443 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 820 observations,
- but ab_agecurve is fitting the curve using 377 observations.
+                  CV-Risk        Coef
+SL.mean_All     0.5807535 0.006013051
+SL.glm_All      0.4854871 0.015699223
+SL.Yman2016_All 0.5160688 0.000000000
+SL.gam.df10_All 0.3905170 0.862697503
+SL.loess_All    0.3947061 0.115590223
 > 
 > # village cluster 5
 > # Kawari
 > v153.EYxa <- sapply(1:8,SLAb.wrap,vil=153,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk      Coef
+SL.mean_All     0.2276686 0.3786436
+SL.glm_All      0.2351996 0.0000000
+SL.Yman2016_All 0.2233022 0.6213564
+SL.gam.df4_All  0.2370473 0.0000000
+SL.loess_All    0.2402121 0.0000000
 
-                     Risk      Coef
-SL.mean_All     0.2281343 0.2910919
-SL.glm_All      0.2345320 0.0000000
-SL.Yman2016_All 0.2237185 0.3932596
-SL.gam.df3_All  0.2253334 0.3156486
-SL.loess_All    0.2324170 0.0000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk       Coef
+SL.mean_All     0.6824444 0.02586649
+SL.glm_All      0.6044291 0.06954208
+SL.Yman2016_All 0.4782128 0.27305801
+SL.gam.df7_All  0.4896486 0.00000000
+SL.loess_All    0.4554861 0.63153342
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk       Coef
-SL.mean_All     0.6923309 0.08591549
-SL.glm_All      0.6282996 0.00000000
-SL.Yman2016_All 0.5596077 0.13168072
-SL.gam.df4_All  0.5105208 0.78240379
-SL.loess_All    0.5348448 0.00000000
+                  CV-Risk       Coef
+SL.mean_All     0.8466684 0.00000000
+SL.glm_All      0.6279031 0.03094292
+SL.Yman2016_All 0.8824365 0.00000000
+SL.gam.df3_All  0.4520142 0.76785005
+SL.loess_All    0.4635885 0.20120703
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk Coef
+SL.mean_All     1.4297354    0
+SL.glm_All      0.9565680    0
+SL.Yman2016_All 1.6970170    0
+SL.gam.df8_All  0.4766964    1
+SL.loess_All    0.6708371    0
 
-                     Risk       Coef
-SL.mean_All     0.8188138 0.04632478
-SL.glm_All      0.6168293 0.13827005
-SL.Yman2016_All 0.9586832 0.00000000
-SL.gam.df5_All  0.4825125 0.81540517
-SL.loess_All    0.4928605 0.00000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk       Coef
+SL.mean_All     1.3269136 0.01295124
+SL.glm_All      0.6987193 0.10203724
+SL.Yman2016_All 0.7848233 0.03125893
+SL.gam.df10_All 0.4733015 0.82849676
+SL.loess_All    0.5430346 0.02525583
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk Coef
-SL.mean_All     1.3640667    0
-SL.glm_All      0.9059757    0
-SL.Yman2016_All 1.5642053    0
-SL.gam.df6_All  0.5480292    1
-SL.loess_All    0.6901472    0
+                  CV-Risk        Coef
+SL.mean_All     1.4570155 0.070618291
+SL.glm_All      0.8464594 0.002992262
+SL.Yman2016_All 1.3617693 0.000000000
+SL.gam.df8_All  0.5272620 0.926389447
+SL.loess_All    0.5851737 0.000000000
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk      Coef
+SL.mean_All     1.0727022 0.1120648
+SL.glm_All      0.8995040 0.3319907
+SL.Yman2016_All 1.3140541 0.0000000
+SL.gam.df8_All  0.9046617 0.2876634
+SL.loess_All    0.8831115 0.2682812
 
-                     Risk       Coef
-SL.mean_All     1.3133771 0.02759176
-SL.glm_All      0.7221349 0.05174662
-SL.Yman2016_All 0.7915506 0.00000000
-SL.gam.df6_All  0.5289271 0.92066161
-SL.loess_All    0.5645983 0.00000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk Coef
-SL.mean_All     1.4869859    0
-SL.glm_All      0.8869522    0
-SL.Yman2016_All 1.4251001    0
-SL.gam.df6_All  0.5386109    1
-SL.loess_All    0.6054059    0
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk       Coef
-SL.mean_All     1.0424504 0.08650447
-SL.glm_All      0.8637491 0.00000000
-SL.Yman2016_All 1.1610343 0.00000000
-SL.gam.df2_All  0.8108488 0.91349553
-SL.loess_All    0.8618574 0.00000000
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk      Coef
-SL.mean_All     0.6886231 0.2985552
-SL.glm_All      0.6415120 0.0000000
-SL.Yman2016_All 0.6619252 0.0000000
-SL.gam.df5_All  0.6014039 0.0000000
-SL.loess_All    0.5991382 0.7014448
-Warning messages:
-1: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  37 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 93 observations,
- but ab_agecurve is fitting the curve using 56 observations.
-2: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  40 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 86 observations,
- but ab_agecurve is fitting the curve using 46 observations.
-3: In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
-4: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  43 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 93 observations,
- but ab_agecurve is fitting the curve using 50 observations.
-5: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  41 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 93 observations,
- but ab_agecurve is fitting the curve using 52 observations.
-6: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  33 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 87 observations,
- but ab_agecurve is fitting the curve using 54 observations.
-7: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  44 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 98 observations,
- but ab_agecurve is fitting the curve using 54 observations.
-8: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  41 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 100 observations,
- but ab_agecurve is fitting the curve using 59 observations.
-9: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  70 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 107 observations,
- but ab_agecurve is fitting the curve using 37 observations.
+                  CV-Risk       Coef
+SL.mean_All     0.6715366 0.13264142
+SL.glm_All      0.5632357 0.36858122
+SL.Yman2016_All 0.5807346 0.03855715
+SL.gam.df3_All  0.5407849 0.00000000
+SL.loess_All    0.5679045 0.46022022
+There were 32 warnings (use warnings() to see them)
 > 
 > # Rafin Marke
 > v154.EYxa <- sapply(1:8,SLAb.wrap,vil=154,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     0.3632303 0.09614791
+SL.glm_All      0.3474924 0.33945629
+SL.Yman2016_All 0.3460860 0.32582689
+SL.gam.df6_All  0.3555462 0.00000000
+SL.loess_All    0.3446055 0.23856890
 
-                     Risk      Coef
-SL.mean_All     0.3522631 0.1144932
-SL.glm_All      0.3308602 0.3559119
-SL.Yman2016_All 0.3351147 0.2729389
-SL.gam.df4_All  0.3274607 0.0000000
-SL.loess_All    0.3281534 0.2566560
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk       Coef
+SL.mean_All     0.7515217 0.03790054
+SL.glm_All      0.6170789 0.00000000
+SL.Yman2016_All 1.0711117 0.00000000
+SL.gam.df9_All  0.5054728 0.96209946
+SL.loess_All    0.5356800 0.00000000
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk       Coef
-SL.mean_All     0.7452696 0.06060466
-SL.glm_All      0.6334645 0.00000000
-SL.Yman2016_All 1.0789001 0.00000000
-SL.gam.df2_All  0.5509028 0.56332162
-SL.loess_All    0.5599172 0.37607372
+                  CV-Risk       Coef
+SL.mean_All     1.0670599 0.03856438
+SL.glm_All      0.7068232 0.07878110
+SL.Yman2016_All 0.9156804 0.00000000
+SL.gam.df9_All  0.5436103 0.88265452
+SL.loess_All    0.5686544 0.00000000
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     1.4425651 0.01529159
+SL.glm_All      0.8500319 0.09290399
+SL.Yman2016_All 0.9949470 0.00000000
+SL.gam.df4_All  0.7141062 0.00000000
+SL.loess_All    0.7145144 0.89180442
 
-                     Risk        Coef
-SL.mean_All     1.0682056 0.000975238
-SL.glm_All      0.6886046 0.032655326
-SL.Yman2016_All 0.9031772 0.000000000
-SL.gam.df6_All  0.5504835 0.000000000
-SL.loess_All    0.5413787 0.966369436
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk      Coef
+SL.mean_All     1.1922953 0.0000000
+SL.glm_All      0.6624174 0.1194189
+SL.Yman2016_All 1.1773840 0.0000000
+SL.gam.df9_All  0.4553910 0.8805811
+SL.loess_All    0.4850519 0.0000000
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk       Coef
-SL.mean_All     1.4973597 0.00000000
-SL.glm_All      0.8760657 0.09415367
-SL.Yman2016_All 1.0284210 0.00000000
-SL.gam.df5_All  0.7193222 0.00000000
-SL.loess_All    0.7131219 0.90584633
+                  CV-Risk      Coef
+SL.mean_All     1.5048190 0.0000000
+SL.glm_All      0.7605751 0.0000000
+SL.Yman2016_All 1.3477694 0.0000000
+SL.gam.df10_All 0.5112096 0.6907744
+SL.loess_All    0.5219037 0.3092256
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                 CV-Risk       Coef
+SL.mean_All     1.812905 0.03552032
+SL.glm_All      1.360547 0.27167191
+SL.Yman2016_All 1.575063 0.00000000
+SL.gam.df7_All  1.312339 0.60837407
+SL.loess_All    1.316676 0.08443371
 
-                     Risk Coef
-SL.mean_All     1.1859325    0
-SL.glm_All      0.6620935    0
-SL.Yman2016_All 1.1904197    0
-SL.gam.df6_All  0.5097844    1
-SL.loess_All    0.5210624    0
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk Coef
-SL.mean_All     1.5040389    0
-SL.glm_All      0.7717767    0
-SL.Yman2016_All 1.3698181    0
-SL.gam.df6_All  0.5527012    0
-SL.loess_All    0.5465502    1
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                    Risk       Coef
-SL.mean_All     1.776332 0.01566684
-SL.glm_All      1.315910 0.12461240
-SL.Yman2016_All 1.556288 0.00000000
-SL.gam.df6_All  1.237323 0.00000000
-SL.loess_All    1.233339 0.85972076
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                    Risk       Coef
-SL.mean_All     1.378100 0.08712167
-SL.glm_All      1.060651 0.66663530
-SL.Yman2016_All 1.992985 0.00000000
-SL.gam.df4_All  1.083745 0.00000000
-SL.loess_All    1.089859 0.24624303
-There were 50 or more warnings (use warnings() to see the first 50)
+                 CV-Risk      Coef
+SL.mean_All     1.390161 0.0181477
+SL.glm_All      1.083208 0.4043116
+SL.Yman2016_All 1.907662 0.0000000
+SL.gam.df10_All 1.049761 0.5775407
+SL.loess_All    1.086911 0.0000000
+There were 37 warnings (use warnings() to see them)
 > 
 > # Kukar Maikiva
 > v155.EYxa <- sapply(1:8,SLAb.wrap,vil=155,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     0.4879551 0.12347372
+SL.glm_All      0.4939247 0.00000000
+SL.Yman2016_All 0.4485648 0.55123612
+SL.gam.df3_All  0.4523756 0.26701045
+SL.loess_All    0.4538334 0.05827971
 
-                     Risk      Coef
-SL.mean_All     0.4926883 0.2063169
-SL.glm_All      0.4858644 0.0000000
-SL.Yman2016_All 0.4584420 0.5909036
-SL.gam.df3_All  0.4638544 0.2027796
-SL.loess_All    0.4721859 0.0000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk Coef
+SL.mean_All     0.6774297    0
+SL.glm_All      0.5606114    0
+SL.Yman2016_All 0.6442291    0
+SL.gam.df10_All 0.4020097    1
+SL.loess_All    0.4652014    0
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk       Coef
-SL.mean_All     0.6845632 0.02863365
-SL.glm_All      0.5778050 0.00000000
-SL.Yman2016_All 0.6507385 0.00000000
-SL.gam.df6_All  0.4514422 0.97136635
-SL.loess_All    0.4682417 0.00000000
+                  CV-Risk Coef
+SL.mean_All     0.9918424    0
+SL.glm_All      0.6834650    0
+SL.Yman2016_All 1.0662677    0
+SL.gam.df10_All 0.4907580    1
+SL.loess_All    0.6434325    0
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk Coef
+SL.mean_All     1.4037730    0
+SL.glm_All      0.7349621    0
+SL.Yman2016_All 0.9644620    0
+SL.gam.df9_All  0.5267753    1
+SL.loess_All    0.5901032    0
 
-                     Risk Coef
-SL.mean_All     0.9876430    0
-SL.glm_All      0.6718268    0
-SL.Yman2016_All 1.0361693    0
-SL.gam.df6_All  0.5759891    1
-SL.loess_All    0.6312620    0
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk        Coef
+SL.mean_All     1.2698796 0.007734947
+SL.glm_All      0.6873029 0.099876531
+SL.Yman2016_All 0.8401833 0.000000000
+SL.gam.df10_All 0.5627749 0.860133894
+SL.loess_All    0.5925201 0.032254628
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk Coef
-SL.mean_All     1.3983290    0
-SL.glm_All      0.7126199    0
-SL.Yman2016_All 0.9378074    0
-SL.gam.df6_All  0.5509979    1
-SL.loess_All    0.5822484    0
+                  CV-Risk       Coef
+SL.mean_All     1.3157391 0.00000000
+SL.glm_All      0.6473255 0.02332946
+SL.Yman2016_All 1.0754792 0.00000000
+SL.gam.df8_All  0.5229314 0.74182657
+SL.loess_All    0.5289631 0.23484398
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                 CV-Risk       Coef
+SL.mean_All     1.850946 0.01778040
+SL.glm_All      1.214795 0.04529541
+SL.Yman2016_All 1.128430 0.00000000
+SL.gam.df5_All  1.036554 0.93692419
+SL.loess_All    1.050031 0.00000000
 
-                     Risk Coef
-SL.mean_All     1.2534276    0
-SL.glm_All      0.6833640    0
-SL.Yman2016_All 0.8546934    0
-SL.gam.df5_All  0.5663977    1
-SL.loess_All    0.5746365    0
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk Coef
-SL.mean_All     1.3071549    0
-SL.glm_All      0.6747295    0
-SL.Yman2016_All 1.0763156    0
-SL.gam.df6_All  0.5467152    0
-SL.loess_All    0.5381402    1
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                    Risk       Coef
-SL.mean_All     1.853282 0.01941843
-SL.glm_All      1.219786 0.06882558
-SL.Yman2016_All 1.129433 0.00000000
-SL.gam.df5_All  1.051048 0.91175599
-SL.loess_All    1.065144 0.00000000
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk       Coef
-SL.mean_All     1.4973264 0.01428275
-SL.glm_All      1.0249397 0.13127608
-SL.Yman2016_All 1.0332353 0.00000000
-SL.gam.df4_All  0.9281030 0.85444117
-SL.loess_All    0.9647457 0.00000000
-Warning messages:
-1: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  71 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 174 observations,
- but ab_agecurve is fitting the curve using 103 observations.
-2: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  74 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 175 observations,
- but ab_agecurve is fitting the curve using 101 observations.
-3: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  92 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 212 observations,
- but ab_agecurve is fitting the curve using 120 observations.
-4: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  84 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 202 observations,
- but ab_agecurve is fitting the curve using 118 observations.
-5: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  87 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 206 observations,
- but ab_agecurve is fitting the curve using 119 observations.
-6: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  92 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 211 observations,
- but ab_agecurve is fitting the curve using 119 observations.
-7: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  75 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 187 observations,
- but ab_agecurve is fitting the curve using 112 observations.
-8: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  119 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 207 observations,
- but ab_agecurve is fitting the curve using 88 observations.
+                  CV-Risk       Coef
+SL.mean_All     1.4838463 0.02936415
+SL.glm_All      1.0052499 0.06673757
+SL.Yman2016_All 1.0024642 0.00000000
+SL.gam.df10_All 0.8652112 0.90389828
+SL.loess_All    0.9370319 0.00000000
 > 
 > # village cluster 7
 > # Kargo Kudu
 > v213.EYxa <- sapply(1:8,SLAb.wrap,vil=213,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     0.1483212 0.08845705
+SL.glm_All      0.1418551 0.78739507
+SL.Yman2016_All 0.1499611 0.00000000
+SL.gam.df2_All  0.1431625 0.00000000
+SL.loess_All    0.1464018 0.12414789
 
-                     Risk      Coef
-SL.mean_All     0.1472650 0.3988678
-SL.glm_All      0.1456675 0.6011322
-SL.Yman2016_All 0.1473691 0.0000000
-SL.gam.df2_All  0.1498314 0.0000000
-SL.loess_All    0.1559050 0.0000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk      Coef
+SL.mean_All     0.2337811 0.1412982
+SL.glm_All      0.2029953 0.1345672
+SL.Yman2016_All 0.2004991 0.3869853
+SL.gam.df4_All  0.2030701 0.3371492
+SL.loess_All    0.2262992 0.0000000
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk      Coef
-SL.mean_All     0.2374962 0.1151688
-SL.glm_All      0.2018474 0.0000000
-SL.Yman2016_All 0.2120616 0.2082260
-SL.gam.df3_All  0.1788612 0.6766052
-SL.loess_All    0.2049789 0.0000000
+                  CV-Risk      Coef
+SL.mean_All     1.0770025 0.0000000
+SL.glm_All      0.7394338 0.0000000
+SL.Yman2016_All 0.3935307 0.2087832
+SL.gam.df4_All  0.3488097 0.0000000
+SL.loess_All    0.3413307 0.7912168
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk Coef
+SL.mean_All     1.1718952    0
+SL.glm_All      0.6346111    0
+SL.Yman2016_All 1.0878105    0
+SL.gam.df10_All 0.2449211    1
+SL.loess_All    0.5391660    0
 
-                     Risk     Coef
-SL.mean_All     1.0619617 0.000000
-SL.glm_All      0.7742685 0.000000
-SL.Yman2016_All 0.3957233 0.233521
-SL.gam.df5_All  0.3504389 0.000000
-SL.loess_All    0.3471008 0.766479
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk        Coef
+SL.mean_All     1.1163637 0.002156276
+SL.glm_All      0.6222612 0.000000000
+SL.Yman2016_All 0.9909304 0.000000000
+SL.gam.df9_All  0.3348060 0.997843724
+SL.loess_All    0.4448022 0.000000000
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk Coef
-SL.mean_All     1.1904982    0
-SL.glm_All      0.6649312    0
-SL.Yman2016_All 1.0920403    0
-SL.gam.df6_All  0.4292420    1
-SL.loess_All    0.5585686    0
+                  CV-Risk       Coef
+SL.mean_All     1.3587567 0.00000000
+SL.glm_All      0.5009151 0.02307078
+SL.Yman2016_All 0.3207711 0.00000000
+SL.gam.df4_All  0.2808087 0.97692922
+SL.loess_All    0.2859449 0.00000000
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
-SL.mean_All     1.1391417    0
-SL.glm_All      0.6411614    0
-SL.Yman2016_All 1.0242884    0
-SL.gam.df6_All  0.3878222    1
-SL.loess_All    0.4551606    0
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk Coef
-SL.mean_All     1.3727712    0
-SL.glm_All      0.5389397    0
-SL.Yman2016_All 0.3245111    0
-SL.gam.df4_All  0.2794250    1
-SL.loess_All    0.2864318    0
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk       Coef
-SL.mean_All     1.1096194 0.05691762
-SL.glm_All      0.7918994 0.15237382
-SL.Yman2016_All 1.0984740 0.00000000
-SL.gam.df5_All  0.6665284 0.79070856
-SL.loess_All    0.6896431 0.00000000
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+                  CV-Risk Coef
+SL.mean_All     1.1272480    0
+SL.glm_All      0.7883897    0
+SL.Yman2016_All 1.0871729    0
+SL.gam.df3_All  0.6308778    1
+SL.loess_All    0.6586913    0
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning messages:
-1: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  41 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 110 observations,
- but ab_agecurve is fitting the curve using 69 observations.
+1: In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
 2: In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
-3: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  48 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 102 observations,
- but ab_agecurve is fitting the curve using 54 observations.
-4: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  62 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 114 observations,
- but ab_agecurve is fitting the curve using 52 observations.
-5: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  63 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 121 observations,
- but ab_agecurve is fitting the curve using 58 observations.
-6: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  66 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 142 observations,
- but ab_agecurve is fitting the curve using 76 observations.
-7: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  71 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 135 observations,
- but ab_agecurve is fitting the curve using 64 observations.
-8: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  75 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 145 observations,
- but ab_agecurve is fitting the curve using 70 observations.
-9: In ab_agecurve(Y = log10(d$ifatpftitre[d$village == vil & d$serosvy ==  :
-  86 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 123 observations,
- but ab_agecurve is fitting the curve using 37 observations.
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
 In addition: Warning message:
 In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
 
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk      Coef
-SL.mean_All     0.2292039 0.0000000
-SL.glm_All      0.1940330 0.3823415
+                  CV-Risk      Coef
+SL.mean_All     0.2243585 0.0000000
+SL.glm_All      0.1912085 0.3177737
 SL.Yman2016_All        NA 0.0000000
-SL.gam.df4_All  0.1547432 0.0000000
-SL.loess_All    0.1606855 0.6176585
+SL.gam.df3_All  0.1420567 0.0000000
+SL.loess_All    0.1414261 0.6822263
 Warning messages:
 1: In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016  on full data 
   The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
@@ -747,202 +573,179 @@ Warning messages:
 > # Nasakar
 > v218.EYxa <- sapply(1:8,SLAb.wrap,vil=218,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     0.1616216 0.45279681
+SL.glm_All      0.1692009 0.00000000
+SL.Yman2016_All 0.1692850 0.05139879
+SL.gam.df10_All 0.1615703 0.49580441
+SL.loess_All    0.1690052 0.00000000
 
-                     Risk      Coef
-SL.mean_All     0.1592369 0.8164226
-SL.glm_All      0.1653162 0.0000000
-SL.Yman2016_All 0.1650843 0.1835774
-SL.gam.df2_All  0.1664404 0.0000000
-SL.loess_All    0.1672093 0.0000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk      Coef
+SL.mean_All     0.2319683 0.0000000
+SL.glm_All      0.2172278 0.1182949
+SL.Yman2016_All 0.2337835 0.0000000
+SL.gam.df10_All 0.1698387 0.4630848
+SL.loess_All    0.1686417 0.4186202
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk        Coef
-SL.mean_All     0.2303826 0.007326849
-SL.glm_All      0.2108595 0.111936117
-SL.Yman2016_All 0.2444002 0.000000000
-SL.gam.df6_All  0.1655344 0.865784193
-SL.loess_All    0.1692442 0.014952841
+                  CV-Risk        Coef
+SL.mean_All     0.6357181 0.005809648
+SL.glm_All      0.4265881 0.012544098
+SL.Yman2016_All 0.5871020 0.000000000
+SL.gam.df9_All  0.3218746 0.268476325
+SL.loess_All    0.3162880 0.713169929
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     1.0015415 0.02761372
+SL.glm_All      0.8358181 0.00000000
+SL.Yman2016_All 1.0020509 0.00000000
+SL.gam.df8_All  0.6199205 0.97238628
+SL.loess_All    0.6548091 0.00000000
 
-                     Risk Coef
-SL.mean_All     0.6468166    0
-SL.glm_All      0.4529363    0
-SL.Yman2016_All 0.6643653    0
-SL.gam.df5_All  0.3423657    0
-SL.loess_All    0.3309932    1
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk      Coef
+SL.mean_All     1.1722204 0.0000000
+SL.glm_All      0.7826512 0.0000000
+SL.Yman2016_All 1.1510170 0.0000000
+SL.gam.df8_All  0.5829183 0.4605453
+SL.loess_All    0.5701836 0.5394547
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk Coef
-SL.mean_All     0.9997963    0
-SL.glm_All      0.8313493    0
-SL.Yman2016_All 0.9930978    0
-SL.gam.df6_All  0.6198876    1
-SL.loess_All    0.6326393    0
+                  CV-Risk       Coef
+SL.mean_All     1.2340522 0.02340397
+SL.glm_All      0.6588592 0.02931561
+SL.Yman2016_All 0.8552413 0.00000000
+SL.gam.df8_All  0.4647341 0.86354338
+SL.loess_All    0.4895726 0.08373704
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                 CV-Risk      Coef
+SL.mean_All     1.866482 0.0000000
+SL.glm_All      1.250934 0.1815468
+SL.Yman2016_All 1.626280 0.0000000
+SL.gam.df5_All  1.106739 0.8184532
+SL.loess_All    1.112193 0.0000000
 
-                     Risk      Coef
-SL.mean_All     1.1770176 0.0000000
-SL.glm_All      0.7689551 0.0000000
-SL.Yman2016_All 1.1155810 0.0000000
-SL.gam.df6_All  0.5650528 0.5480408
-SL.loess_All    0.5718520 0.4519592
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk       Coef
-SL.mean_All     1.2309303 0.02456842
-SL.glm_All      0.6532613 0.00000000
-SL.Yman2016_All 0.8768252 0.00000000
-SL.gam.df6_All  0.4913700 0.86332126
-SL.loess_All    0.5138668 0.11211032
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                    Risk       Coef
-SL.mean_All     1.869754 0.01305887
-SL.glm_All      1.228081 0.22277714
-SL.Yman2016_All 1.618235 0.00000000
-SL.gam.df5_All  1.101774 0.76416399
-SL.loess_All    1.120489 0.00000000
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk       Coef
-SL.mean_All     1.2856272 0.01166109
-SL.glm_All      0.9519413 0.00000000
-SL.Yman2016_All 0.8438589 0.00000000
-SL.gam.df6_All  0.7172894 0.98833891
-SL.loess_All    0.7448547 0.00000000
-There were 26 warnings (use warnings() to see them)
+                  CV-Risk        Coef
+SL.mean_All     1.2737964 0.009257524
+SL.glm_All      0.9527867 0.000000000
+SL.Yman2016_All 0.8092624 0.000000000
+SL.gam.df5_All  0.6969297 0.990742476
+SL.loess_All    0.7076816 0.000000000
+Warning messages:
+1: In log(Aa) : NaNs produced
+2: In log(Aa) : NaNs produced
+3: In log(Aa) : NaNs produced
+4: In log(Aa) : NaNs produced
+5: In log(Aa) : NaNs produced
+6: In log(Aa) : NaNs produced
+7: In log(Aa) : NaNs produced
+8: In log(Aa) : NaNs produced
+9: In log(Aa) : NaNs produced
 > 
 > # Bakan Sabara
 > v220.EYxa <- sapply(1:8,SLAb.wrap,vil=220,d=d,simplify=FALSE)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk       Coef
+SL.mean_All     0.1720302 0.74536165
+SL.glm_All      0.1777500 0.15951209
+SL.Yman2016_All 0.1943763 0.09512626
+SL.gam.df2_All  0.1889482 0.00000000
+SL.loess_All    0.2074735 0.00000000
 
-                     Risk       Coef
-SL.mean_All     0.1750348 0.15328780
-SL.glm_All      0.1670825 0.83069276
-SL.Yman2016_All 0.1820420 0.01601945
-SL.gam.df3_All  0.1844394 0.00000000
-SL.loess_All    0.1978752 0.00000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                   CV-Risk       Coef
+SL.mean_All     0.21591171 0.09291772
+SL.glm_All      0.14910139 0.02773744
+SL.Yman2016_All 0.62145899 0.00000000
+SL.gam.df4_All  0.09601879 0.87934484
+SL.loess_All    0.10236805 0.00000000
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                      Risk     Coef
-SL.mean_All     0.23991204 0.000000
-SL.glm_All      0.15995765 0.217927
-SL.Yman2016_All 0.67320704 0.000000
-SL.gam.df4_All  0.09363707 0.782073
-SL.loess_All    0.10404137 0.000000
+                  CV-Risk       Coef
+SL.mean_All     0.6768124 0.05771558
+SL.glm_All      0.3966574 0.00000000
+SL.Yman2016_All 0.6311547 0.00000000
+SL.gam.df2_All  0.3464132 0.94228442
+SL.loess_All    0.3616621 0.00000000
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk      Coef
+SL.mean_All     1.4124008 0.0000000
+SL.glm_All      0.8743227 0.2906336
+SL.Yman2016_All 1.4125770 0.0000000
+SL.gam.df8_All  0.7246414 0.7093664
+SL.loess_All    0.7734889 0.0000000
 
-                     Risk       Coef
-SL.mean_All     0.6773582 0.05490654
-SL.glm_All      0.3634099 0.49009722
-SL.Yman2016_All 0.6590052 0.00000000
-SL.gam.df3_All  0.3687780 0.45499624
-SL.loess_All    0.3915825 0.00000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+                  CV-Risk       Coef
+SL.mean_All     1.6718501 0.00000000
+SL.glm_All      0.9740115 0.45984678
+SL.Yman2016_All 3.0442480 0.00000000
+SL.gam.df4_All  0.7707760 0.08829826
+SL.loess_All    0.9709676 0.45185496
 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-                     Risk       Coef
-SL.mean_All     1.3528320 0.00000000
-SL.glm_All      0.8956479 0.11244357
-SL.Yman2016_All 1.3029497 0.04717453
-SL.gam.df6_All  0.7225038 0.84038190
-SL.loess_All    0.7729714 0.00000000
+                  CV-Risk      Coef
+SL.mean_All     1.5630716 0.0000000
+SL.glm_All      0.4091691 0.2645119
+SL.Yman2016_All 1.6862368 0.0000000
+SL.gam.df6_All  0.3093646 0.7354881
+SL.loess_All    0.3517030 0.0000000
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                 CV-Risk Coef
+SL.mean_All     1.964628    0
+SL.glm_All      1.396666    0
+SL.Yman2016_All 1.043779    1
+SL.gam.df4_All  1.162758    0
+SL.loess_All    1.201537    0
 
-                     Risk      Coef
-SL.mean_All     1.6978865 0.0000000
-SL.glm_All      0.9992395 0.2441612
-SL.Yman2016_All 1.6542168 0.0000000
-SL.gam.df6_All  0.6961045 0.7558388
-SL.loess_All    0.9406985 0.0000000
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                     Risk      Coef
-SL.mean_All     1.5591564 0.0189511
-SL.glm_All      0.4469566 0.7020200
-SL.Yman2016_All 1.9600207 0.0000000
-SL.gam.df5_All  0.5047587 0.0000000
-SL.loess_All    0.5566714 0.2790289
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                    Risk Coef
-SL.mean_All     1.985924    0
-SL.glm_All      1.443043    0
-SL.Yman2016_All 1.049731    1
-SL.gam.df4_All  1.204943    0
-SL.loess_All    1.299663    0
-
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
-
-
-                    Risk      Coef
-SL.mean_All     1.700015 0.2676914
-SL.glm_All      1.454789 0.0000000
-SL.Yman2016_All 1.315450 0.3473678
-SL.gam.df5_All  1.360313 0.0000000
-SL.loess_All    1.794093 0.3849408
-There were 24 warnings (use warnings() to see them)
+                 CV-Risk      Coef
+SL.mean_All     1.643668 0.0000000
+SL.glm_All      1.499109 0.5521515
+SL.Yman2016_All 1.406810 0.0000000
+SL.gam.df2_All  1.243800 0.0000000
+SL.loess_All    1.908871 0.4478485
+There were 50 or more warnings (use warnings() to see the first 50)
 > 
 > 
 > 
@@ -962,9 +765,9 @@ There were 24 warnings (use warnings() to see them)
 > ## Control Villages (no measurement in round 6)
 > # Nabanawa + Ajura
 > 
-> v552 <-  sapply(c(1:5,7:8),function(x) ab_tmle(
+> v552 <-  sapply(c(1:5,7:8),function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
-+   Age=d$ageyrs[d$tr=="Control" & d$serosvy==x],
++   W=data.frame(Age=d$ageyrs[d$tr=="Control" & d$serosvy==x]),
 +   id=d$id[d$tr=="Control" & d$serosvy==x],
 +   SL.library=SL.library
 +   )
@@ -1006,6 +809,9 @@ There were 24 warnings (use warnings() to see them)
     95% Conf Interval: (2.7049, 2.9624) 
 > 	# add NA column for survey round 6
 > 	v552 <- cbind(v552[,1:5],rep(NA,5),v552[,6:7])
+Warning message:
+In cbind(v552[, 1:5], rep(NA, 5), v552[, 6:7]) :
+  number of rows of result is not a multiple of vector length (arg 2)
 > 
 > 
 > 
@@ -1013,9 +819,9 @@ There were 24 warnings (use warnings() to see them)
 > 
 > # village cluster 5
 > # Kawari
-> v153 <- sapply(c(1:8),function(x) ab_tmle(
+> v153 <- sapply(c(1:8),function(x) tmleAb(
 +     Y=log10(d$ifatpftitre[d$village==153 & d$serosvy==x]+1),
-+     Age=d$ageyrs[d$village==153 & d$serosvy==x],
++     W=data.frame(Age=d$ageyrs[d$village==153 & d$serosvy==x]),
 +     id=d$id[d$village==153 & d$serosvy==x],
 +     SL.library=SL.library
 +     )
@@ -1061,9 +867,9 @@ There were 24 warnings (use warnings() to see them)
               p-value:  <2e-16
     95% Conf Interval: (2.4037, 2.9229) 
 > # Rafin Marke
-> v154 <- sapply(c(1:8),function(x) ab_tmle(
+> v154 <- sapply(c(1:8),function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$village==154 & d$serosvy==x]+1),
-+   Age=d$ageyrs[d$village==154 & d$serosvy==x],
++   W=data.frame(Age=d$ageyrs[d$village==154 & d$serosvy==x]),
 +   id=d$id[d$village==154 & d$serosvy==x],
 +   SL.library=SL.library
 +   )
@@ -1109,9 +915,9 @@ There were 24 warnings (use warnings() to see them)
               p-value:  <2e-16
     95% Conf Interval: (1.8048, 2.3797) 
 > # Kukar Maikiva
-> v155 <- sapply(c(1:8),function(x) ab_tmle(
+> v155 <- sapply(c(1:8),function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$village==155 & d$serosvy==x]+1),
-+   Age=d$ageyrs[d$village==155 & d$serosvy==x],
++   W=data.frame(Age=d$ageyrs[d$village==155 & d$serosvy==x]),
 +   id=d$id[d$village==155 & d$serosvy==x],
 +   SL.library=SL.library
 +   )
@@ -1159,9 +965,9 @@ There were 24 warnings (use warnings() to see them)
 > 
 > # village cluster 7
 > # Kargo Kudu
-> v213 <- sapply(c(1:8),function(x) ab_tmle(
+> v213 <- sapply(c(1:8),function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$village==213 & d$serosvy==x]+1),
-+   Age=d$ageyrs[d$village==213 & d$serosvy==x],
++   W=data.frame(Age=d$ageyrs[d$village==213 & d$serosvy==x]),
 +   id=d$id[d$village==213 & d$serosvy==x],
 +   SL.library=SL.library
 +   )
@@ -1201,15 +1007,15 @@ There were 24 warnings (use warnings() to see them)
    Estimated Variance:  0.015541
               p-value:  <2e-16
     95% Conf Interval: (2.177, 2.6657) 
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
-Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) : 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
   function cannot be evaluated at initial parameters
  Population Mean
    Parameter Estimate:  2.9526
@@ -1217,9 +1023,9 @@ Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) :
               p-value:  <2e-16
     95% Conf Interval: (2.8011, 3.1041) 
 > # Nasakar
-> v218 <- sapply(c(1:8),function(x) ab_tmle(
+> v218 <- sapply(c(1:8),function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$village==218 & d$serosvy==x]+1),
-+   Age=d$ageyrs[d$village==218 & d$serosvy==x],
++   W=data.frame(Age=d$ageyrs[d$village==218 & d$serosvy==x]),
 +   id=d$id[d$village==218 & d$serosvy==x],
 +   SL.library=SL.library
 +   )
@@ -1265,9 +1071,9 @@ Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) :
               p-value:  <2e-16
     95% Conf Interval: (2.037, 2.6747) 
 > # Bakan Sabara
-> v220 <- sapply(c(1:8),function(x) ab_tmle(
+> v220 <- sapply(c(1:8),function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$village==220 & d$serosvy==x]+1),
-+   Age=d$ageyrs[d$village==220 & d$serosvy==x],
++   W=data.frame(Age=d$ageyrs[d$village==220 & d$serosvy==x]),
 +   id=d$id[d$village==220 & d$serosvy==x],
 +   SL.library=SL.library
 +   )
@@ -1323,4 +1129,4 @@ Error in optim(c(0.1, 0.01, 1), fn = LL, Age = X, logAb = Y) :
 > 
 > proc.time()
    user  system elapsed 
- 67.267   0.985  73.415 
+123.356   1.105 127.748 

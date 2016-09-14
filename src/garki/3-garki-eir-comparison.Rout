@@ -1,6 +1,6 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -47,10 +47,8 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmle)
 Welcome to the tmle package, version 1.2.0-2
@@ -65,7 +63,13 @@ The following object is masked from ‘package:SuperLearner’:
 
 > library(tmleAb)
 Welcome to the tmleAb package
-Targeted maximum likelihood estimation for antibody (Ab) measurements.
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
 > 
 > 
 > #-------------------------------
@@ -87,9 +91,14 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > #-------------------------------
 > # load the serology dataset
 > #-------------------------------
-> d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+> # d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+> data("garki_sero")
+> d <- garki_sero
 > 
 > d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> # drop observations with missing outcome or age information
+> d <- subset(d,!is.na(d$ifatpftitre) & !is.na(d$ageyrs))
 > 
 > #-------------------------------
 > # subset the dataset to
@@ -114,9 +123,9 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > table(ad$vname,ad$wetseason)
              
               1971 1972 1973 1974 1975
-  Ajura        427  390  405  354  375
-  Nasakar      345  738  358  361  318
-  Rafin Marke  304  374  340  336  330
+  Ajura        115  114  127  104   70
+  Nasakar      109  211  103  100   62
+  Rafin Marke   94  108  101  106   77
 > 
 > 
 > #-------------------------------
@@ -129,7 +138,7 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > 
 > 
 > set.seed(2343242)
-> ajura.1971.SL <- ab_agecurve(
+> ajura.1971.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1971]+1),
 + 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1971],
 + 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971],
@@ -141,308 +150,302 @@ Loading required package: foreach
 Loaded gam 1.12
 
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
+                  CV-Risk      Coef
+SL.mean_All     0.2301838 0.0000000
+SL.glm_All      0.2282796 0.0000000
+SL.Yman2016_All 0.2094110 0.7044639
+SL.gam.df5_All  0.2178496 0.2955361
+SL.loess_All    0.2183671 0.0000000
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
+  
 
-                     Risk       Coef
-SL.mean_All     0.2310267 0.00000000
-SL.glm_All      0.2300993 0.00000000
-SL.Yman2016_All 0.2077567 0.61235325
-SL.gam.df6_All  0.2133145 0.01504222
-SL.loess_All    0.2124465 0.37260453
-Warning messages:
-1: In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
-  1086 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1201 observations,
- but ab_agecurve is fitting the curve using 115 observations.
-2: In log(Aa) : NaNs produced
-3: In log(Aa) : NaNs produced
-4: In log(Aa) : NaNs produced
-> ajura.1972.SL <- ab_agecurve(
+ 225 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 340 observations,
+ but agecurveAb is fitting the curve using 115 observations.
+> ajura.1972.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1972]+1),
 + 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1972],
 + 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1972],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     0.2425933 0.02205485
-SL.glm_All      0.2361235 0.00000000
-SL.Yman2016_All 0.2005503 0.38457754
-SL.gam.df4_All  0.2079514 0.00000000
-SL.loess_All    0.1940663 0.59336761
+                  CV-Risk      Coef
+SL.mean_All     0.2460302 0.1285359
+SL.glm_All      0.2471208 0.0000000
+SL.Yman2016_All 0.3037979 0.1507487
+SL.gam.df4_All  0.2226414 0.0000000
+SL.loess_All    0.2100563 0.7207153
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
-  1050 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1164 observations,
- but ab_agecurve is fitting the curve using 114 observations.
-> ajura.1973.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
+  
+
+ 225 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 339 observations,
+ but agecurveAb is fitting the curve using 114 observations.
+> ajura.1973.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1973]+1),
 + 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1973],
 + 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1973],
 + 		SL.library=SL.library
 + 	)	
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     0.5562502 0.04965707
-SL.glm_All      0.5261595 0.03495192
-SL.Yman2016_All 0.5269150 0.00000000
-SL.gam.df5_All  0.4449327 0.00000000
-SL.loess_All    0.4344569 0.91539101
+                  CV-Risk       Coef
+SL.mean_All     0.5494043 0.07299610
+SL.glm_All      0.5210855 0.03888505
+SL.Yman2016_All 0.5159216 0.00000000
+SL.gam.df10_All 0.4343770 0.73211301
+SL.loess_All    0.4372115 0.15600583
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
-  1052 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1179 observations,
- but ab_agecurve is fitting the curve using 127 observations.
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
+  
+
+ 225 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 352 observations,
+ but agecurveAb is fitting the curve using 127 observations.
 > 
-> rafin.1971.SL <- ab_agecurve(
+> rafin.1971.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1971]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1971],
 + 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1971],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk      Coef
-SL.mean_All     0.3021188 0.0000000
-SL.glm_All      0.2941755 0.2802513
-SL.Yman2016_All 0.2826180 0.5078567
-SL.gam.df6_All  0.2856211 0.2118920
-SL.loess_All    0.2880509 0.0000000
+                  CV-Risk     Coef
+SL.mean_All     0.3019031 0.000000
+SL.glm_All      0.2941832 0.237877
+SL.Yman2016_All 0.2696838 0.762123
+SL.gam.df6_All  0.2869214 0.000000
+SL.loess_All    0.2883003 0.000000
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  :
-  1111 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1205 observations,
- but ab_agecurve is fitting the curve using 94 observations.
-> rafin.1972.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 354 observations,
+ but agecurveAb is fitting the curve using 94 observations.
+> rafin.1972.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1972]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1972],
 + 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1972],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     0.8848592 0.01279783
-SL.glm_All      0.7380591 0.00000000
-SL.Yman2016_All 0.6414476 0.00000000
-SL.gam.df6_All  0.4947490 0.98720217
-SL.loess_All    0.4984606 0.00000000
+                  CV-Risk       Coef
+SL.mean_All     0.8941194 0.03069583
+SL.glm_All      0.7392221 0.03828723
+SL.Yman2016_All 0.6652053 0.00000000
+SL.gam.df10_All 0.4990773 0.91025565
+SL.loess_All    0.5076095 0.02076129
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  :
-  1167 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1275 observations,
- but ab_agecurve is fitting the curve using 108 observations.
-> rafin.1973.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 368 observations,
+ but agecurveAb is fitting the curve using 108 observations.
+> rafin.1973.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1973]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1973],
 + 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1973],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk         Coef
-SL.mean_All     1.2875417 0.000000e+00
-SL.glm_All      0.8542797 4.156947e-05
-SL.Yman2016_All 0.9891869 0.000000e+00
-SL.gam.df6_All  0.4993861 0.000000e+00
-SL.loess_All    0.4890822 9.999584e-01
+                  CV-Risk Coef
+SL.mean_All     1.2862888    0
+SL.glm_All      0.8515644    0
+SL.Yman2016_All 1.0154438    0
+SL.gam.df9_All  0.4774946    1
+SL.loess_All    0.5068570    0
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  :
-  1140 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1241 observations,
- but ab_agecurve is fitting the curve using 101 observations.
-> rafin.1974.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 361 observations,
+ but agecurveAb is fitting the curve using 101 observations.
+> rafin.1974.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1974]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1974],
 + 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1974],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                    Risk        Coef
-SL.mean_All     1.613798 0.020461635
-SL.glm_All      1.391148 0.004325974
-SL.Yman2016_All 1.276199 0.000000000
-SL.gam.df5_All  1.055714 0.963702266
-SL.loess_All    1.067722 0.011510125
+                 CV-Risk       Coef
+SL.mean_All     1.601384 0.03507291
+SL.glm_All      1.379901 0.02616461
+SL.Yman2016_All 1.293249 0.00000000
+SL.gam.df9_All  1.047400 0.93876248
+SL.loess_All    1.061471 0.00000000
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  :
-  1131 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1237 observations,
- but ab_agecurve is fitting the curve using 106 observations.
-> rafin.1975.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 366 observations,
+ but agecurveAb is fitting the curve using 106 observations.
+> rafin.1975.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1975]+1),
 + 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1975],
 + 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1975],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     1.2874470 0.08609974
-SL.glm_All      1.1117179 0.04443283
-SL.Yman2016_All 1.7859106 0.00000000
-SL.gam.df5_All  0.9423273 0.86946744
-SL.loess_All    0.9629649 0.00000000
-Warning messages:
-1: In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  :
-  1154 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1231 observations,
- but ab_agecurve is fitting the curve using 77 observations.
-2: In log(Aa) : NaNs produced
-3: In log(Aa) : NaNs produced
-4: In log(Aa) : NaNs produced
-5: In log(Aa) : NaNs produced
-6: In log(Aa) : NaNs produced
+                  CV-Risk       Coef
+SL.mean_All     1.2843796 0.04006079
+SL.glm_All      1.1002430 0.03749707
+SL.Yman2016_All 1.5394713 0.00000000
+SL.gam.df4_All  0.9105103 0.31018184
+SL.loess_All    0.9119895 0.61226031
+There were 40 warnings (use warnings() to see them)
 > 
-> nasak.1971.SL <- ab_agecurve(
+> nasak.1971.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1971]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1971],
 + 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1971],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk      Coef
-SL.mean_All     0.1537471 0.3302295
-SL.glm_All      0.1535913 0.4976106
-SL.Yman2016_All 0.1594759 0.1721598
-SL.gam.df2_All  0.1553871 0.0000000
-SL.loess_All    0.1632864 0.0000000
+                  CV-Risk      Coef
+SL.mean_All     0.1531167 0.4065463
+SL.glm_All      0.1538729 0.3458623
+SL.Yman2016_All 0.1656477 0.2475914
+SL.gam.df2_All  0.1570535 0.0000000
+SL.loess_All    0.1681924 0.0000000
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
-  904 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1013 observations,
- but ab_agecurve is fitting the curve using 109 observations.
-> nasak.1972.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 305 observations,
+ but agecurveAb is fitting the curve using 109 observations.
+> nasak.1972.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1972]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1972],
 + 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1972],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     0.5092026 0.01024583
-SL.glm_All      0.4445329 0.00000000
-SL.Yman2016_All 0.4646302 0.00000000
-SL.gam.df6_All  0.3454009 0.37208651
-SL.loess_All    0.3445707 0.61766766
+                  CV-Risk       Coef
+SL.mean_All     0.5140512 0.00000000
+SL.glm_All      0.4471424 0.03254991
+SL.Yman2016_All 0.4747071 0.00000000
+SL.gam.df7_All  0.3461138 0.33303725
+SL.loess_All    0.3453678 0.63441285
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
-  1195 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1406 observations,
- but ab_agecurve is fitting the curve using 211 observations.
-> nasak.1973.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 407 observations,
+ but agecurveAb is fitting the curve using 211 observations.
+> nasak.1973.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1973]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1973],
 + 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1973],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     1.2966090 0.00000000
-SL.glm_All      0.8593655 0.01741528
-SL.Yman2016_All 0.9561213 0.00000000
-SL.gam.df5_All  0.5630398 0.00000000
-SL.loess_All    0.5334351 0.98258472
+                  CV-Risk       Coef
+SL.mean_All     1.2854061 0.03920940
+SL.glm_All      0.8623191 0.00000000
+SL.Yman2016_All 0.9555006 0.00000000
+SL.gam.df10_All 0.5199276 0.92382211
+SL.loess_All    0.5354443 0.03696849
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
-  923 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1026 observations,
- but ab_agecurve is fitting the curve using 103 observations.
-> nasak.1974.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 299 observations,
+ but agecurveAb is fitting the curve using 103 observations.
+> nasak.1974.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1974]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1974],
 + 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1974],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     1.7001446 0.00000000
-SL.glm_All      1.3449163 0.05093102
-SL.Yman2016_All 1.2588823 0.00000000
-SL.gam.df6_All  0.8873303 0.36052746
-SL.loess_All    0.8891904 0.58854152
+                  CV-Risk       Coef
+SL.mean_All     1.7017225 0.00000000
+SL.glm_All      1.3389775 0.08988017
+SL.Yman2016_All 1.2937635 0.00000000
+SL.gam.df7_All  0.9070302 0.33178539
+SL.loess_All    0.9087235 0.57833444
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
-  929 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 1029 observations,
- but ab_agecurve is fitting the curve using 100 observations.
-> nasak.1975.SL <- ab_agecurve(
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 296 observations,
+ but agecurveAb is fitting the curve using 100 observations.
+> nasak.1975.SL <- agecurveAb(
 + 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1975]+1),
 + 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1975],
 + 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1975],
 + 		SL.library=SL.library
 + 	)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk       Coef
-SL.mean_All     1.1275160 0.01376981
-SL.glm_All      0.9615315 0.00000000
-SL.Yman2016_All 0.6743036 0.00000000
-SL.gam.df6_All  0.6660865 0.00000000
-SL.loess_All    0.6178640 0.98623019
+                  CV-Risk       Coef
+SL.mean_All     1.0878288 0.04106934
+SL.glm_All      0.9085815 0.00000000
+SL.Yman2016_All 0.6294515 0.00000000
+SL.gam.df8_All  0.5934752 0.00000000
+SL.loess_All    0.5724501 0.95893066
 Warning message:
-In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
-  924 observations were dropped due to missing values in the outcome, age, or adjustement covariates. 
- The original dataset contained 986 observations,
- but ab_agecurve is fitting the curve using 62 observations.
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 258 observations,
+ but agecurveAb is fitting the curve using 62 observations.
 > 
 > #-------------------------------
 > # TMLE estimates of age-adjusted
@@ -451,11 +454,11 @@ In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
 > #-------------------------------
 > 
 > set.seed(5463452)
-> ajura.tmle <- sapply(c(1971,1972,1973),function(x) ab_tmle(
+> ajura.tmle <- sapply(c(1971,1972,1973),function(x) tmleAb(
 +   Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==x]+1),
-+   Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x],
++   W=data.frame(Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x]),
 +   id=ad$id[ad$vname=="Ajura" & ad$wetseason==x],
-+   SL.library=SL.library)
++   SL.library=SL.library)[c("psi","se","lb","ub","p")]
 +   )
  Population Mean
    Parameter Estimate:  3.4214
@@ -473,11 +476,11 @@ In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
               p-value:  <2e-16
     95% Conf Interval: (3.2568, 3.515) 
 > 
-> rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) ab_tmle(
+> rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) tmleAb(
 +   Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==x]+1),
-+   Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x],
++   W=data.frame(Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x]),
 +   id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==x],
-+   SL.library=SL.library)
++   SL.library=SL.library)[c("psi","se","lb","ub","p")]
 + )
  Population Mean
    Parameter Estimate:  3.3026
@@ -505,11 +508,11 @@ In ab_agecurve(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" &  :
               p-value:  <2e-16
     95% Conf Interval: (2.0059, 2.5108) 
 > 
-> nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) ab_tmle(
+> nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) tmleAb(
 +   Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==x]+1),
-+   Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x],
++   W=data.frame(Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x]),
 +   id=ad$id[ad$vname=="Nasakar" & ad$wetseason==x],
-+   SL.library=SL.library)
++   SL.library=SL.library)[c("psi","se","lb","ub","p")]
 + )
  Population Mean
    Parameter Estimate:  3.4111
@@ -667,4 +670,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
- 16.536   0.233  16.940 
+ 34.385   0.471  36.668 

@@ -57,7 +57,7 @@ EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,lett
   
   # Panel A: Pre-intervention age-antibody curves
   op <- par(mar=c(4,5,4,1)+0.1,xpd=T)
-  plot(EYxa.c12$pYframe$Age,EYxa.c12$pYframe$pY,type="l",lwd=2,col=c.cols,
+  plot(EYxa.c12$Age,EYxa.c12$pY,type="l",lwd=2,col=c.cols,
        ylim=c(0,4),ylab="",yaxt="n",
        xlim=c(0,21),xlab="",xaxt="n",
        bty="n",las=1
@@ -76,8 +76,8 @@ EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,lett
   ), las=1,cex.axis=1.25
   )
   axis(1,at=xtics,cex.axis=1.5)
-  lines(EYxa.tr[[1]]$pYframe$Age,EYxa.tr[[1]]$pYframe$pY,col=i.cols[1])
-  lines(EYxa.tr[[2]]$pYframe$Age,EYxa.tr[[2]]$pYframe$pY,col=i.cols[2])
+  lines(EYxa.tr[[1]]$Age,EYxa.tr[[1]]$pY,col=i.cols[1])
+  lines(EYxa.tr[[2]]$Age,EYxa.tr[[2]]$pY,col=i.cols[2])
   
   text(70,3.1,"Control",cex=1,adj=1,font=2,col=c.cols)
   #text(70,3.6,paste(vname,"\n(survey 1, 2)"),cex=1,adj=1,font=1,col=i.cols[1])
@@ -105,7 +105,7 @@ EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,lett
   
   # Panel B: Active Intervention  age-antibody curves
   op <- par(mar=c(4,5,4,1)+0.1)
-  plot(EYxa.c345$pYframe$Age,EYxa.c345$pYframe$pY,type="l",lwd=2,col=c.cols,
+  plot(EYxa.c345$Age,EYxa.c345$pY,type="l",lwd=2,col=c.cols,
        ylim=c(0,4),ylab="",yaxt="n",
        xlim=c(0,21),xlab="",xaxt="n",
        bty="n",las=1
@@ -125,9 +125,9 @@ EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,lett
   )
   # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
   axis(1,at=xtics,cex.axis=1.5)
-  lines(EYxa.tr[[3]]$pYframe$Age,EYxa.tr[[3]]$pYframe$pY,col=i.cols[3])
-  lines(EYxa.tr[[4]]$pYframe$Age,EYxa.tr[[4]]$pYframe$pY,col=i.cols[4])
-  lines(EYxa.tr[[5]]$pYframe$Age,EYxa.tr[[5]]$pYframe$pY,col=i.cols[5])
+  lines(EYxa.tr[[3]]$Age,EYxa.tr[[3]]$pY,col=i.cols[3])
+  lines(EYxa.tr[[4]]$Age,EYxa.tr[[4]]$pY,col=i.cols[4])
+  lines(EYxa.tr[[5]]$Age,EYxa.tr[[5]]$pY,col=i.cols[5])
   
   text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
   #text(70,2.5,paste(vname,"\n(survey 3, 4, 5)"),cex=1,adj=1,font=1,col=i.cols[1])
@@ -177,9 +177,9 @@ EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,lett
 #   )
 #   # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 #   axis(1,at=xtics,cex.axis=1.5)
-#   lines(EYxa.tr[[6]]$pYframe$Age,EYxa.tr[[6]]$pYframe$pY,col=i.cols[6])
-#   lines(EYxa.tr[[7]]$pYframe$Age,EYxa.tr[[7]]$pYframe$pY,col=i.cols[7])
-#   lines(EYxa.tr[[8]]$pYframe$Age,EYxa.tr[[8]]$pYframe$pY,col=i.cols[8])
+#   lines(EYxa.tr[[6]]$Age,EYxa.tr[[6]]$pY,col=i.cols[6])
+#   lines(EYxa.tr[[7]]$Age,EYxa.tr[[7]]$pY,col=i.cols[7])
+#   lines(EYxa.tr[[8]]$Age,EYxa.tr[[8]]$pY,col=i.cols[8])
 #   
 #   text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
 #   text(70,2.5,paste(vname,"\n(survey 6, 7, 8)"),cex=1,adj=1,font=1,col=i.cols[1])
