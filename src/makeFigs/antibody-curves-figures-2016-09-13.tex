@@ -141,23 +141,24 @@
 {\Large \textbf{a}}
 \vspace{-10pt}
 \begin{center}
-\includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/garki-cvR2-age-control.pdf}
 \includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/garki-cvR2-age-int.pdf}
+\includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/mauke-cvR2.pdf}
 \includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/haiti-cvR2-vsp5.pdf}
 \includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/haiti-cvR2-norogi.pdf}\\
 \end{center}
 {\Large \textbf{b}}
 \vspace{-10pt}
 \begin{center}
-\includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/garki-cvSLcurves-control.pdf}
+
 \includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/garki-cvSLcurves-int.pdf}
+\includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-cvSLcurves.pdf}
 \includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/haiti2-cvSLcurves-vsp5.pdf}
 \includegraphics[width=0.33\textwidth]{/users/benarnold/dropbox/articles/antibody-curves/results/figs/haiti2-cvSLcurves-norogi.pdf}
 
 \begin{minipage}{1.3\textwidth}
-\caption{\textbf{a}, Cross-validated estimates of R-squared for the super learner ensemble and its constituent models/algorithms across example populations and pathogens. Cross-validated R-squared is defined as 1-- (cross-validated MSE / cross validated var(Y)), and represents the percentage of outcome variability explained beyond estimating the simple mean. Horizontal lines represent twice the standard error of the R-squared estimates measured from 10 random splits of each dataset. In all cases, the algorithms only included age as a feature in antibody level prediction. In the Garki Project, where additional information was available, inclusion of additional covariates (sex, wet vs. dry season, village membership) did not markedly improve R-squared for any algorithm or the ensemble (results available from the authors).
+\caption{\textbf{a}, Cross-validated estimates of R-squared for the super learner ensemble and its constituent models/algorithms across example populations and pathogens. Cross-validated R-squared represents the percentage of outcome variability explained beyond estimating the simple mean. Horizontal lines represent twice the standard error of the R-squared estimates measured across 10 cross-validation splits. In all cases, the algorithms only included age as a feature in antibody level prediction. In the Garki Project, where additional information was available, inclusion of additional covariates (sex, wet vs. dry season, village membership) did not markedly improve R-squared for any algorithm or the ensemble (results available from the authors).
 \textbf{b} Super learner ensemble  estimates of age-dependent antibody curves for different populations and pathogens including the full library (all members listed in \textbf{a}) as well as a restricted library that excluded two highly adaptive algorithms (Random Forest and MARS). Curves were fit from individual data points included in the plots. 
-\textit{Plasmodium falciparum} IFA antibody titers measured in Garki Project (Nigeria) control and intervention villages during the active intervention period (surveys 3-5). \textit{Giardia intestinalis} variant-specific surface protein-5 (VSP-5) and Norovirus Group I.4 bound antigen measured on the Luminex platform (median fluorescence intensity minus background) in children from Leogane, Haiti.
+\textit{Plasmodium falciparum} IFA antibody titers measured in Garki Project (Nigeria) intervention villages during the active intervention period (surveys 3-5). \textit{Wuchereria bancrofti} Wb123 antigen measured on the LISP platform (light units) on Mauke, Cook Islands, five years after an island-wide mass-drug administration. \textit{Giardia intestinalis} variant-specific surface protein-5 (VSP-5) and Norovirus Group I.4 bound antigen measured on the Luminex platform (median fluorescence intensity minus background) in children from Leogane, Haiti.
 Abbreviations: GAM: generalized additive models with natural splines; GLM: generalized linear model; LOESS: Locally weighted regression; MARS: Multivariate adaptive regression splines; Yman2016: Antibody acquisition model proposed by Yman et al. (\textit{23}).}
 \label{fig:CVSL}
 \end{minipage}
