@@ -19,10 +19,14 @@
 rm(list=ls())
 library(SuperLearner)
 library(tmleAb)
-library(r2weight)
-library(ggplot2)
 library(RColorBrewer)
 library(scales)
+
+# load general plotting functions
+library(ggplot2)
+library(r2weight)
+source("~/slabcurves/src/ab_plot_cvSL.R")
+source("~/slabcurves/src/ab_plot_cvR2.R")
 
 
 
@@ -32,7 +36,7 @@ library(scales)
 # d.haiti <- read.csv("~/dropbox/articles/antibody-curves/data/enterics/haiti-enterics-public.csv")
 
 d <- haiti_enterics
-
+X <- data.frame(Age=d$agey)
 
 #-------------------------------
 # fit cross-validated SL
@@ -42,11 +46,11 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomF
 
 # giardia
 set.seed(982375)
-CVvsp5 <- ab_cvSL(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,family=gaussian(),V=10,SL.library=SL.library)
+CVvsp5 <- cvSLAb(Y=log10(d$vsp5+1),X=X,id=d$id,family=gaussian(),V=10,SL.library=SL.library,gamdf=2:6)
 
 # noro GI
 set.seed(2359)
-CVnorogi <- ab_cvSL(Y=log10(d$norogi+1),Age=d$agey,id=d$id,family=gaussian(),V=10,SL.library=SL.library)
+CVnorogi <- cvSLAb(Y=log10(d$norogi+1),X=X,id=d$id,family=gaussian(),V=10,SL.library=SL.library,gamdf=2:6)
 
 #------------------------------
 # print results to log
@@ -78,7 +82,6 @@ cols <- c(cols,brewer.pal(8,"Dark2")[3])
 #-------------------------------
 # plot the CV R2 estimates
 #-------------------------------
-X <- data.frame(Age=d$agey)
 
 pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvR2-vsp5.pdf")
 ab_plot_cvR2(CVvsp5,X=X,ylab="10-fold Cross-validated R-squared",title=expression(paste(italic('Giardia intestinalis')," VSP-5, Haiti")),col=cols,ylim=c(0,0.6))
@@ -106,12 +109,12 @@ dev.off()
 # full library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 set.seed(543221)
-SLvsp5full <- ab_agecurve(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library)
+SLvsp5full <- agecurveAb(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
 # restricted library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 set.seed(543221)
-SLvsp5res <- ab_agecurve(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library)
+SLvsp5res <- agecurveAb(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
 
 # plot age-dependent antibody curves and means for two SL libraries
@@ -144,8 +147,8 @@ axis(2,at=0:5,labels=c(
 )
 # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 axis(1,at=xtics,cex.axis=1.5)
-lines(SLvsp5full$pYframe$Age,SLvsp5full$pYframe$pY,col=cols[1],lwd=1)
-lines(SLvsp5res$pYframe$Age,SLvsp5res$pYframe$pY,col=cols[2],lwd=1)
+lines(SLvsp5full$Age,SLvsp5full$pY,col=cols[1],lwd=1)
+lines(SLvsp5res$Age,SLvsp5res$pY,col=cols[2],lwd=1)
 
 legend(x=12,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
 par(op)
@@ -160,12 +163,12 @@ dev.off()
 # full library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 set.seed(543221)
-SLnorofull <- ab_agecurve(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library)
+SLnorofull <- agecurveAb(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
 # restricted library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 set.seed(543221)
-SLnorores <- ab_agecurve(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library)
+SLnorores <- agecurveAb(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
 
 # plot age-dependent antibody curves and means for two SL libraries
@@ -198,8 +201,8 @@ axis(2,at=0:5,labels=c(
 )
 # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 axis(1,at=xtics,cex.axis=1.5)
-lines(SLnorofull$pYframe$Age,SLnorofull$pYframe$pY,col=cols[1],lwd=1)
-lines(SLnorores$pYframe$Age,SLnorores$pYframe$pY,col=cols[2],lwd=1)
+lines(SLnorofull$Age,SLnorofull$pY,col=cols[1],lwd=1)
+lines(SLnorores$Age,SLnorores$pY,col=cols[2],lwd=1)
 
 legend(x=12,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
 par(op)

@@ -1,6 +1,6 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -41,18 +41,26 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmleAb)
 Welcome to the tmleAb package
-Targeted maximum likelihood estimation for antibody (Ab) measurements.
-> library(r2weight)
-> library(ggplot2)
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
 > library(RColorBrewer)
 > library(scales)
+> 
+> # load general plotting functions
+> library(ggplot2)
+> library(r2weight)
+> source("~/slabcurves/src/ab_plot_cvSL.R")
+> source("~/slabcurves/src/ab_plot_cvR2.R")
 > 
 > 
 > 
@@ -62,7 +70,7 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > # d.haiti <- read.csv("~/dropbox/articles/antibody-curves/data/enterics/haiti-enterics-public.csv")
 > 
 > d <- haiti_enterics
-> 
+> X <- data.frame(Age=d$agey)
 > 
 > #-------------------------------
 > # fit cross-validated SL
@@ -72,10 +80,17 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > 
 > # giardia
 > set.seed(982375)
-> CVvsp5 <- ab_cvSL(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,family=gaussian(),V=10,SL.library=SL.library)
+> CVvsp5 <- cvSLAb(Y=log10(d$vsp5+1),X=X,id=d$id,family=gaussian(),V=10,SL.library=SL.library,gamdf=2:6)
 Loading required package: randomForest
-randomForest 4.6-10
+randomForest 4.6-12
 Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object is masked from ‘package:ggplot2’:
+
+    margin
+
 Loading required package: gam
 Loading required package: splines
 Loading required package: foreach
@@ -85,7 +100,7 @@ Loading required package: polspline
 > 
 > # noro GI
 > set.seed(2359)
-> CVnorogi <- ab_cvSL(Y=log10(d$norogi+1),Age=d$agey,id=d$id,family=gaussian(),V=10,SL.library=SL.library)
+> CVnorogi <- cvSLAb(Y=log10(d$norogi+1),X=X,id=d$id,family=gaussian(),V=10,SL.library=SL.library,gamdf=2:6)
 > 
 > #------------------------------
 > # print results to log
@@ -95,30 +110,7 @@ Loading required package: polspline
 > summary(CVvsp5)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
-    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
-
-
-Risk is based on: Mean Squared Error
-
-All risk estimates are based on V =  10 
-
-                Algorithm     Ave       se     Min     Max
-            Super Learner 0.64950 0.037098 0.40682 0.87488
-              Discrete SL 0.65819 0.037834 0.41253 0.86574
-              SL.mean_All 0.84637 0.042834 0.58269 1.09557
-               SL.glm_All 0.85028 0.042754 0.58761 1.09539
-          SL.Yman2016_All 0.75326 0.037504 0.53836 0.96566
-           SL.gam.df9_All 0.64483 0.036124 0.41253 0.86574
-             SL.loess_All 0.65978 0.034642 0.41385 0.88800
- SL.randomForest.ns40_All 0.65989 0.040177 0.42133 0.90726
-          SL.polymars_All 0.66181 0.038182 0.41765 0.86698
-> 
-> # noro GI
-> summary(CVnorogi)
-
-Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -127,15 +119,38 @@ Risk is based on: Mean Squared Error
 All risk estimates are based on V =  10 
 
                 Algorithm     Ave       se     Min    Max
-            Super Learner 0.99090 0.045577 0.80320 1.3924
-              Discrete SL 0.98111 0.045638 0.79234 1.3939
-              SL.mean_All 1.24452 0.046217 0.85817 1.6858
-               SL.glm_All 1.07156 0.045240 0.76552 1.6150
-          SL.Yman2016_All 1.10257 0.063464 0.84856 1.5119
-           SL.gam.df8_All 0.98111 0.045638 0.79234 1.3939
-             SL.loess_All 0.98961 0.045685 0.80234 1.4275
- SL.randomForest.ns40_All 1.00146 0.047648 0.80312 1.3925
-          SL.polymars_All 0.98894 0.046071 0.77814 1.4009
+            Super Learner 0.66457 0.036915 0.46916 1.0748
+              Discrete SL 0.68005 0.036722 0.45288 1.1415
+              SL.mean_All 0.85484 0.042869 0.51970 1.2819
+               SL.glm_All 0.86104 0.042976 0.52920 1.2911
+          SL.Yman2016_All 0.76235 0.037982 0.56064 1.0850
+           SL.gam.df6_All 0.66379 0.034945 0.45288 1.0304
+             SL.loess_All 0.66989 0.034756 0.46484 1.0057
+ SL.randomForest.ns40_All 0.67645 0.040639 0.50063 1.1415
+          SL.polymars_All 0.67137 0.038651 0.47864 1.0449
+> 
+> # noro GI
+> summary(CVnorogi)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min    Max
+            Super Learner 0.98442 0.045484 0.71990 1.4694
+              Discrete SL 0.99516 0.046085 0.73109 1.4760
+              SL.mean_All 1.24871 0.046211 0.96976 1.7636
+               SL.glm_All 1.07429 0.044726 0.79830 1.5156
+          SL.Yman2016_All 1.10590 0.063471 0.74654 1.5090
+           SL.gam.df5_All 0.98240 0.045324 0.73109 1.4662
+             SL.loess_All 0.98740 0.045635 0.73245 1.4668
+ SL.randomForest.ns40_All 1.00323 0.048223 0.71884 1.5513
+          SL.polymars_All 0.97898 0.045843 0.71669 1.4760
 > 
 > #-------------------------------
 > # plot the CV Risk estimates
@@ -157,34 +172,33 @@ All risk estimates are based on V =  10
 > #-------------------------------
 > # plot the CV R2 estimates
 > #-------------------------------
-> X <- data.frame(Age=d$agey)
 > 
 > pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvR2-vsp5.pdf")
 > ab_plot_cvR2(CVvsp5,X=X,ylab="10-fold Cross-validated R-squared",title=expression(paste(italic('Giardia intestinalis')," VSP-5, Haiti")),col=cols,ylim=c(0,0.6))
-  cvr2$Algorithm      r2   lower  upper
-1  Super Learner  0.2326  0.1626 0.2967
-2    Simple Mean  0.0000  0.0000 0.0000
-3            GLM -0.0046 -0.0108 0.0015
-4       Yman2016  0.1100  0.0670 0.1510
-5            GAM  0.2381  0.1706 0.3001
-6          LOESS  0.2205  0.1518 0.2836
-7  Random Forest  0.2203  0.1378 0.2950
-8           MARS  0.2181  0.1514 0.2794
+  cvr2$Algorithm      r2   lower   upper
+1  Super Learner  0.2226  0.1342  0.3019
+2    Simple Mean  0.0000  0.0000  0.0000
+3            GLM -0.0073 -0.0102 -0.0043
+4       Yman2016  0.1082  0.0459  0.1664
+5            GAM  0.2235  0.1416  0.2976
+6          LOESS  0.2163  0.1415  0.2847
+7  Random Forest  0.2087  0.1150  0.2925
+8           MARS  0.2146  0.1132  0.3045
 > dev.off()
 null device 
           1 
 > 
 > pdf("~/dropbox/articles/antibody-curves/results/figs/haiti-cvR2-norogi.pdf")
 > ab_plot_cvR2(CVnorogi,X=X,ylab="10-fold Cross-validated R-squared",title="Norovirus GI.4, Haiti",col=cols,ylim=c(0,0.6))
-  cvr2$Algorithm     r2   lower  upper
-1  Super Learner 0.2038  0.1492 0.2549
-2    Simple Mean 0.0000  0.0000 0.0000
-3            GLM 0.1390  0.0995 0.1767
-4       Yman2016 0.1141 -0.0682 0.2652
-5            GAM 0.2117  0.1562 0.2635
-6          LOESS 0.2048  0.1519 0.2545
-7  Random Forest 0.1953  0.1343 0.2520
-8           MARS 0.2054  0.1457 0.2609
+  cvr2$Algorithm     r2  lower  upper
+1  Super Learner 0.2117 0.1637 0.2569
+2    Simple Mean 0.0000 0.0000 0.0000
+3            GLM 0.1397 0.1047 0.1733
+4       Yman2016 0.1144 0.0700 0.1566
+5            GAM 0.2133 0.1627 0.2608
+6          LOESS 0.2093 0.1591 0.2564
+7  Random Forest 0.1966 0.1486 0.2419
+8           MARS 0.2160 0.1632 0.2655
 > dev.off()
 null device 
           1 
@@ -207,38 +221,34 @@ null device
 > # full library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 > set.seed(543221)
-> SLvsp5full <- ab_agecurve(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library)
+> SLvsp5full <- agecurveAb(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                              Risk        Coef
-SL.mean_All              0.8491138 0.006425052
-SL.glm_All               0.8568878 0.000000000
-SL.Yman2016_All          0.7532987 0.000000000
-SL.gam.df8_All           0.6486630 0.544468045
-SL.loess_All             0.6635543 0.000000000
-SL.randomForest.ns40_All 0.6520485 0.449106903
-SL.polymars_All          0.6835295 0.000000000
+                           CV-Risk      Coef
+SL.mean_All              0.8493298 0.0000000
+SL.glm_All               0.8532755 0.0000000
+SL.Yman2016_All          0.7547202 0.0000000
+SL.gam.df6_All           0.6566628 0.3103219
+SL.loess_All             0.6649110 0.0000000
+SL.randomForest.ns40_All 0.6625821 0.3426620
+SL.polymars_All          0.6562285 0.3470161
 > 
 > # restricted library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 > set.seed(543221)
-> SLvsp5res <- ab_agecurve(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library)
+> SLvsp5res <- agecurveAb(Y=log10(d$vsp5+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
-SL.mean_All     0.8500532    0
-SL.glm_All      0.8536546    0
-SL.Yman2016_All 0.7584949    0
-SL.gam.df8_All  0.6494956    1
-SL.loess_All    0.6638858    0
+                  CV-Risk Coef
+SL.mean_All     0.8480593    0
+SL.glm_All      0.8529603    0
+SL.Yman2016_All 0.7567930    0
+SL.gam.df6_All  0.6558446    1
+SL.loess_All    0.6635907    0
 > 
 > 
 > # plot age-dependent antibody curves and means for two SL libraries
@@ -271,8 +281,8 @@ SL.loess_All    0.6638858    0
 + )
 > # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 > axis(1,at=xtics,cex.axis=1.5)
-> lines(SLvsp5full$pYframe$Age,SLvsp5full$pYframe$pY,col=cols[1],lwd=1)
-> lines(SLvsp5res$pYframe$Age,SLvsp5res$pYframe$pY,col=cols[2],lwd=1)
+> lines(SLvsp5full$Age,SLvsp5full$pY,col=cols[1],lwd=1)
+> lines(SLvsp5res$Age,SLvsp5res$pY,col=cols[2],lwd=1)
 > 
 > legend(x=12,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
 > par(op)
@@ -289,38 +299,34 @@ null device
 > # full library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 > set.seed(543221)
-> SLnorofull <- ab_agecurve(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library)
+> SLnorofull <- agecurveAb(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                              Risk      Coef
-SL.mean_All              1.2475278 0.0160989
-SL.glm_All               1.0744645 0.0137064
-SL.Yman2016_All          1.1126772 0.0000000
-SL.gam.df4_All           0.9902541 0.4266013
-SL.loess_All             0.9941317 0.0000000
-SL.randomForest.ns35_All 1.0068407 0.3049441
-SL.polymars_All          0.9910714 0.2386493
+                          CV-Risk        Coef
+SL.mean_All              1.261139 0.009871117
+SL.glm_All               1.086722 0.007434244
+SL.Yman2016_All          1.123168 0.000000000
+SL.gam.df4_All           1.001469 0.602859122
+SL.loess_All             1.005103 0.000000000
+SL.randomForest.ns35_All 1.030963 0.231042144
+SL.polymars_All          1.005450 0.148793374
 > 
 > # restricted library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 > set.seed(543221)
-> SLnorores <- ab_agecurve(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library)
+> SLnorores <- agecurveAb(Y=log10(d$norogi+1),Age=d$agey,id=d$id,SL.library=SL.library,gamdf=2:6)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk         Coef
-SL.mean_All     1.2495975 0.0242324156
-SL.glm_All      1.0786597 0.0004825135
-SL.Yman2016_All 1.1140605 0.0000000000
-SL.gam.df8_All  0.9862919 0.9752850709
-SL.loess_All    0.9947615 0.0000000000
+                  CV-Risk       Coef
+SL.mean_All     1.2487555 0.00000000
+SL.glm_All      1.0707539 0.02408339
+SL.Yman2016_All 1.1074873 0.00000000
+SL.gam.df5_All  0.9853065 0.97591661
+SL.loess_All    0.9907584 0.00000000
 > 
 > 
 > # plot age-dependent antibody curves and means for two SL libraries
@@ -353,8 +359,8 @@ SL.loess_All    0.9947615 0.0000000000
 + )
 > # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 > axis(1,at=xtics,cex.axis=1.5)
-> lines(SLnorofull$pYframe$Age,SLnorofull$pYframe$pY,col=cols[1],lwd=1)
-> lines(SLnorores$pYframe$Age,SLnorores$pYframe$pY,col=cols[2],lwd=1)
+> lines(SLnorofull$Age,SLnorofull$pY,col=cols[1],lwd=1)
+> lines(SLnorores$Age,SLnorores$pY,col=cols[2],lwd=1)
 > 
 > legend(x=12,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
 > par(op)
@@ -371,4 +377,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-235.460   3.472 244.663 
+299.690   2.969 312.125 

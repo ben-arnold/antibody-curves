@@ -14,6 +14,12 @@
 rm(list=ls())
 library(RColorBrewer)
 library(scales)
+library(ggplot2)
+library(r2weight)
+
+# load general plotting functions
+source("~/slabcurves/src/ab_plot_cvSL.R")
+source("~/slabcurves/src/ab_plot_cvR2.R")
 
 
 #--------------------------------------
@@ -77,8 +83,8 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	# plot data (points and fitted lines)
 	points(SLfit0$Age, SLfit0$Y,col=alpha(cols[1],alpha=0.6), pch=16,cex=0.7)
 	points(SLfit1$Age, SLfit1$Y,col=alpha(cols[2],alpha=0.6), pch=16,cex=0.7)
-	lines(SLfit0$pYframe$Age,SLfit0$pYframe$pY,col=cols[1],lwd=2)
-	lines(SLfit1$pYframe$Age,SLfit1$pYframe$pY,col=cols[2],lwd=2)
+	lines(SLfit0$Age,SLfit0$pY,col=cols[1],lwd=2)
+	lines(SLfit1$Age,SLfit1$pY,col=cols[2],lwd=2)
 	
 	# country labels
 	mtext("USA",side=4,line=1,adj=1,at=SLfit0$pY[length(SLfit0$pY)], col=cols[1],cex=1.25,las=1)
