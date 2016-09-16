@@ -103,11 +103,11 @@ SLAb.plotLong <- function(Ab1,Ab2,mu1,mu2,diff,labels=c("Ab-","Ab-"),letter="",y
 pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-long.pdf",width=10,height=4)
 lo <- layout(mat=matrix(1:3,nrow=1,ncol=3,byrow=TRUE))
 
-SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Pos-Neg"]),Ab2=log10(d$wb123.92[d$Abstatus=="Pos-Neg"]),mu1=unlist(EYx.75.Abstatus[,2]),mu2=unlist(EYx.92.Abstatus[,2]),diff=unlist(diff.Abstatus[,2]),labels=c("Ag+","Ag-"),letter="c",ylabel=TRUE)
+SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Pos-Neg"]),Ab2=log10(d$wb123.92[d$Abstatus=="Pos-Neg"]),mu1=unlist(EYx_75_Abstatus[,2]),mu2=unlist(EYx_92_Abstatus[,2]),diff=unlist(diff_Abstatus[,2]),labels=c("Ag+","Ag-"),letter="c",ylabel=TRUE)
 
-SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Neg-Neg"]),Ab2=log10(d$wb123.92[d$Abstatus=="Neg-Neg"]),mu1=unlist(EYx.75.Abstatus[,1]),mu2=unlist(EYx.92.Abstatus[,1]),diff=unlist(diff.Abstatus[,1]),labels=c("Ag-","Ag-"),letter="",ylabel=FALSE)
+SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Neg-Neg"]),Ab2=log10(d$wb123.92[d$Abstatus=="Neg-Neg"]),mu1=unlist(EYx_75_Abstatus[,1]),mu2=unlist(EYx_92_Abstatus[,1]),diff=unlist(diff_Abstatus[,1]),labels=c("Ag-","Ag-"),letter="",ylabel=FALSE)
 
-SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Pos-Pos"]),Ab2=log10(d$wb123.92[d$Abstatus=="Pos-Pos"]),mu1=unlist(EYx.75.Abstatus[,3]),mu2=unlist(EYx.92.Abstatus[,3]),diff=unlist(diff.Abstatus[,3]),labels=c("Ag+","Ag+"),letter="",ylabel=FALSE)
+SLAb.plotLong(Ab1=log10(d$wb123.75[d$Abstatus=="Pos-Pos"]),Ab2=log10(d$wb123.92[d$Abstatus=="Pos-Pos"]),mu1=unlist(EYx_75_Abstatus[,3]),mu2=unlist(EYx_92_Abstatus[,3]),diff=unlist(diff_Abstatus[,3]),labels=c("Ag+","Ag+"),letter="",ylabel=FALSE)
 
 dev.off()
 

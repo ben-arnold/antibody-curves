@@ -37,7 +37,7 @@ load("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-analysis.RData"
 # plot
 #-------------------------------------------
 # cross-tab of groups for sample sizes
-table(a7592$agecat,a7592$mda)
+table(d$agecat,d$mda)
 
 pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-analysis.pdf",width=12,height=6)
 
@@ -70,8 +70,8 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	points(jitter(mauke75$Age),mauke75$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha=0.6))
 	points(jitter(mauke92$Age),mauke92$Y,cex=0.45,pch=16,col=alpha(cols[2],alpha=0.6))
 	
-	lines(mauke75$pYframe$Age,mauke75$pYframe$pY,col=cols[1],lwd=2)
-	lines(mauke92$pYframe$Age,mauke92$pYframe$pY,col=cols[2],lwd=2)
+	lines(mauke75$Age,mauke75$pY,col=cols[1],lwd=2)
+	lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
 	
 	# Axis labels
 	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (light units)")),side=2,line=3,cex=1.25)
@@ -125,7 +125,7 @@ axis(side=2,at=ytics,labels=c(
   ), las=1,cex.axis=1.5
 )
 # X labels and line segments
-mtext(levels(a7592$agecat),side=1,line=1,at=1:4,cex=1.5)
+mtext(levels(d$agecat),side=1,line=1,at=1:4,cex=1.5)
 mtext("Age category, years",side=1,line=3,cex=1.5)
 
 # Y label
@@ -134,15 +134,15 @@ mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),
 # mtext(c("1975","1992"),at=c(1,2),col=cols[1:2],side=3,line=-0.5)
 
 # add in geometric means
-arrows(x0=c(1:4), y0=unlist(EYx.mauke75kids[3,]), y1=unlist(EYx.mauke75kids[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
-points(c(1:4),unlist(EYx.mauke75kids[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+arrows(x0=c(1:4), y0=unlist(EYx_mauke75kids[3,]), y1=unlist(EYx_mauke75kids[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
+points(c(1:4),unlist(EYx_mauke75kids[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
 
-arrows(x0=c(1:4), y0=unlist(EYx.mauke92kids[3,]), y1=unlist(EYx.mauke92kids[4,]), col=cols[2],lwd=2,length=0.05,angle=90,code=3)
-points(c(1:4),unlist(EYx.mauke92kids[1,]),pch=21,cex=1.75,bg="white",col=cols[2],lwd=2)
+arrows(x0=c(1:4), y0=unlist(EYx_mauke92kids[3,]), y1=unlist(EYx_mauke92kids[4,]), col=cols[2],lwd=2,length=0.05,angle=90,code=3)
+points(c(1:4),unlist(EYx_mauke92kids[1,]),pch=21,cex=1.75,bg="white",col=cols[2],lwd=2)
 
 # label data series
-text(4,EYx.mauke75kids[1,4],"1975",col=cols[1],pos=4)
-text(4,EYx.mauke92kids[1,4],"1992",col=cols[2],pos=4)
+text(4,EYx_mauke75kids[1,4],"1975",col=cols[1],pos=4)
+text(4,EYx_mauke92kids[1,4],"1992",col=cols[2],pos=4)
 
 par(op)
 dev.off()
