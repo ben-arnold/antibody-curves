@@ -17,8 +17,6 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-[Previously saved workspace restored]
-
 > 
 > #-------------------------------
 > # 3-haiti2-cvSL.R
@@ -53,12 +51,11 @@ Check github.com/ben-arnold/tmleAb for the most current version
 (we have plans for some useful additions)
 
 
-> library(RColorBrewer)
-> library(scales)
 > 
 > # load general plotting functions
 > library(ggplot2)
 > library(r2weight)
+> library(RColorBrewer)
 > source("~/slabcurves/src/ab_plot_cvSL.R")
 > source("~/slabcurves/src/ab_plot_cvR2.R")
 > 
@@ -377,4 +374,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-299.690   2.969 312.125 
+307.998   2.996 324.593 

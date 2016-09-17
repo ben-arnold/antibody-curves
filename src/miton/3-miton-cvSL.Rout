@@ -1,6 +1,6 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -38,16 +38,26 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmleAb)
 Welcome to the tmleAb package
-Targeted maximum likelihood estimation for antibody (Ab) measurements.
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
+> 
+> 
+> # load general plotting functions
+> library(ggplot2)
 > library(r2weight)
 > library(RColorBrewer)
+> source("~/slabcurves/src/ab_plot_cvSL.R")
+> source("~/slabcurves/src/ab_plot_cvR2.R")
 > 
 > #-------------------------------
 > # load data
@@ -64,26 +74,31 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > # fit cross-validated SL
 > # with age as the only feature
 > #-------------------------------
-> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars","SL.svm","SL.nnet")
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 > 
 > set.seed(32423)
-> CVmiton <- ab_cvSL(Y=log10(d$msp1+1),Age=d$age,family=gaussian(),V=10,SL.library=SL.library)
+> CVmiton <- cvSLAb(Y=log10(d$msp1+1),X=data.frame(Age=d$age),family=gaussian(),V=10,SL.library=SL.library)
 Loading required package: randomForest
-randomForest 4.6-10
+randomForest 4.6-12
 Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object is masked from ‘package:ggplot2’:
+
+    margin
+
 Loading required package: gam
 Loading required package: splines
 Loading required package: foreach
 Loaded gam 1.12
 
-Loading required package: nnet
 Loading required package: polspline
-Loading required package: e1071
 > 
 > summary(CVmiton)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -92,17 +107,15 @@ Risk is based on: Mean Squared Error
 All risk estimates are based on V =  10 
 
                 Algorithm    Ave       se     Min    Max
-            Super Learner 1.2110 0.073253 0.94889 1.5667
-              Discrete SL 1.2498 0.092156 0.96276 1.5899
-              SL.mean_All 1.5349 0.072614 1.25478 1.8318
-               SL.glm_All 1.3140 0.070794 1.13697 1.7256
-          SL.Yman2016_All 1.3402 0.093508 0.95715 1.5720
-           SL.gam.df5_All 1.1764 0.069921 0.96276 1.5363
-             SL.loess_All 1.1793 0.070169 0.97290 1.5623
- SL.randomForest.ns40_All 1.2062 0.075868 0.96831 1.6558
-          SL.polymars_All 1.2227 0.076420 0.90536 1.6204
-               SL.svm_All 1.2003 0.068869 0.96687 1.5482
-              SL.nnet_All 1.2363 0.093638 0.96212 1.6755
+            Super Learner 1.1850 0.070184 0.90689 1.4754
+              Discrete SL 1.1760 0.070054 0.90501 1.4854
+              SL.mean_All 1.5382 0.072462 1.13992 1.9440
+               SL.glm_All 1.3156 0.070874 0.96462 1.6263
+          SL.Yman2016_All 1.3475 0.095136 0.95390 2.0662
+           SL.gam.df5_All 1.1788 0.069967 0.90501 1.4854
+             SL.loess_All 1.1792 0.070124 0.89766 1.5053
+ SL.randomForest.ns40_All 1.2038 0.074587 0.91699 1.5479
+          SL.polymars_All 1.2092 0.071761 0.89884 1.4607
 > 
 > 
 > #-------------------------------
@@ -110,14 +123,11 @@ All risk estimates are based on V =  10
 > #-------------------------------
 > cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 > cols <- cbPalette[c(1:4,6:8)]
-> cols <- c(cols,brewer.pal(8,"Dark2")[1:3])
+> cols <- c(cols,brewer.pal(8,"Dark2")[3])
 > 
-> pdf("~/dropbox/articles/antibody-curves/results/figs/miton-cvSL.pdf")
-> ab_plot_cvSL(CVmiton,col=cols,ylab="10-fold Cross-validated MSE Estimate",title="P. falciparum, low transmission (age only)")
-Loading required package: ggplot2
-> dev.off()
-null device 
-          1 
+> # pdf("~/dropbox/articles/antibody-curves/results/figs/miton-cvSL.pdf")
+> # ab_plot_cvSL(CVmiton,col=cols,ylab="10-fold Cross-validated MSE Estimate",title="P. falciparum, low transmission (age only)")
+> # dev.off()
 > 
 > #-------------------------------
 > # convert CV MSE into R2
@@ -126,30 +136,21 @@ null device
 > #-------------------------------
 > pdf("~/dropbox/articles/antibody-curves/results/figs/miton-cvR2.pdf")
 > ab_plot_cvR2(CVmiton,data.frame(Age=d$age),col=cols,ylab="10-fold Cross-validated R-squared",title="P. falciparum, (Miton, Haiti)",ylim=c(0,0.6))
-   cvr2$Algorithm     r2  lower  upper
-1   Super Learner 0.2110 0.1336 0.2815
-2     Simple Mean 0.0000 0.0000 0.0000
-3             GLM 0.1439 0.0864 0.1979
-4        Yman2016 0.1268 0.0380 0.2074
-5             GAM 0.2335 0.1532 0.3063
-6           LOESS 0.2317 0.1509 0.3047
-7   Random Forest 0.2141 0.1242 0.2949
-8            MARS 0.2034 0.1224 0.2769
-9             SVM 0.2180 0.1434 0.2861
-10     Neural Net 0.1945 0.1167 0.2655
+  cvr2$Algorithm     r2  lower  upper
+1  Super Learner 0.2296 0.1600 0.2935
+2    Simple Mean 0.0000 0.0000 0.0000
+3            GLM 0.1447 0.0941 0.1926
+4       Yman2016 0.1240 0.0024 0.2308
+5            GAM 0.2336 0.1631 0.2983
+6          LOESS 0.2334 0.1593 0.3010
+7  Random Forest 0.2174 0.1526 0.2772
+8           MARS 0.2139 0.1602 0.2642
 > dev.off()
 null device 
           1 
 > 
 > 
-> #-------------------------------
-> # save down the results
-> #-------------------------------
-> save(CVmiton,file="~/dropbox/articles/antibody-curves/results/raw/miton-cvSL.RData")
-> 
-> 
-> 
 > 
 > proc.time()
    user  system elapsed 
- 31.601   0.378  32.571 
+ 34.918   0.392  41.220 

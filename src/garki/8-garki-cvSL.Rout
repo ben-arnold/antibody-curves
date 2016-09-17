@@ -1,6 +1,6 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
-Copyright (C) 2016 The R Foundation for Statistical Computing
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -16,8 +16,6 @@ Type 'contributors()' for more information and
 Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
-
-[Previously saved workspace restored]
 
 > 
 > #-------------------------------
@@ -40,18 +38,25 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-15
-Package created on 2014-07-16
-
-Use SuperLearnerNews() to see changes from previous versions and latest news
+Version: 2.0-19
+Package created on 2016-02-02
 
 > library(tmleAb)
 Welcome to the tmleAb package
-Targeted maximum likelihood estimation for antibody (Ab) measurements.
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
+> 
+> # load general plotting functions
+> library(ggplot2)
 > library(r2weight)
 > library(RColorBrewer)
-> library(scales)
-> library(ggplot2)
+> source("~/slabcurves/src/ab_plot_cvSL.R")
+> source("~/slabcurves/src/ab_plot_cvR2.R")
 > 
 > #-------------------------------
 > # load the serology dataset
@@ -107,10 +112,17 @@ Targeted maximum likelihood estimation for antibody (Ab) measurements.
 > # fit the cross-validated super learner
 > # with just Age as the predictor
 > set.seed(62522)
-> CVcfit <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+> CVcfit <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
 Loading required package: randomForest
-randomForest 4.6-10
+randomForest 4.6-12
 Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object is masked from ‘package:ggplot2’:
+
+    margin
+
 Loading required package: gam
 Loading required package: splines
 Loading required package: foreach
@@ -122,7 +134,7 @@ Loading required package: polspline
 > # accounting for other covariates
 > Wc <- dc[,c("sex","wetseason","vname")]
 > set.seed(62522)
-> CVcfitm <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,W=Wc,family=gaussian(),V=10,SL.library=SL.library)
+> CVcfitm <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs,Wc),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
 >   
 > # fit cross-validated SL
 > # with a restricted library
@@ -132,12 +144,12 @@ Loading required package: polspline
 > # fit the cross-validated super learner
 > # with just Age as the predictor
 > set.seed(62522)
-> CVcfitr <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+> CVcfitr <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
 >   
 > # fit the cross-validated super learner
 > # accounting for other covariates
 > set.seed(62522)
-> CVcfitrm <- ab_cvSL(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,W=Wc,family=gaussian(),V=10,SL.library=SL.library)
+> CVcfitrm <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs,Wc),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
 > 
 > #-------------------------------
 > # Intervention Villages
@@ -150,13 +162,13 @@ Loading required package: polspline
 > # fit the cross-validated super learner
 > # with just Age as the predictor
 > set.seed(62522)
-> CVtfit <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+> CVtfit <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 > 
 > # fit the cross-validated super learner
 > # accounting for other covariates
 > Wt <- dt[,c("sex","wetseason","vname")]
 > set.seed(62522)
-> CVtfitm <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,W=Wt,family=gaussian(),V=10,SL.library=SL.library)
+> CVtfitm <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs,Wt),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 > 
 > # fit cross-validated SL
 > # with a restricted library
@@ -166,12 +178,12 @@ Loading required package: polspline
 > # fit the cross-validated super learner
 > # with just Age as the predictor
 > set.seed(62522)
-> CVtfitr <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+> CVtfitr <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 > 
 > # fit the cross-validated super learner
 > # accounting for other covariates
 > set.seed(62522)
-> CVtfitrm <- ab_cvSL(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,W=Wt,family=gaussian(),V=10,SL.library=SL.library)
+> CVtfitrm <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs,Wt),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
 > 
 > #------------------------------
 > # print results to log
@@ -181,7 +193,7 @@ Loading required package: polspline
 > summary(CVcfit)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -204,7 +216,7 @@ All risk estimates are based on V =  10
 > summary(CVcfitm)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -230,7 +242,7 @@ All risk estimates are based on V =  10
 > summary(CVcfitr)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -251,7 +263,7 @@ All risk estimates are based on V =  10
 > summary(CVcfitrm)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -273,7 +285,7 @@ All risk estimates are based on V =  10
 > summary(CVtfit)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -296,7 +308,7 @@ All risk estimates are based on V =  10
 > summary(CVtfitm)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -322,7 +334,7 @@ All risk estimates are based on V =  10
 > summary(CVtfitr)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -343,7 +355,7 @@ All risk estimates are based on V =  10
 > summary(CVtfitrm)
 
 Call:  
-SuperLearner::CV.SuperLearner(Y = fitd$Y, X = X, V = V, family = family,  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
     SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
 
 
@@ -492,14 +504,12 @@ null device
 > # full library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 > set.seed(62522)
-> SLcfull <- ab_agecurve(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
+> SLcfull <- agecurveAb(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                              Risk       Coef
+                           CV-Risk       Coef
 SL.mean_All              0.7523777 0.00000000
 SL.glm_All               0.6301191 0.00000000
 SL.Yman2016_All          0.6863269 0.01286807
@@ -511,14 +521,12 @@ SL.polymars_All          0.4795801 0.77051632
 > # restricted library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 > set.seed(62522)
-> SLcres <- ab_agecurve(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
+> SLcres <- agecurveAb(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
+                  CV-Risk Coef
 SL.mean_All     0.7566991    0
 SL.glm_All      0.6345153    0
 SL.Yman2016_All 0.6890986    0
@@ -576,14 +584,12 @@ null device
 > # full library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 > set.seed(62522)
-> SLfull <- ab_agecurve(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
+> SLfull <- agecurveAb(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                              Risk      Coef
+                           CV-Risk      Coef
 SL.mean_All              1.3018857 0.0000000
 SL.glm_All               0.8477748 0.0000000
 SL.Yman2016_All          1.2229395 0.0000000
@@ -595,14 +601,12 @@ SL.polymars_All          0.6004254 0.4056304
 > # restricted library
 > SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 > set.seed(62522)
-> SLres <- ab_agecurve(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
+> SLres <- agecurveAb(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
 
-Call:  
-SuperLearner::SuperLearner(Y = fitd$Y, X = X, family = family, SL.library = SL.library,  
-    method = "method.NNLS", id = fitd$id) 
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
 
-
-                     Risk Coef
+                  CV-Risk Coef
 SL.mean_All     1.2999302    0
 SL.glm_All      0.8451180    0
 SL.Yman2016_All 1.2189959    0
@@ -652,4 +656,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-575.001  10.826 598.313 
+757.837  11.240 787.238 

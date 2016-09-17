@@ -19,12 +19,11 @@
 rm(list=ls())
 library(SuperLearner)
 library(tmleAb)
-library(RColorBrewer)
-library(scales)
 
 # load general plotting functions
 library(ggplot2)
 library(r2weight)
+library(RColorBrewer)
 source("~/slabcurves/src/ab_plot_cvSL.R")
 source("~/slabcurves/src/ab_plot_cvR2.R")
 

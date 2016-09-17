@@ -59,7 +59,7 @@ axis(2,at=ytics,labels=c(
 )
 set.seed(243) # jitter age slightly for better display
 points(jitter(msp1_EYxa$Age),msp1_EYxa$Y,cex=0.45,pch=16,col=alpha(cols[1],alpha=0.5))
-lines(msp1_EYxa$pYframe$Age,msp1_EYxa$pYframe$pY,col=cols[1],lwd=2)
+lines(msp1_EYxa$Age,msp1_EYxa$pY,col=cols[1],lwd=2)
 
 # Axis labels
 mtext("a",line=1,at=-11,adj=0,font=2,cex=2)

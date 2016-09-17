@@ -18,10 +18,13 @@
 rm(list=ls())
 library(SuperLearner)
 library(tmleAb)
+
+# load general plotting functions
+library(ggplot2)
 library(r2weight)
 library(RColorBrewer)
-library(scales)
-library(ggplot2)
+source("~/slabcurves/src/ab_plot_cvSL.R")
+source("~/slabcurves/src/ab_plot_cvR2.R")
 
 #-------------------------------
 # load the serology dataset
@@ -239,12 +242,12 @@ dev.off()
 # full library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 set.seed(62522)
-SLcfull <- ab_agecurve(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
+SLcfull <- agecurveAb(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
 
 # restricted library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 set.seed(62522)
-SLcres <- ab_agecurve(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
+SLcres <- agecurveAb(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
 
 
 # plot age-dependent antibody curves and means for two SL libraries
@@ -295,12 +298,12 @@ dev.off()
 # full library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
 set.seed(62522)
-SLfull <- ab_agecurve(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
+SLfull <- agecurveAb(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
 
 # restricted library
 SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 set.seed(62522)
-SLres <- ab_agecurve(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
+SLres <- agecurveAb(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
 
 
 # plot age-dependent antibody curves and means for two SL libraries

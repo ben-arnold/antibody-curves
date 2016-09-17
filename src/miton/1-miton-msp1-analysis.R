@@ -31,11 +31,13 @@ library(tmleAb)
 # load the Miton data
 #-------------------------------------------
 
-d <- read.csv("~/dropbox/articles/antibody-curves/data/miton/haiti2-malaria-miton-public.csv")
+# d <- read.csv("~/dropbox/articles/antibody-curves/data/miton/haiti2-malaria-miton-public.csv")
+data("miton_malaria")
+d <- miton_malaria
 
 d$msp1 <- d$msp13d7
 
-# for 6 negative MSP_1 values, replace as 0.001
+# for 6 negative MSP_1 values, replace as 0
 d$msp1[d$msp1<0] <- 0
 
 # create age categories for stratified analyses
@@ -51,7 +53,7 @@ SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
 # estimate a marginal Ab curve E(Y_x,a)
 #-------------------------------------------
 set.seed(25234)
-msp1_EYxa <- ab_agecurve(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.library=SL.library)
+msp1_EYxa <- agecurveAb(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.library=SL.library)
 
 #-------------------------------------------
 # estimate age-adjusted means E(Y_x)
@@ -59,7 +61,9 @@ msp1_EYxa <- ab_agecurve(Y=log10(d$msp1+1),Age=d$age,family="gaussian",SL.librar
 #-------------------------------------------
 agegrps <-c("1-5","6-10","11-15","16-20")
 msp1_EYx <- sapply(agegrps, function(x)
-  ab_tmle(Y=log10(d$msp1[d$agecat==x]+1),Age=data.frame(Age=d$age[d$agecat==x]),SL.library=SL.library)
+  tmleAb(Y=log10(d$msp1[d$agecat==x]+1),
+         W=data.frame(Age=d$age[d$agecat==x]),
+         SL.library=SL.library)
 )
 
 
