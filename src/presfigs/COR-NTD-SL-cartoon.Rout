@@ -1,0 +1,293 @@
+
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> #-----------------------------------
+> # COR-NTD-SL-cartoon.R
+> #
+> # build up an ensemble prediction
+> # showing each model's fit
+> #-----------------------------------
+> 
+> 
+> 
+> #-----------------------------------
+> # preamble
+> #-----------------------------------
+> rm(list=ls())
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-19
+Package created on 2016-02-02
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(tmleAb)
+Welcome to the tmleAb package
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.1)
+
+Check github.com/ben-arnold/tmleAb for the most current version
+(we have plans for some useful additions)
+
+
+> library(scales)
+> 
+> 
+> #-------------------------------------------
+> # load the Hait2 longitudinal data
+> #-------------------------------------------
+> library(foreign)
+> d <- read.dta("~/dropbox/haiti2/data/final/haiti2-long.dta")
+> 
+> 
+> #-------------------------------------------
+> # fit age-antibody curves
+> #-------------------------------------------
+> SL.libfull <- c("SL.mean","SL.glm","SL.Yman2016","SL.loess","SL.gam","SL.polymars","SL.randomForest")
+> SL.libres <- c("SL.mean","SL.glm","SL.gam","SL.loess")
+> 
+> set.seed(3234723)
+> bm14mean <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.mean")
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+             CV-Risk Coef
+SL.mean_All 1.669697    1
+> set.seed(3234723)
+> bm14glm <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.glm")
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+            CV-Risk Coef
+SL.glm_All 1.120195    1
+> set.seed(3234723)
+> bm14yman <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.Yman2016")
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk Coef
+SL.Yman2016_All 1.226732    1
+> set.seed(3234723)
+> bm14lo <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.loess")
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+              CV-Risk Coef
+SL.loess_All 1.012772    1
+> set.seed(3234723)
+> bm14gam <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.gam")
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                CV-Risk Coef
+SL.gam.df6_All 1.006305    1
+> set.seed(3234723)
+> bm14mars <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.polymars")
+Loading required package: polspline
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk Coef
+SL.polymars_All 1.027344    1
+> set.seed(3234723)
+> bm14rf <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library="SL.randomForest")
+Loading required package: randomForest
+randomForest 4.6-12
+Type rfNews() to see new features/changes/bug fixes.
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                          CV-Risk Coef
+SL.randomForest.ns40_All 1.037913    1
+> set.seed(3234723)
+> bm14sl <- agecurveAb(Y=log10(d$bm14),Age=d$agey,id=d$id,SL.library=SL.libfull)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                          CV-Risk        Coef
+SL.mean_All              1.672784 0.004430016
+SL.glm_All               1.129497 0.022751778
+SL.Yman2016_All          1.236164 0.000000000
+SL.loess_All             1.022790 0.000000000
+SL.gam.df10_All          1.007280 0.828105116
+SL.polymars_All          1.020627 0.035849003
+SL.randomForest.ns40_All 1.039566 0.108864087
+> 
+> #-------------------------------------------
+> # Bm14 curves
+> #-------------------------------------------
+> 
+> ### general plot, to call repeatedly below
+> bm14shell <- function(x){
++   op <- par(mar=c(5,6,4,0)+0.1)
++   xtics <- seq(0,12,by=2)
++   
++   plot(x$Age, x$Y,type="n",
++        ylab="",yaxt="n",
++        ylim=c(0,5),
++        xlab="",xlim=range(xtics),xaxt="n",
++        bty="n",las=1
++   )
++   
++   # header
++   mtext(expression(paste(italic("W. bancrofti")," Bm14   ",italic(E),"(",italic(Y[a]),")")),cex=1.25,side=3,line=1.5)
++   
++   # axes
++   mtext("Age, years",side=1,line=3,cex=1.5)
++   #mtext("Luminex Response (MFI-Background)",side=2,line=3.5,cex=1.25)
++   axis(1,at=xtics,cex.axis=1.5)
++   axis(2,at=0:5,labels=c(
++     # expression(10^-1),
++     expression(10^0),
++     expression(10^1),
++     expression(10^2),
++     expression(10^3),
++     expression(10^4),
++     expression(10^5)
++   ), las=1,cex.axis=1.5
++   )
++   
++   # plot data (points and fitted lines)
++   points(x$Age, x$Y,col=alpha('black',alpha=0.3), pch=16,cex=0.4)
++ }
+> 
+> 
+> cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+> cols <- cbPalette
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-1.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-2.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> dev.off()
+null device 
+          1 
+> 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-3.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> lines(bm14yman$Age,bm14yman$pY,col=cols[4])
+> dev.off()
+null device 
+          1 
+> 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-4.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> lines(bm14yman$Age,bm14yman$pY,col=cols[4])
+> lines(bm14lo$Age,bm14lo$pY,col=cols[5])
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-5.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> lines(bm14yman$Age,bm14yman$pY,col=cols[4])
+> lines(bm14lo$Age,bm14lo$pY,col=cols[5])
+> lines(bm14gam$Age,bm14gam$pY,col=cols[6])
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-6.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> lines(bm14yman$Age,bm14yman$pY,col=cols[4])
+> lines(bm14lo$Age,bm14lo$pY,col=cols[5])
+> lines(bm14gam$Age,bm14gam$pY,col=cols[6])
+> lines(bm14mars$Age,bm14mars$pY,col=cols[7])
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-7.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> lines(bm14yman$Age,bm14yman$pY,col=cols[4])
+> lines(bm14lo$Age,bm14lo$pY,col=cols[5])
+> lines(bm14gam$Age,bm14gam$pY,col=cols[6])
+> lines(bm14mars$Age,bm14mars$pY,col=cols[7])
+> lines(bm14rf$Age,bm14rf$pY,col=cols[8])
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-8.pdf")
+> bm14shell(bm14mean)
+> lines(bm14mean$Age,bm14mean$pY,col=cols[2])
+> lines(bm14glm$Age,bm14glm$pY,col=cols[3])
+> lines(bm14yman$Age,bm14yman$pY,col=cols[4])
+> lines(bm14lo$Age,bm14lo$pY,col=cols[5])
+> lines(bm14gam$Age,bm14gam$pY,col=cols[6])
+> lines(bm14mars$Age,bm14mars$pY,col=cols[7])
+> lines(bm14rf$Age,bm14rf$pY,col=cols[8])
+> lines(bm14sl$Age,bm14sl$pY,col=cols[1],lwd=3)
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd/figs/slcartoon-9.pdf")
+> bm14shell(bm14mean)
+> lines(bm14sl$Age,bm14sl$pY,col=cols[1])
+> dev.off()
+null device 
+          1 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 84.164   0.915  92.170 
