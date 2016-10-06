@@ -56,9 +56,9 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.1)
+(Version 0.1.2)
 
-Check github.com/ben-arnold/tmleAb for the most current version
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
 (we have plans for some useful additions)
 
 
@@ -272,23 +272,6 @@ SL.gam.df9_All  0.4064500 0.5942174
 SL.loess_All    0.4078289 0.3869800
 > 
 > 
-> 
-> 
-> # temp code to look at curves
-> # lo <- layout(mat=matrix(1:3,nrow=3,ncol=1))
-> # cols <- rainbow(n=7,v=0.7)
-> # plot(p.c1$pYframe$Age,p.c1$pYframe$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[1])
-> # lines(p.c2$pYframe$Age,p.c2$pYframe$pY,col=cols[2])
-> #
-> # plot(p.c3$pYframe$Age,p.c3$pYframe$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[3])
-> # lines(p.c4$pYframe$Age,p.c4$pYframe$pY,col=cols[4])
-> # lines(p.c5$pYframe$Age,p.c5$pYframe$pY,col=cols[5])
-> #
-> # plot(p.c7$pYframe$Age,p.c7$pYframe$pY,type="l",bty="n",ylim=c(1,4),xlim=c(0,15),col=cols[6])
-> # lines(p.c8$pYframe$Age,p.c8$pYframe$pY,col=cols[7])
-> 
-> 
-> 
 > #-------------------------------
 > # Step 2:
 > # Calculate age-adjusted means
@@ -499,20 +482,20 @@ SL.loess_All    0.4078289 0.3869800
 + 	)
 + )
  Additive Effect
-   Parameter Estimate:  0.54755
-   Estimated Variance:  0.0012978
-              p-value:  <2e-16
-    95% Conf Interval: (0.47694, 0.61816) 
+   Parameter Estimate:  0.15383
+   Estimated Variance:  0.0049935
+              p-value:  0.029489
+    95% Conf Interval: (0.015326, 0.29233) 
  Additive Effect
-   Parameter Estimate:  0.82052
-   Estimated Variance:  0.00096522
-              p-value:  <2e-16
-    95% Conf Interval: (0.75962, 0.88141) 
+   Parameter Estimate:  0.071611
+   Estimated Variance:  0.003585
+              p-value:  0.23169
+    95% Conf Interval: (-0.045744, 0.18897) 
  Additive Effect
-   Parameter Estimate:  0.19661
-   Estimated Variance:  0.0028845
-              p-value:  0.00025148
-    95% Conf Interval: (0.091343, 0.30188) 
+   Parameter Estimate:  0.078684
+   Estimated Variance:  0.015046
+              p-value:  0.52121
+    95% Conf Interval: (-0.16173, 0.3191) 
 > tc.diff.psi2 <- sapply(ages,function(x) tmleAb(
 +   Y=log10(d$ifatpftitre[d$serosvy==2 & d$agecat==x]+1),
 +   X=d$tr01[d$serosvy==2 & d$agecat==x],
@@ -522,26 +505,26 @@ SL.loess_All    0.4078289 0.3869800
 +   )
 + )
  Additive Effect
-   Parameter Estimate:  0.04365
-   Estimated Variance:  0.0013614
-              p-value:  0.2368
-    95% Conf Interval: (-0.028669, 0.11597) 
+   Parameter Estimate:  0.043775
+   Estimated Variance:  0.0046969
+              p-value:  0.523
+    95% Conf Interval: (-0.090552, 0.1781) 
  Additive Effect
-   Parameter Estimate:  0.89606
-   Estimated Variance:  0.00089039
-              p-value:  <2e-16
-    95% Conf Interval: (0.83757, 0.95454) 
+   Parameter Estimate:  0.12292
+   Estimated Variance:  0.0028767
+              p-value:  0.021918
+    95% Conf Interval: (0.017796, 0.22805) 
  Additive Effect
-   Parameter Estimate:  0.77476
-   Estimated Variance:  0.0020362
-              p-value:  <2e-16
-    95% Conf Interval: (0.68632, 0.86321) 
+   Parameter Estimate:  0.14879
+   Estimated Variance:  0.0099946
+              p-value:  0.13667
+    95% Conf Interval: (-0.047156, 0.34474) 
 > 
 > # P-values for differences in means, with Bonferroni correction for 6 tests
 > sprintf("%1.4f",unlist(tc.diff.psi1[5,])*6)
-[1] "0.0000" "0.0000" "0.0015"
+[1] "0.1769" "1.3901" "3.1273"
 > sprintf("%1.4f",unlist(tc.diff.psi2[5,])*6)
-[1] "1.4208" "0.0000" "0.0000"
+[1] "3.1380" "0.1315" "0.8200"
 > 
 > #-------------------------------
 > # Estimate difference between
@@ -573,68 +556,68 @@ SL.loess_All    0.4078289 0.3869800
 > set.seed(3413)
 > wet.diff.12 <- tmle.wrap(d.12)
  Additive Effect
-   Parameter Estimate:  0.44521
-   Estimated Variance:  0.0019972
-              p-value:  <2e-16
-    95% Conf Interval: (0.35762, 0.53281) 
+   Parameter Estimate:  0.25669
+   Estimated Variance:  0.0072629
+              p-value:  0.0025953
+    95% Conf Interval: (0.089654, 0.42373) 
  Additive Effect
-   Parameter Estimate:  0.11899
-   Estimated Variance:  0.0011882
-              p-value:  0.00055664
-    95% Conf Interval: (0.051427, 0.18655) 
+   Parameter Estimate:  0.0089865
+   Estimated Variance:  0.0046375
+              p-value:  0.89501
+    95% Conf Interval: (-0.12449, 0.14246) 
  Additive Effect
-   Parameter Estimate:  0.76115
-   Estimated Variance:  0.0057537
-              p-value:  <2e-16
-    95% Conf Interval: (0.61248, 0.90982) 
+   Parameter Estimate:  0.10895
+   Estimated Variance:  0.021431
+              p-value:  0.45673
+    95% Conf Interval: (-0.17798, 0.39589) 
 > wet.diff.23 <- tmle.wrap(d.23)
  Additive Effect
-   Parameter Estimate:  0.080784
-   Estimated Variance:  0.0024897
-              p-value:  0.10544
-    95% Conf Interval: (-0.017014, 0.17858) 
+   Parameter Estimate:  0.079639
+   Estimated Variance:  0.0087992
+              p-value:  0.39589
+    95% Conf Interval: (-0.10422, 0.26349) 
  Additive Effect
-   Parameter Estimate:  0.78361
-   Estimated Variance:  0.00098493
-              p-value:  <2e-16
-    95% Conf Interval: (0.7221, 0.84512) 
+   Parameter Estimate:  0.051928
+   Estimated Variance:  0.0035502
+              p-value:  0.38348
+    95% Conf Interval: (-0.064856, 0.16871) 
  Additive Effect
-   Parameter Estimate:  0.62684
-   Estimated Variance:  0.0033617
-              p-value:  <2e-16
-    95% Conf Interval: (0.5132, 0.74049) 
+   Parameter Estimate:  0.04667
+   Estimated Variance:  0.012687
+              p-value:  0.67862
+    95% Conf Interval: (-0.1741, 0.26744) 
 > wet.diff.34 <- tmle.wrap(d.34)
  Additive Effect
-   Parameter Estimate:  0.73593
-   Estimated Variance:  0.0034338
-              p-value:  <2e-16
-    95% Conf Interval: (0.62108, 0.85078) 
+   Parameter Estimate:  0.56615
+   Estimated Variance:  0.012939
+              p-value:  6.4534e-07
+    95% Conf Interval: (0.3432, 0.7891) 
  Additive Effect
-   Parameter Estimate:  0.66739
-   Estimated Variance:  0.00091153
-              p-value:  <2e-16
-    95% Conf Interval: (0.60821, 0.72656) 
+   Parameter Estimate:  0.13939
+   Estimated Variance:  0.0035725
+              p-value:  0.019693
+    95% Conf Interval: (0.022243, 0.25654) 
  Additive Effect
-   Parameter Estimate:  0.61908
-   Estimated Variance:  0.0032249
-              p-value:  <2e-16
-    95% Conf Interval: (0.50778, 0.73039) 
+   Parameter Estimate:  0.10543
+   Estimated Variance:  0.01232
+              p-value:  0.34219
+    95% Conf Interval: (-0.11212, 0.32298) 
 > wet.diff.45 <- tmle.wrap(d.45)
  Additive Effect
-   Parameter Estimate:  0.61766
-   Estimated Variance:  0.0038796
-              p-value:  <2e-16
-    95% Conf Interval: (0.49557, 0.73974) 
+   Parameter Estimate:  0.61762
+   Estimated Variance:  0.014741
+              p-value:  3.6378e-07
+    95% Conf Interval: (0.37965, 0.85559) 
  Additive Effect
-   Parameter Estimate:  0.62246
-   Estimated Variance:  0.00082139
-              p-value:  <2e-16
-    95% Conf Interval: (0.56628, 0.67863) 
+   Parameter Estimate:  0.22655
+   Estimated Variance:  0.0030662
+              p-value:  4.2877e-05
+    95% Conf Interval: (0.11802, 0.33509) 
  Additive Effect
-   Parameter Estimate:  1.0039
-   Estimated Variance:  0.0052843
-              p-value:  <2e-16
-    95% Conf Interval: (0.86139, 1.1463) 
+   Parameter Estimate:  0.29269
+   Estimated Variance:  0.019573
+              p-value:  0.036426
+    95% Conf Interval: (0.018486, 0.5669) 
 > # note: 5 v 7 and 7 v 8 are not tested b/c all wet season
 > 
 > 
@@ -648,4 +631,4 @@ SL.loess_All    0.4078289 0.3869800
 > 
 > proc.time()
    user  system elapsed 
- 85.135   0.700  86.439 
+ 97.148   1.083 105.989 

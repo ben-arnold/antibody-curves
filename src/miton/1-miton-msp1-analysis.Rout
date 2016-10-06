@@ -17,6 +17,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > #-------------------------------
 > # 1-miton-msp1-analysis
 > #
@@ -61,9 +63,9 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.1)
+(Version 0.1.2)
 
-Check github.com/ben-arnold/tmleAb for the most current version
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
 (we have plans for some useful additions)
 
 
@@ -155,4 +157,4 @@ SL.loess_All    1.177752 0.4629636
 > 
 > proc.time()
    user  system elapsed 
-  6.099   0.115   7.530 
+  6.427   0.189   9.810 

@@ -278,8 +278,8 @@ axis(2,at=0:4,labels=c(
 )
 # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 axis(1,at=xtics,cex.axis=1.5)
-lines(SLcfull$pYframe$Age,SLcfull$pYframe$pY,col=cols[1],lwd=1)
-lines(SLcres$pYframe$Age,SLcres$pYframe$pY,col=cols[2],lwd=1)
+lines(SLcfull$Age,SLcfull$pY,col=cols[1],lwd=1)
+lines(SLcres$Age,SLcres$pY,col=cols[2],lwd=1)
 
 legend(x=20,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
 par(op)
@@ -334,8 +334,8 @@ axis(2,at=0:4,labels=c(
 )
 # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 axis(1,at=xtics,cex.axis=1.5)
-lines(SLfull$pYframe$Age,SLfull$pYframe$pY,col=cols[1],lwd=1)
-lines(SLres$pYframe$Age,SLres$pYframe$pY,col=cols[2],lwd=1)
+lines(SLfull$Age,SLfull$pY,col=cols[1],lwd=1)
+lines(SLres$Age,SLres$pY,col=cols[2],lwd=1)
 
 legend(x=20,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
 par(op)

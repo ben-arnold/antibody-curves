@@ -53,9 +53,9 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.1)
+(Version 0.1.2)
 
-Check github.com/ben-arnold/tmleAb for the most current version
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
 (we have plans for some useful additions)
 
 
@@ -374,44 +374,44 @@ There were 11 warnings (use warnings() to see them)
 +                                                  id=d$id[d$serosvy==x],
 +                                                  SL.library=SL.library)[c("psi","se","lb","ub","p")])
  Additive Effect
-   Parameter Estimate:  0.22081
-   Estimated Variance:  0.00043435
-              p-value:  <2e-16
-    95% Conf Interval: (0.17996, 0.26166) 
+   Parameter Estimate:  0.10482
+   Estimated Variance:  0.0017798
+              p-value:  0.012969
+    95% Conf Interval: (0.022132, 0.18751) 
  Additive Effect
-   Parameter Estimate:  0.078406
-   Estimated Variance:  0.00047103
-              p-value:  0.00030308
-    95% Conf Interval: (0.035868, 0.12094) 
+   Parameter Estimate:  0.078403
+   Estimated Variance:  0.0016658
+              p-value:  0.054735
+    95% Conf Interval: (-0.0015928, 0.1584) 
  Additive Effect
-   Parameter Estimate:  -0.54491
-   Estimated Variance:  0.00070054
+   Parameter Estimate:  -0.54488
+   Estimated Variance:  0.0027778
               p-value:  <2e-16
-    95% Conf Interval: (-0.59678, -0.49303) 
+    95% Conf Interval: (-0.64818, -0.44158) 
  Additive Effect
    Parameter Estimate:  -0.71222
-   Estimated Variance:  0.00084427
+   Estimated Variance:  0.0034793
               p-value:  <2e-16
-    95% Conf Interval: (-0.76917, -0.65527) 
+    95% Conf Interval: (-0.82783, -0.59661) 
  Additive Effect
-   Parameter Estimate:  -1.531
-   Estimated Variance:  0.00079064
+   Parameter Estimate:  -1.5464
+   Estimated Variance:  0.0035532
               p-value:  <2e-16
-    95% Conf Interval: (-1.5862, -1.4759) 
+    95% Conf Interval: (-1.6632, -1.4295) 
  Additive Effect
-   Parameter Estimate:  -0.95426
-   Estimated Variance:  0.0013092
+   Parameter Estimate:  -0.76092
+   Estimated Variance:  0.0041308
               p-value:  <2e-16
-    95% Conf Interval: (-1.0252, -0.88335) 
+    95% Conf Interval: (-0.88689, -0.63494) 
  Additive Effect
-   Parameter Estimate:  -0.46334
-   Estimated Variance:  0.001621
-              p-value:  <2e-16
-    95% Conf Interval: (-0.54225, -0.38443) 
+   Parameter Estimate:  -0.46589
+   Estimated Variance:  0.005754
+              p-value:  8.1592e-10
+    95% Conf Interval: (-0.61456, -0.31721) 
 > 
 > # P-values for differences in means, with Bonferroni correction for 7 tests
 > sprintf("%1.4f",unlist(diff_psi[5,])*7)
-[1] "0.0000" "0.0021" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
+[1] "0.0908" "0.3831" "0.0000" "0.0000" "0.0000" "0.0000" "0.0000"
 > 
 > #-------------------------------
 > # save down the results
@@ -423,4 +423,4 @@ There were 11 warnings (use warnings() to see them)
 > 
 > proc.time()
    user  system elapsed 
- 72.209   0.583  73.282 
+ 90.065   3.533 102.116 

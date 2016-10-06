@@ -63,9 +63,9 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.1)
+(Version 0.1.2)
 
-Check github.com/ben-arnold/tmleAb for the most current version
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
 (we have plans for some useful additions)
 
 
@@ -167,10 +167,10 @@ SL.loess_All    0.4291412 0.46154505
 > # estimate difference in means
 > diff.cp17      <- tmleAb(Y=log10(d.all$cp17+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  2.3219
-   Estimated Variance:  0.0024994
+   Parameter Estimate:  1.7296
+   Estimated Variance:  0.013481
               p-value:  <2e-16
-    95% Conf Interval: (2.2239, 2.4199) 
+    95% Conf Interval: (1.502, 1.9572) 
 > 
 > 
 > #-------------------------------
@@ -225,10 +225,10 @@ Warning messages:
 > # estimate difference in means
 > diff.cp23      <- tmleAb(Y=log10(d.all$cp23+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  2.2237
-   Estimated Variance:  0.002298
+   Parameter Estimate:  1.812
+   Estimated Variance:  0.023239
               p-value:  <2e-16
-    95% Conf Interval: (2.1298, 2.3177) 
+    95% Conf Interval: (1.5132, 2.1108) 
 > 
 > 
 > #-------------------------------
@@ -278,10 +278,10 @@ There were 11 warnings (use warnings() to see them)
 > # estimate difference in means
 > diff.giar      <- tmleAb(Y=log10(d.all$vsp5+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  2.5461
-   Estimated Variance:  0.0021762
+   Parameter Estimate:  1.8917
+   Estimated Variance:  0.019176
               p-value:  <2e-16
-    95% Conf Interval: (2.4547, 2.6375) 
+    95% Conf Interval: (1.6203, 2.1631) 
 > 
 > 
 > #-------------------------------
@@ -333,10 +333,10 @@ Warning messages:
 > # estimate difference in means
 > diff.leca      <- tmleAb(Y=log10(d.all$leca+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  2.13
-   Estimated Variance:  0.0031375
+   Parameter Estimate:  1.4329
+   Estimated Variance:  0.020603
               p-value:  <2e-16
-    95% Conf Interval: (2.0203, 2.2398) 
+    95% Conf Interval: (1.1516, 1.7143) 
 > 
 > 
 > #-------------------------------
@@ -387,10 +387,10 @@ In log(Aa) : NaNs produced
 > # estimate difference in means
 > diff.etec      <- tmleAb(Y=log10(d.all$etec+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  2.7538
-   Estimated Variance:  0.00035205
+   Parameter Estimate:  2.3308
+   Estimated Variance:  0.010739
               p-value:  <2e-16
-    95% Conf Interval: (2.717, 2.7905) 
+    95% Conf Interval: (2.1277, 2.5339) 
 > 
 > 
 > #-------------------------------
@@ -439,10 +439,10 @@ SL.loess_All    0.7280832    0
 > # estimate difference in means
 > diff.salb      <- tmleAb(Y=log10(d.all$salb+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  1.5183
-   Estimated Variance:  0.00283
+   Parameter Estimate:  1.1336
+   Estimated Variance:  0.017987
               p-value:  <2e-16
-    95% Conf Interval: (1.414, 1.6226) 
+    95% Conf Interval: (0.87077, 1.3965) 
 > 
 > #-------------------------------
 > # noro Group I
@@ -489,10 +489,10 @@ SL.loess_All    1.417843 0.14616699
 > # estimate difference in means
 > diff.norogi      <- tmleAb(Y=log10(d.all$norogi+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  1.3784
-   Estimated Variance:  0.0048233
-              p-value:  <2e-16
-    95% Conf Interval: (1.2423, 1.5146) 
+   Parameter Estimate:  0.92328
+   Estimated Variance:  0.045966
+              p-value:  1.6594e-05
+    95% Conf Interval: (0.50306, 1.3435) 
 > 
 > 
 > #-------------------------------
@@ -540,10 +540,10 @@ SL.loess_All    0.6404667 0.1848434
 > # estimate difference in means
 > diff.norogii      <- tmleAb(Y=log10(d.all$norogii+1),W=data.frame(Age=d.all$agey),id=d.all$id,X=d.all$haiti,SL.library=SL.library,gamdf=2:6)
  Additive Effect
-   Parameter Estimate:  0.90676
-   Estimated Variance:  0.002459
-              p-value:  <2e-16
-    95% Conf Interval: (0.80956, 1.0039) 
+   Parameter Estimate:  0.57426
+   Estimated Variance:  0.029638
+              p-value:  0.00085088
+    95% Conf Interval: (0.23683, 0.91168) 
 > 
 > 	
 > 
@@ -563,4 +563,4 @@ SL.loess_All    0.6404667 0.1848434
 > 
 > proc.time()
    user  system elapsed 
- 60.976   1.979  68.990 
+ 64.212   1.362  72.857 

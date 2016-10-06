@@ -57,9 +57,9 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.1)
+(Version 0.1.2)
 
-Check github.com/ben-arnold/tmleAb for the most current version
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
 (we have plans for some useful additions)
 
 
@@ -1129,4 +1129,4 @@ Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) :
 > 
 > proc.time()
    user  system elapsed 
-123.356   1.105 127.748 
+135.557   1.379 145.357 

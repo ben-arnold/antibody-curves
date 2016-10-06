@@ -17,8 +17,6 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-[Previously saved workspace restored]
-
 > 
 > 
 > #-------------------------------------------
@@ -69,9 +67,9 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.1)
+(Version 0.1.2)
 
-Check github.com/ben-arnold/tmleAb for the most current version
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
 (we have plans for some useful additions)
 
 
@@ -166,10 +164,10 @@ SL.loess_All    0.9046339 0.0000000
 > # estimate difference in means
 > diff.mauke  <- tmleAb(Y=log10(d$wb123),X=d$mda,W=data.frame(Age=d$ager),id=d$id,SL.library=SL.library)
  Additive Effect
-   Parameter Estimate:  -0.76922
-   Estimated Variance:  0.00099211
+   Parameter Estimate:  -0.71457
+   Estimated Variance:  0.0034441
               p-value:  <2e-16
-    95% Conf Interval: (-0.83096, -0.70749) 
+    95% Conf Interval: (-0.8296, -0.59955) 
 > 
 > 
 > #--------------------------------------
@@ -314,4 +312,4 @@ SL.loess_All    0.9046339 0.0000000
 > 
 > proc.time()
    user  system elapsed 
- 27.708   0.285  32.825 
+ 23.754   0.241  26.695 
