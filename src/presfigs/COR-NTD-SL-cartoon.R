@@ -164,3 +164,73 @@ bm14shell(bm14mean)
 lines(bm14sl$Age,bm14sl$pY,col=cols[1])
 dev.off()
 
+
+#-------------------------------------------
+# Bm14 beeswarm plot
+#-------------------------------------------
+library(beeswarm)
+
+pdf("~/dropbox/articles/antibody-curves/presentations/cor-ntd-2016/figs/haiti2-bm14-beeswarm.pdf",width=4,height=5)
+ytics <- 0:5
+op <- par(mar=c(2,6,4,0)+0.1)
+midpts <- beeswarm(log10(d$bm14),
+                   #corral='wrap',corralWidth = 0.5,
+                   labels=NA,
+                   col=alpha("black",alpha=0.3),
+                   pch=16,cex=0.5,
+                   ylab="", yaxt="n",ylim=range(ytics),
+                   xlab="",
+                   bty="n"
+)
+mtext(expression(paste(italic("W. bancrofti")," Bm14")),side=2,line=4.5,cex=1.25)
+mtext("Luminex Response (MFI-Background)",side=2,line=3.5,cex=1)
+axis(2,at=0:5,labels=c(
+  # expression(10^-1),
+  expression(10^0),
+  expression(10^1),
+  expression(10^2),
+  expression(10^3),
+  expression(10^4),
+  expression(10^5)
+), las=1,cex.axis=1.5
+)
+dev.off()
+
+
+#-------------------------------------------
+# Bm14 age-dependent plot
+#-------------------------------------------
+op <- par(mar=c(5,6,4,0)+0.1)
+xtics <- seq(0,12,by=2)
+
+plot(d$agey, log10(d$bm14),type="n",
+     ylab="",yaxt="n",
+     ylim=c(0,5),
+     xlab="",xlim=range(xtics),xaxt="n",
+     bty="n",las=1
+)
+
+# header
+#mtext(expression(paste(italic("W. bancrofti")," Bm14   ",italic(E),"(",italic(Y[a]),")")),cex=1.25,side=3,line=1.5)
+
+# axes
+mtext("Age, years",side=1,line=3,cex=1.5)
+mtext(expression(paste(italic("W. bancrofti")," Bm14")),side=2,line=4.5,cex=1.25)
+mtext("Luminex Response (MFI-Background)",side=2,line=3.5,cex=1)
+axis(1,at=xtics,cex.axis=1.5)
+axis(2,at=0:5,labels=c(
+  # expression(10^-1),
+  expression(10^0),
+  expression(10^1),
+  expression(10^2),
+  expression(10^3),
+  expression(10^4),
+  expression(10^5)
+), las=1,cex.axis=1.5
+)
+
+# plot data (points and fitted lines)
+points(d$agey, log10(d$bm14),col=alpha('black',alpha=0.3), pch=16,cex=0.4)
+
+
+
