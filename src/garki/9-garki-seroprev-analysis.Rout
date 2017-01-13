@@ -255,14 +255,8 @@ SL.loess_All    0.10180735    0
 > # by treatment group and 
 > # survey round
 > # 
-> # unlike the quantitative analysis
-> # all of the change in the 
-> # age-prevalence curves is in <5s
-> # so compare means for children <5
 > #-------------------------------
 > 
-> # subset the data to children <5y
-> d <- subset(d,ageyrs<=5)
 > 
 > # create a numeric 0/1 treatment variable
 > d$tr01 <- ifelse(d$tr=="Control",0,1)
@@ -278,40 +272,40 @@ SL.loess_All    0.10180735    0
 +                                              id=d$id[d$tr=="Control" & d$serosvy==x],
 +                                              SL.library=SL.library)[c("psi","se","lb","ub","p")] )
  Population Mean
-   Parameter Estimate:  0.9916
-   Estimated Variance:  7.0616e-05
+   Parameter Estimate:  0.9959
+   Estimated Variance:  1.6797e-05
               p-value:  <2e-16
-    95% Conf Interval: (0.97513, 1.0081) 
+    95% Conf Interval: (0.98787, 1.0039) 
  Population Mean
-   Parameter Estimate:  0.99074
-   Estimated Variance:  8.5734e-05
+   Parameter Estimate:  0.99573
+   Estimated Variance:  1.8263e-05
               p-value:  <2e-16
-    95% Conf Interval: (0.97259, 1.0089) 
+    95% Conf Interval: (0.98735, 1.0041) 
  Population Mean
-   Parameter Estimate:  0.94737
-   Estimated Variance:  0.00044125
+   Parameter Estimate:  0.976
+   Estimated Variance:  9.4072e-05
               p-value:  <2e-16
-    95% Conf Interval: (0.9062, 0.98854) 
+    95% Conf Interval: (0.95699, 0.99501) 
  Population Mean
-   Parameter Estimate:  0.82883
-   Estimated Variance:  0.0012897
+   Parameter Estimate:  0.92149
+   Estimated Variance:  0.0003002
               p-value:  <2e-16
-    95% Conf Interval: (0.75844, 0.89922) 
+    95% Conf Interval: (0.88753, 0.95545) 
  Population Mean
-   Parameter Estimate:  0.93636
-   Estimated Variance:  0.00054667
+   Parameter Estimate:  0.97143
+   Estimated Variance:  0.00011375
               p-value:  <2e-16
-    95% Conf Interval: (0.89054, 0.98219) 
+    95% Conf Interval: (0.95052, 0.99233) 
  Population Mean
-   Parameter Estimate:  0.95192
-   Estimated Variance:  0.00044433
+   Parameter Estimate:  0.97768
+   Estimated Variance:  9.7862e-05
               p-value:  <2e-16
-    95% Conf Interval: (0.91061, 0.99324) 
+    95% Conf Interval: (0.95829, 0.99707) 
  Population Mean
-   Parameter Estimate:  0.89744
-   Estimated Variance:  0.0011954
+   Parameter Estimate:  0.94771
+   Estimated Variance:  0.00032601
               p-value:  <2e-16
-    95% Conf Interval: (0.82967, 0.9652) 
+    95% Conf Interval: (0.91232, 0.9831) 
 > 
 > 
 > ### Intervention Villages - Spraying (Propoxur) + MDA
@@ -320,45 +314,45 @@ SL.loess_All    0.10180735    0
 +                                          id=d$id[d$tr=="Intervention" & d$serosvy==x],
 +                                          SL.library=SL.library)[c("psi","se","lb","ub","p")] )
  Population Mean
-   Parameter Estimate:  0.98396
-   Estimated Variance:  8.4868e-05
+   Parameter Estimate:  0.99272
+   Estimated Variance:  1.7588e-05
               p-value:  <2e-16
-    95% Conf Interval: (0.9659, 1.002) 
+    95% Conf Interval: (0.9845, 1.0009) 
  Population Mean
-   Parameter Estimate:  0.9593
-   Estimated Variance:  0.00022831
+   Parameter Estimate:  0.98056
+   Estimated Variance:  5.311e-05
               p-value:  <2e-16
-    95% Conf Interval: (0.92969, 0.98892) 
+    95% Conf Interval: (0.96627, 0.99484) 
  Population Mean
-   Parameter Estimate:  0.85577
-   Estimated Variance:  0.00059627
+   Parameter Estimate:  0.92574
+   Estimated Variance:  0.00017058
               p-value:  <2e-16
-    95% Conf Interval: (0.80791, 0.90363) 
+    95% Conf Interval: (0.90014, 0.95134) 
  Population Mean
-   Parameter Estimate:  0.64078
-   Estimated Variance:  0.0011228
+   Parameter Estimate:  0.81509
+   Estimated Variance:  0.00036761
               p-value:  <2e-16
-    95% Conf Interval: (0.5751, 0.70645) 
+    95% Conf Interval: (0.77751, 0.85266) 
  Population Mean
-   Parameter Estimate:  0.47951
-   Estimated Variance:  0.0010271
+   Parameter Estimate:  0.70814
+   Estimated Variance:  0.00046865
               p-value:  <2e-16
-    95% Conf Interval: (0.41669, 0.54232) 
+    95% Conf Interval: (0.66571, 0.75058) 
  Population Mean
-   Parameter Estimate:  0.34052
-   Estimated Variance:  0.00097214
+   Parameter Estimate:  0.63059
+   Estimated Variance:  0.0005494
               p-value:  <2e-16
-    95% Conf Interval: (0.27941, 0.40163) 
+    95% Conf Interval: (0.58465, 0.67653) 
  Population Mean
-   Parameter Estimate:  0.65789
-   Estimated Variance:  0.00099149
+   Parameter Estimate:  0.81651
+   Estimated Variance:  0.00034441
               p-value:  <2e-16
-    95% Conf Interval: (0.59618, 0.71961) 
+    95% Conf Interval: (0.78014, 0.85289) 
  Population Mean
-   Parameter Estimate:  0.7619
-   Estimated Variance:  0.0010863
+   Parameter Estimate:  0.86301
+   Estimated Variance:  0.00040626
               p-value:  <2e-16
-    95% Conf Interval: (0.69731, 0.8265) 
+    95% Conf Interval: (0.82351, 0.90252) 
 > 
 > 
 > #-------------------------------
@@ -375,44 +369,44 @@ SL.loess_All    0.10180735    0
 +                                                  id=d$id[d$serosvy==x],
 +                                                  SL.library=SL.library)[c("psi","se","lb","ub","p")])
  Additive Effect
-   Parameter Estimate:  -0.0085099
-   Estimated Variance:  0.00014735
-              p-value:  0.48327
-    95% Conf Interval: (-0.032302, 0.015282) 
+   Parameter Estimate:  -0.0039327
+   Estimated Variance:  3.2796e-05
+              p-value:  0.49226
+    95% Conf Interval: (-0.015157, 0.0072918) 
  Additive Effect
-   Parameter Estimate:  -0.033431
-   Estimated Variance:  0.00028358
-              p-value:  0.047119
-    95% Conf Interval: (-0.066437, -0.00042491) 
+   Parameter Estimate:  -0.015701
+   Estimated Variance:  6.8075e-05
+              p-value:  0.057049
+    95% Conf Interval: (-0.031872, 0.00047084) 
  Additive Effect
-   Parameter Estimate:  -0.086941
-   Estimated Variance:  0.00080413
-              p-value:  0.0021699
-    95% Conf Interval: (-0.14252, -0.031361) 
+   Parameter Estimate:  -0.046082
+   Estimated Variance:  0.00022872
+              p-value:  0.002311
+    95% Conf Interval: (-0.075724, -0.01644) 
  Additive Effect
-   Parameter Estimate:  -0.18228
-   Estimated Variance:  0.001736
-              p-value:  1.2147e-05
-    95% Conf Interval: (-0.26395, -0.10062) 
+   Parameter Estimate:  -0.094449
+   Estimated Variance:  0.00044681
+              p-value:  7.8878e-06
+    95% Conf Interval: (-0.13588, -0.053018) 
  Additive Effect
-   Parameter Estimate:  -0.44753
-   Estimated Variance:  0.0013208
+   Parameter Estimate:  -0.2393
+   Estimated Variance:  0.00043306
               p-value:  <2e-16
-    95% Conf Interval: (-0.51876, -0.3763) 
+    95% Conf Interval: (-0.28009, -0.19851) 
  Additive Effect
-   Parameter Estimate:  -0.2908
-   Estimated Variance:  0.0013693
-              p-value:  3.8818e-15
-    95% Conf Interval: (-0.36333, -0.21827) 
+   Parameter Estimate:  -0.14961
+   Estimated Variance:  0.00039024
+              p-value:  3.6308e-14
+    95% Conf Interval: (-0.18833, -0.11089) 
  Additive Effect
-   Parameter Estimate:  -0.14164
-   Estimated Variance:  0.0019274
-              p-value:  0.0012542
-    95% Conf Interval: (-0.22769, -0.055592) 
+   Parameter Estimate:  -0.08031
+   Estimated Variance:  0.00064117
+              p-value:  0.0015159
+    95% Conf Interval: (-0.12994, -0.03068) 
 > 
 > # P-values for differences in means, with Bonferroni correction for 7 tests
 > sprintf("%1.4f",unlist(diff_psi[5,])*7)
-[1] "3.3829" "0.3298" "0.0152" "0.0001" "0.0000" "0.0000" "0.0088"
+[1] "3.4458" "0.3993" "0.0162" "0.0001" "0.0000" "0.0000" "0.0106"
 > 
 > 
 > #-------------------------------
@@ -422,4 +416,4 @@ SL.loess_All    0.10180735    0
 > 
 > proc.time()
    user  system elapsed 
- 53.905   0.783  55.453 
+ 63.544   0.853  65.036 

@@ -105,14 +105,8 @@ p.tr8 <- agecurveAb(Y=d.tr8$ifapfpos,Age=d.tr8$ageyrs,id=d.tr8$id,SL.library=SL.
 # by treatment group and 
 # survey round
 # 
-# unlike the quantitative analysis
-# all of the change in the 
-# age-prevalence curves is in <5s
-# so compare means for children <5
 #-------------------------------
 
-# subset the data to children <5y
-d <- subset(d,ageyrs<=5)
 
 # create a numeric 0/1 treatment variable
 d$tr01 <- ifelse(d$tr=="Control",0,1)
