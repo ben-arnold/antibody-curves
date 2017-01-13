@@ -86,7 +86,7 @@ ad <- subset(d,!is.na(ifapfpos),select=c('tr','serosvy','ageyrs','ifapfpos'))
 
 ad$n <- rep(1,nrow(ad))
 
-fitC <- optim(c(0.3,0.01),fn=Lrcm,data=ad[ad$tr=="Control" & ad$serosvy==5,c("ageyrs","n","ifapfpos")],method="L-BFGS-B", lower=c(0.00001,0.0000001),upper=c(10,10),hessian=TRUE)
+fitC <- optim(c(0.3,0.01),fn=Lrcm,data=ad[ad$tr=="Control" & ad$serosvy==5,c("ageyrs","n","ifapfpos")],method="L-BFGS-B", lower=c(0.00001,0.0000001),upper=c(100,100),hessian=TRUE)
 
 fitI <- optim(c(4,0.01),fn=Lrcm,data=ad[ad$tr=="Intervention" & ad$serosvy==5 ,c("ageyrs","n","ifapfpos")],method="L-BFGS-B", lower=c(0.00001,0.0000001),upper=c(4,100),hessian=TRUE)
 

@@ -1,6 +1,6 @@
 
-R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 3.3.1 (2016-06-21) -- "Bug in Your Hair"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -47,8 +47,8 @@ Type 'q()' to quit R.
 > library(SuperLearner)
 Loading required package: nnls
 Super Learner
-Version: 2.0-19
-Package created on 2016-02-02
+Version: 2.0-21
+Package created on 2016-11-11
 
 > library(tmle)
 Welcome to the tmle package, version 1.2.0-2
@@ -64,10 +64,12 @@ The following object is masked from ‘package:SuperLearner’:
 > library(tmleAb)
 Welcome to the tmleAb package
 Targeted maximum likelihood estimation for antibody measurements.
-(Version 0.1.2)
+(Version 0.2.0)
 
-Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
-(we have plans for some useful additions)
+Periodically check for the latest development version using 
+devtools::install_github('ben-arnold/tmleAb')  
+
+This software is based on work funded by the National Institute of Allergy and Infectius Diseases grant K01-AI119180
 
 
 > 
@@ -670,4 +672,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
- 38.158   0.978  46.507 
+ 39.794   0.449  41.378 
