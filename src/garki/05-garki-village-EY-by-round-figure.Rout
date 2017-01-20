@@ -1,0 +1,381 @@
+
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # 5-garki-village-EY-by-round-figure.R
+> #
+> # Plot village level antibody
+> # curves and means by round
+> #
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> library(RColorBrewer)
+> library(scales)
+> 
+> #-------------------------------
+> # load analysis output
+> #-------------------------------
+> load("~/dropbox/articles/antibody-curves/results/raw/garki-village-EY-by-round.RData")
+> 
+> 
+> #-------------------------------
+> # plot antibody curves and means
+> #-------------------------------
+> 
+> # plotting schema, repeated for each intervention village
+> 
+> EYxaplot <- function(EYxa.c12,EYxa.c345,EYxa.c78,EYxa.tr,EYx.c,EYx.tr,vname,letter) {
++   # EYxa.c12  : SLAb.curve() returned object for control villages in rounds 1-2
++   # EYxa.c345 : SLAb.curve() returned object for control villages in rounds 3-5
++   # EYxa.c78  : SLAb.curve() returned object for control villages in rounds 7-8
++   # EYxa.tr   : list of SLAb.curve() returned objects for tr village, by round
++   # EYx.c     : matrix of SLAb.tmle() results for control villages by round
++   # EYx.tr    : matrix of SLAb.tmle() results for tr village by round
++   # vname     : name of intervention village
++   # letter    : figure panel letter (a, b, c, ....)
++   # 
++   # general plotting parameters
++   ytics <- seq(0,4,by=1)
++   xtics <- seq(0,20,by=5)
++   
++   cbPalette <- c("#000000","#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
++   i.cols <- cbPalette[c(2,3,7,8,9)]
++   c.cols <- cbPalette[1]
++   
++   # be careful: need to control the layout outside of this function
++   # lo <- layout(mat=matrix(1:6,nrow=1,ncol=6,byrow=T),widths=c(1,0.25,1,0.25,1,0.25))
++   
++   # plot village name and figure panel letter
++   op <- par(mar=c(4,5,4,1)+0.1,xpd=T)
++   plot(c(0,1),c(0,1),type="n",xaxt="n",yaxt="n",bty="n",xlab="",ylab="",xlim=c(0,1),ylim=c(0,1))
++   mtext(vname,side=2,line=-8,las=1,cex=2,col=c.cols[1])
++   mtext(letter,side=2,line=2,las=1,cex=2,font=2)
++   # mtext("Village",line=3,cex=1.5)
++   
++   # Panel A: Pre-intervention age-antibody curves
++   op <- par(mar=c(4,5,4,1)+0.1,xpd=T)
++   plot(EYxa.c12$Age,EYxa.c12$pY,type="l",lwd=2,col=c.cols,
++        ylim=c(0,4),ylab="",yaxt="n",
++        xlim=c(0,21),xlab="",xaxt="n",
++        bty="n",las=1
++   )
++   mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
++   # mtext("a",adj=1,line=3,at=-5,font=2,cex=1.75)
++   # mtext("Pre-Intervention Period",line=3,cex=1.5)
++   mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
++   mtext("Age, years",side=1,line=2.5)
++   axis(2,at=0:4,labels=c(
++     expression(10^0),
++     expression(10^1),
++     expression(10^2),
++     expression(10^3),
++     expression(10^4)
++   ), las=1,cex.axis=1.25
++   )
++   axis(1,at=xtics,cex.axis=1.5)
++   lines(EYxa.tr[[1]]$Age,EYxa.tr[[1]]$pY,col=i.cols[1])
++   lines(EYxa.tr[[2]]$Age,EYxa.tr[[2]]$pY,col=i.cols[2])
++   
++   text(70,3.1,"Control",cex=1,adj=1,font=2,col=c.cols)
++   #text(70,3.6,paste(vname,"\n(survey 1, 2)"),cex=1,adj=1,font=1,col=i.cols[1])
++   text(3,3.4,"1",cex=0.75,col=i.cols[1])
++   text(10,3.6,"2",cex=0.75,col=i.cols[2])
++   
++   # Pre-intervention  mean estimates
++   op <- par(mar=c(4,0,4,4)+0.1)
++   plot(1:3,1:3,type="n",
++        xlim=c(0.5,3.5),xaxt="n",xlab="",
++        ylim=c(0.5,4),ylab="",yaxt="n",
++        las=1,bty="n"
++   )
++ 
++   mtext(c("1","2"),side=1,line=1,at=c(1.5,2.5),cex=1,col=i.cols[1:2])
++   mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
++   mtext("Survey",side=1,line=2.5)
++   # control 
++   arrows(x0=c(1.5,2.5),y0=unlist(EYx.c[3,1:2]), y1=unlist(EYx.c[4,1:2]),lwd=1,col=c.cols,length=0.05,angle=90,code=3)
++   points(c(1.5,2.5),EYx.c[1,1:2], pch=21,cex=1.5, lwd=1,bg=c.cols,col=c.cols)
++   # intervention
++   arrows(x0=c(1.5,2.5),y0=unlist(EYx.tr[3,1:2]), y1=unlist(EYx.tr[4,1:2]),lwd=1,col=i.cols[1:2],length=0.05,angle=90,code=3)
++   points(c(1.5,2.5),EYx.tr[1,1:2], pch=21,bg="white",cex=1.5,lwd=1, col=i.cols[1:2])
++   
++   
++   # Panel B: Active Intervention  age-antibody curves
++   op <- par(mar=c(4,5,4,1)+0.1)
++   plot(EYxa.c345$Age,EYxa.c345$pY,type="l",lwd=2,col=c.cols,
++        ylim=c(0,4),ylab="",yaxt="n",
++        xlim=c(0,21),xlab="",xaxt="n",
++        bty="n",las=1
++   )
++   # mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
++   # mtext("b",adj=1,line=3,at=-5,font=2,cex=1.75)
++   # mtext("Active Intervention Period",line=3,cex=1.5)
++   mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
++   mtext("Age, years",side=1,line=2.5)
++   axis(2,at=0:4,labels=c(
++     expression(10^0),
++     expression(10^1),
++     expression(10^2),
++     expression(10^3),
++     expression(10^4)
++   ), las=1,cex.axis=1.25
++   )
++   # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
++   axis(1,at=xtics,cex.axis=1.5)
++   lines(EYxa.tr[[3]]$Age,EYxa.tr[[3]]$pY,col=i.cols[3])
++   lines(EYxa.tr[[4]]$Age,EYxa.tr[[4]]$pY,col=i.cols[4])
++   lines(EYxa.tr[[5]]$Age,EYxa.tr[[5]]$pY,col=i.cols[5])
++   
++   text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
++   #text(70,2.5,paste(vname,"\n(survey 3, 4, 5)"),cex=1,adj=1,font=1,col=i.cols[1])
++   text(5,3.0,"3",cex=0.75,col=i.cols[3])
++   text(7,2.5,"4",cex=0.75,col=i.cols[4])
++   text(9,2.1,"5",cex=0.75,col=i.cols[5],adj=0)
++   
++   # Active intervention  mean estimates
++   op <- par(mar=c(4,0,4,4)+0.1)
++   plot(1:3,1:3,type="n",
++        xlim=c(0.5,3.5),xaxt="n",xlab="",
++        ylim=c(0.5,4),ylab="",yaxt="n",
++        las=1,bty="n"
++   )
++   mtext(c(3:5),side=1,line=1,at=1:3,cex=1,col=i.cols[3:5])
++   mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
++   mtext("Survey",side=1,line=2.5)
++   # control 
++   arrows(x0=1:3,y0=unlist(EYx.c[3,3:5]), y1=unlist(EYx.c[4,3:5]),lwd=1,col=c.cols,length=0.05,angle=90,code=3)
++   points(1:3,EYx.c[1,3:5], pch=21,cex=1.5, lwd=1,bg=c.cols,col=c.cols)
++   # intervention
++   arrows(x0=1:3,y0=unlist(EYx.tr[3,3:5]), y1=unlist(EYx.tr[4,3:5]),lwd=1,col=i.cols[3:5],length=0.05,angle=90,code=3)
++   points(1:3,EYx.tr[1,3:5], pch=21,bg="white",cex=1.5,lwd=1, col=i.cols[3:5])
++   # mark periods with P<0.01 with Bonferroni corrected pvalues
++   # text(1:3,0.6,"*",cex=2)
++   
++ ### simplify the plot by excluding post-intervention data -- there are just too many panels otherwise.
++   # Panel C: Post-Intervention  age-antibody curves
++ #   op <- par(mar=c(4,5,4,1)+0.1)
++ #   plot(EYxa.c78$Age,EYxa.c78$pY,type="l",lwd=2,col=c.cols,
++ #        ylim=c(0,4),ylab="",yaxt="n",
++ #        xlim=c(0,21),xlab="",xaxt="n",
++ #        bty="n",las=1
++ #   )
++ #   # mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
++ #   # mtext("c",adj=1,line=3,at=-5,font=2,cex=1.75)
++ #   # mtext("Post Intervention Period",adj=0,line=3,at=0,cex=1.5)
++ #   mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
++ #   mtext("Age, years",side=1,line=2.5)
++ #   axis(2,at=1:4,labels=c(
++ #     expression(10^0),
++ #     expression(10^1),
++ #     expression(10^2),
++ #     expression(10^3),
++ #     expression(10^4)
++ #   ), las=1,cex.axis=1.25
++ #   )
++ #   # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
++ #   axis(1,at=xtics,cex.axis=1.5)
++ #   lines(EYxa.tr[[6]]$Age,EYxa.tr[[6]]$pY,col=i.cols[6])
++ #   lines(EYxa.tr[[7]]$Age,EYxa.tr[[7]]$pY,col=i.cols[7])
++ #   lines(EYxa.tr[[8]]$Age,EYxa.tr[[8]]$pY,col=i.cols[8])
++ #   
++ #   text(70,3.4,"Control",cex=1,adj=1,font=2,col=c.cols)
++ #   text(70,2.5,paste(vname,"\n(survey 6, 7, 8)"),cex=1,adj=1,font=1,col=i.cols[1])
++ #   text(20,2.7,"6",cex=0.75,col=i.cols[6])
++ #   text(12,3.1,"7",cex=0.75,col=i.cols[7])
++ #   text(15,2.9,"8",cex=0.75,col=i.cols[8],adj=0)
++ #   
++ #   # Post-intervention  mean estimates
++ #   op <- par(mar=c(4,0,7,4)+0.1)
++ #   plot(1:3,1:3,type="n",
++ #        xlim=c(0.5,3.5),xaxt="n",xlab="",
++ #        ylim=c(0.5,4),ylab="",yaxt="n",
++ #        las=1,bty="n"
++ #   )
++ #   mtext(c(6:8),side=1,line=1,at=1:3,cex=1,col=i.cols[6:8])
++ #   mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
++ #   mtext("Survey",side=1,line=2.5)
++ #   # control 
++ #   arrows(x0=2:3,y0=unlist(EYx.c[3,7:8]), y1=unlist(EYx.c[4,7:8]),lwd=1,col=c.cols,length=0.05,angle=90,code=3)
++ #   points(2:3,EYx.c[1,7:8], pch=21,cex=1.5, lwd=1,bg=c.cols,col=c.cols)
++ #   # intervention
++ #   arrows(x0=1:3,y0=unlist(EYx.tr[3,6:8]), y1=unlist(EYx.tr[4,6:8]),lwd=1,col=i.cols[6:8],length=0.05,angle=90,code=3)
++ #   points(1:3,EYx.tr[1,6:8], pch=21,bg="white",cex=1.5,lwd=1, col=i.cols[6:8])
++ #   # mark periods with P<0.01 with Bonferroni corrected pvalues
++ #   text(2:3,0.6,"*",cex=2)
++ #   
++ #   par(op)
++ 
++ }
+> 
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFAPf-by-village.pdf",width=12,height=30) 
+> lo <- layout(mat=matrix(c(31,32,34,33,35,1:30),nrow=7,ncol=5,byrow=T),widths=c(0.5,1,0.25,1,0.25,1,0.25),heights=c(0.2,rep(1,6)))
+> 
+> EYxaplot(EYxa.c12=c12.EYxa,
++          EYxa.c345=c345.EYxa,
++          EYxa.c78=c678.EYxa,
++          EYxa.tr=v154.EYxa,
++          EYx.c=v552,
++          EYx.tr=v154,
++          vname="Rafin\nMarke",
++          letter="a"
++          )
+> EYxaplot(EYxa.c12=c12.EYxa,
++          EYxa.c345=c345.EYxa,
++          EYxa.c78=c678.EYxa,
++          EYxa.tr=v155.EYxa,
++          EYx.c=v552,
++          EYx.tr=v155,
++          vname="Kukar\nMaikiva",
++          letter="b"
++          )
+> EYxaplot(EYxa.c12=c12.EYxa,
++          EYxa.c345=c345.EYxa,
++          EYxa.c78=c678.EYxa,
++          EYxa.tr=v153.EYxa,
++          EYx.c=v552,
++          EYx.tr=v153,
++          vname="Kawari",
++          letter="c"
++          )
+> EYxaplot(EYxa.c12=c12.EYxa,
++          EYxa.c345=c345.EYxa,
++          EYxa.c78=c678.EYxa,
++          EYxa.tr=v213.EYxa,
++          EYx.c=v552,
++          EYx.tr=v213,
++          vname="Kargo\nKudu",
++          letter="d"
++          )
+> EYxaplot(EYxa.c12=c12.EYxa,
++          EYxa.c345=c345.EYxa,
++          EYxa.c78=c678.EYxa,
++          EYxa.tr=v218.EYxa,
++          EYx.c=v552,
++          EYx.tr=v218,
++          vname="Nasakar",
++          letter="e"
++          )
+> EYxaplot(EYxa.c12=c12.EYxa,
++          EYxa.c345=c345.EYxa,
++          EYxa.c78=c678.EYxa,
++          EYxa.tr=v220.EYxa,
++          EYx.c=v552,
++          EYx.tr=v220,
++          vname="Bakan\nSabara",
++          letter="f"
++          )
+> # label columns
+> op <- par(mar=c(4,0,1,1)+0.1)
+> plot(c(0,1),c(0,1),type="n",xaxt="n",yaxt="n",bty="n",xlab="",ylab="",xlim=c(0,1),ylim=c(0,1))
+>   mtext("Village",side=3,line=-3,las=1,cex=2,adj=1)
+> plot(c(0,1),c(0,1),type="n",xaxt="n",yaxt="n",bty="n",xlab="",ylab="",xlim=c(0,1),ylim=c(0,1))
+>   mtext("Pre-Intervention Period",side=3,line=-3,las=1,cex=2,adj=1)
+> plot(c(0,1),c(0,1),type="n",xaxt="n",yaxt="n",bty="n",xlab="",ylab="",xlim=c(0,1),ylim=c(0,1))
+>   mtext("Active Intervention Period",side=3,line=-3,las=1,cex=2,adj=1)
+> 
+> dev.off()
+null device 
+          1 
+> 
+> 
+> #-------------------------------
+> # plot means by round
+> #-------------------------------
+> 
+> 
+> # plotting schema, repeated for each intervention village
+> EYplot <- function(x,cols,vname,header=FALSE,footer=FALSE) {
++ 	# x    : intervention village/survey round results, from above
++ 	# cols : colors for control and intervention points
++ 	# vname: village name for printing
++ 	# header: logical. print header text?
++ 	# footer: logical. print footer text?
++ 	
++ 	# set up an empty plot
++ 	ytics <- seq(1,4)
++ 	MidPts <- barplot(1:8,names.arg=NA,border=NA,col=NA,
++ 		ylim=range(ytics),ylab="",yaxt="n",
++ 		las=1,bty="n"
++ 	)
++ 	axis(2,at=1:4,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)
++ 		), las=1,cex.axis=1.25
++ 	)
++ 	mtext(1:8,side=1,line=1,at=MidPts,cex=0.8,col="gray40")
++ 	if(header==TRUE) mtext(c("Pre-Intervention","Intervention Phase","Post-Intervention"),side=3,line=1,at=c(mean(MidPts[1:2]),mean(MidPts[3:5]),mean(MidPts[6:8])) )
++ 	segments(x0=c(mean(MidPts[2:3]), mean(MidPts[5:6])),y0=min(ytics), y1=max(ytics), lty=2,col="gray80",lwd=2 )
++ 	
++ 	mtext(vname,side=2,line=3,adj=1,col=cols[2],las=1)
++ 	
++ 	
++ 	# control 
++ 	arrows(x0=MidPts,y0=unlist(v552[3,]),y1=unlist(v552[4,]),lwd=1,col=alpha(cols[1],alpha=1),length=0.05,angle=90,code=3)
++ 	points(MidPts,v552[1,],pch=16,cex=1.5,col=alpha(cols[1],alpha=1))
++ 
++ 	# intervention
++ 	arrows(x0=MidPts,y0=unlist(x[3,]),y1=unlist(x[4,]),lwd=1,col=alpha(cols[2],alpha=1),length=0.05,angle=90,code=3)
++ 	points(MidPts,x[1,],pch=16,cex=1.5,col=alpha(cols[2],alpha=1))
++ }
+> 
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFApf-by-village-svy.pdf",width=7,height=10)
+> # cols <- c(brewer.pal(8,"Dark2")[8],rainbow(6,v=0.75)) 
+> cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+> cols <- c(brewer.pal(8,"Dark2")[8],cbPalette[c(2:4,6:8)])
+> lo <- layout(mat=matrix(1:8,nrow=8,ncol=1),heights=c(0.3,rep(1,6),0.3))
+> # header
+> op <- par(mar=c(0,10,0,0)+0.1,xpd=TRUE)
+> MidPts <- barplot(rep(1,8),names.arg=NA,border=NA,col=NA,ylab="",yaxt="n",bty="n")
+> text(c(mean(MidPts[1:2]),mean(MidPts[3:5]),mean(MidPts[6:8])),rep(0.5,3),c("Pre-Intervention","Active Intervention","Post-Intervention"),cex=1.5)
+> mtext(expression(italic('P. falciparum')),side=2,at=0.5,adj=1,las=1,cex=0.9 )
+> mtext("IFAT antibody titre",side=2,at=0,adj=1,las=1,cex=0.9 )
+> # figures
+> op <- par(mar=c(2,10,1,0)+0.1)
+> EYplot(v154,cols=cols[c(1,2)],vname="Rafin\nMarke")
+> EYplot(v155,cols=cols[c(1,4)],vname="Kukar\nMaikiva")
+> EYplot(v153,cols=cols[c(1,3)],vname="Kawari")
+> EYplot(v213,cols=cols[c(1,5)],vname="Kargo\nKudu")
+> EYplot(v218,cols=cols[c(1,6)],vname="Nasakar")
+> EYplot(v220,cols=cols[c(1,7)],vname="Bakan\nSabara")
+> # footer
+> op <- par(mar=c(0,10,0,0)+0.1)
+> plot(1:8,rep(1,8),type="n",bty="n",xlab="",xaxt="n",ylab="",yaxt="n")
+> text(mean(1:8),1,"Survey Round",cex=1.5)
+> par(op)
+> dev.off()
+null device 
+          1 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  0.860   0.079   4.044 
