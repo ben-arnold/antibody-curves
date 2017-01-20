@@ -96,7 +96,7 @@ plot(1:3,1:3,type="n",
 )
 
 mtext(c("1","2"),side=1,line=1,at=c(1.5,2.5),cex=1,col=i.cols[1:2])
-mtext(expression(paste("<5 ",italic(E),"(",italic(Y[x]),")")),side=3,line=0)
+mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
 mtext("Survey",side=1,line=2.5)
 
 # vertical guides
@@ -148,7 +148,7 @@ plot(1:3,1:3,type="n",
 )
 
 mtext(c(3:5),side=1,line=1,at=1:3,cex=1,col=i.cols[3:5])
-mtext(expression(paste("<5 ",italic(E),"(",italic(Y[x]),")")),side=3,line=0)
+mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
 mtext("Survey",side=1,line=2.5)
 
 # vertical guides
@@ -202,7 +202,7 @@ plot(1:3,1:3,type="n",
 )
 
 mtext(c(6:8),side=1,line=1,at=1:3,cex=1,col=i.cols[6:8])
-mtext(expression(paste("<5 ",italic(E),"(",italic(Y[x]),")")),side=3,line=0)
+mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=0)
 mtext("Survey",side=1,line=2.5)
 
 # vertical guides
