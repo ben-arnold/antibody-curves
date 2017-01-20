@@ -1,0 +1,675 @@
+
+R version 3.3.1 (2016-06-21) -- "Bug in Your Hair"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # 3-garki-eir-comparison.R
+> #
+> # Compare IFA titre 
+> # age-adjusted mean values
+> # with EIR estimates from
+> # the original Garki Project
+> # (Molineaux 1980, Table 4, p 65)
+> # for the 3 villages with both
+> # serological and entomological
+> # analyses at multiple wet season
+> # time points
+> #
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> 
+> rm(list=ls())
+> library(RColorBrewer)
+> library(scales)
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-21
+Package created on 2016-11-11
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(tmleAb)
+Welcome to the tmleAb package
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.2.0)
+
+Periodically check for the latest development version using 
+devtools::install_github('ben-arnold/tmleAb')  
+
+This software is based on work funded by the National Institute of Allergy and Infectius Diseases grant K01-AI119180
+
+
+> 
+> 
+> #-------------------------------
+> # input EIR values from 
+> # Table 4 (p 65) of Molineaux 1980
+> # for villages:
+> # Ajura(553), Rafin-Marke(154), Nasakar(218)
+> #-------------------------------
+> eir <- c( 37,25,28,NA,NA,
++ 		  18, 5, 2, 4, 6,
++ 		 129, 0, 4,16,24)
+> village <- rep(c(553,154,218),c(5,5,5))
+> vname <- rep(c("Ajura","Rafin Marke","Nasakar"),c(5,5,5))
+> eirdates <- rep(c("1971-06-21 to 1971-11-07","1972-05-22 to 1972-10-22","1973-06-18 to 1973-11-04","1974-07-29 to 1974-12-15","1975-07-14 to 1975-11-30"),3)
+> wetseason <- rep(1971:1975,3)
+> deir <- data.frame(village,vname,wetseason,eirdates,eir)
+> 
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> # d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+> data("garki_sero")
+> d <- garki_sero
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> # drop observations with missing outcome or age information
+> d <- subset(d,!is.na(d$ifatpftitre) & !is.na(d$ageyrs))
+> 
+> #-------------------------------
+> # subset the dataset to
+> # the 3 villages with EIR ests
+> #-------------------------------
+> ad <- subset(d,village==553|village==154|village==218)
+> ad$vname <- factor(ad$vname)
+> ad$vname <- factor(ad$vname,levels=c("Ajura","Nasakar","Rafin Marke"))
+> ad$vname[ad$village==553] <- "Ajura"
+> 
+> #-------------------------------
+> # Identify observations in the
+> # wet seasons
+> #-------------------------------
+> ad$wetseason <- NA
+> ad$wetseason[ad$mdate>="1971-06-21" & ad$mdate<="1971-11-07" ] <- 1971
+> ad$wetseason[ad$mdate>="1972-05-22" & ad$mdate<="1972-10-22" ] <- 1972
+> ad$wetseason[ad$mdate>="1973-06-18" & ad$mdate<="1973-11-04" ] <- 1973
+> ad$wetseason[ad$mdate>="1974-07-29" & ad$mdate<="1974-12-15" ] <- 1974
+> ad$wetseason[ad$mdate>="1975-07-14" & ad$mdate<="1975-11-30" ] <- 1975
+> 
+> table(ad$vname,ad$wetseason)
+             
+              1971 1972 1973 1974 1975
+  Ajura        115  114  127  104   70
+  Nasakar      109  211  103  100   62
+  Rafin Marke   94  108  101  106   77
+> 
+> 
+> #-------------------------------
+> # IFAT-Pf
+> # SuperLearner curve fits
+> #-------------------------------
+> 
+> # SL library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+> 
+> 
+> set.seed(2343242)
+> ajura.1971.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1971]+1),
++ 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1971],
++ 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1971],
++ 		SL.library=SL.library
++ 	)
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.2301838 0.0000000
+SL.glm_All      0.2282796 0.0000000
+SL.Yman2016_All 0.2094110 0.7044639
+SL.gam.df5_All  0.2178496 0.2955361
+SL.loess_All    0.2183671 0.0000000
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
+  
+
+ 225 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 340 observations,
+ but agecurveAb is fitting the curve using 115 observations.
+> ajura.1972.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1972]+1),
++ 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1972],
++ 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1972],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.2460302 0.1285359
+SL.glm_All      0.2471208 0.0000000
+SL.Yman2016_All 0.3037979 0.1507487
+SL.gam.df4_All  0.2226414 0.0000000
+SL.loess_All    0.2100563 0.7207153
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
+  
+
+ 225 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 339 observations,
+ but agecurveAb is fitting the curve using 114 observations.
+> ajura.1973.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==1973]+1),
++ 		Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==1973],
++ 		id=ad$id[ad$vname=="Ajura" & ad$wetseason==1973],
++ 		SL.library=SL.library
++ 	)	
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.5494043 0.07299610
+SL.glm_All      0.5210855 0.03888505
+SL.Yman2016_All 0.5159216 0.00000000
+SL.gam.df10_All 0.4343770 0.73211301
+SL.loess_All    0.4372115 0.15600583
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Ajura" & ad$wetseason ==  :
+  
+
+ 225 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 352 observations,
+ but agecurveAb is fitting the curve using 127 observations.
+> 
+> rafin.1971.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1971]+1),
++ 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1971],
++ 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1971],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk     Coef
+SL.mean_All     0.3019031 0.000000
+SL.glm_All      0.2941832 0.237877
+SL.Yman2016_All 0.2696838 0.762123
+SL.gam.df6_All  0.2869214 0.000000
+SL.loess_All    0.2883003 0.000000
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 354 observations,
+ but agecurveAb is fitting the curve using 94 observations.
+> rafin.1972.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1972]+1),
++ 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1972],
++ 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1972],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.8941194 0.03069583
+SL.glm_All      0.7392221 0.03828723
+SL.Yman2016_All 0.6652053 0.00000000
+SL.gam.df10_All 0.4990773 0.91025565
+SL.loess_All    0.5076095 0.02076129
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 368 observations,
+ but agecurveAb is fitting the curve using 108 observations.
+> rafin.1973.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1973]+1),
++ 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1973],
++ 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1973],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     1.2862888    0
+SL.glm_All      0.8515644    0
+SL.Yman2016_All 1.0154438    0
+SL.gam.df9_All  0.4774946    1
+SL.loess_All    0.5068570    0
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 361 observations,
+ but agecurveAb is fitting the curve using 101 observations.
+> rafin.1974.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1974]+1),
++ 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1974],
++ 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1974],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk       Coef
+SL.mean_All     1.601384 0.03507291
+SL.glm_All      1.379901 0.02616461
+SL.Yman2016_All 1.293249 0.00000000
+SL.gam.df9_All  1.047400 0.93876248
+SL.loess_All    1.061471 0.00000000
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Rafin Marke" &  : 
+
+ 260 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 366 observations,
+ but agecurveAb is fitting the curve using 106 observations.
+> rafin.1975.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==1975]+1),
++ 		Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==1975],
++ 		id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==1975],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.2843796 0.04006079
+SL.glm_All      1.1002430 0.03749707
+SL.Yman2016_All 1.5394713 0.00000000
+SL.gam.df4_All  0.9105103 0.31018184
+SL.loess_All    0.9119895 0.61226031
+There were 40 warnings (use warnings() to see them)
+> 
+> nasak.1971.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1971]+1),
++ 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1971],
++ 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1971],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.1531167 0.4065463
+SL.glm_All      0.1538729 0.3458623
+SL.Yman2016_All 0.1656477 0.2475914
+SL.gam.df2_All  0.1570535 0.0000000
+SL.loess_All    0.1681924 0.0000000
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 305 observations,
+ but agecurveAb is fitting the curve using 109 observations.
+> nasak.1972.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1972]+1),
++ 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1972],
++ 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1972],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.5140512 0.00000000
+SL.glm_All      0.4471424 0.03254991
+SL.Yman2016_All 0.4747071 0.00000000
+SL.gam.df7_All  0.3461138 0.33303725
+SL.loess_All    0.3453678 0.63441285
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 407 observations,
+ but agecurveAb is fitting the curve using 211 observations.
+> nasak.1973.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1973]+1),
++ 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1973],
++ 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1973],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.2854061 0.03920940
+SL.glm_All      0.8623191 0.00000000
+SL.Yman2016_All 0.9555006 0.00000000
+SL.gam.df10_All 0.5199276 0.92382211
+SL.loess_All    0.5354443 0.03696849
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 299 observations,
+ but agecurveAb is fitting the curve using 103 observations.
+> nasak.1974.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1974]+1),
++ 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1974],
++ 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1974],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.7017225 0.00000000
+SL.glm_All      1.3389775 0.08988017
+SL.Yman2016_All 1.2937635 0.00000000
+SL.gam.df7_All  0.9070302 0.33178539
+SL.loess_All    0.9087235 0.57833444
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 296 observations,
+ but agecurveAb is fitting the curve using 100 observations.
+> nasak.1975.SL <- agecurveAb(
++ 		Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==1975]+1),
++ 		Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==1975],
++ 		id=ad$id[ad$vname=="Nasakar" & ad$wetseason==1975],
++ 		SL.library=SL.library
++ 	)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.0878288 0.04106934
+SL.glm_All      0.9085815 0.00000000
+SL.Yman2016_All 0.6294515 0.00000000
+SL.gam.df8_All  0.5934752 0.00000000
+SL.loess_All    0.5724501 0.95893066
+Warning message:
+In agecurveAb(Y = log10(ad$ifatpftitre[ad$vname == "Nasakar" & ad$wetseason ==  :
+  
+
+ 196 observations were dropped due to missing values
+ in the outcome, age, or adjustement covariates. 
+ The original dataset contained 258 observations,
+ but agecurveAb is fitting the curve using 62 observations.
+> 
+> #-------------------------------
+> # TMLE estimates of age-adjusted
+> # mean antibody titres in each
+> # year (wet season only)
+> #-------------------------------
+> 
+> set.seed(5463452)
+> ajura.tmle <- sapply(c(1971,1972,1973),function(x) tmleAb(
++   Y=log10(ad$ifatpftitre[ad$vname=="Ajura" & ad$wetseason==x]+1),
++   W=data.frame(Age=ad$ageyrs[ad$vname=="Ajura" & ad$wetseason==x]),
++   id=ad$id[ad$vname=="Ajura" & ad$wetseason==x],
++   SL.library=SL.library)[c("psi","se","lb","ub","p")]
++   )
+ Population Mean
+   Parameter Estimate:  3.4214
+   Estimated Variance:  0.0019832
+              p-value:  <2e-16
+    95% Conf Interval: (3.3341, 3.5087) 
+ Population Mean
+   Parameter Estimate:  3.2896
+   Estimated Variance:  0.0021101
+              p-value:  <2e-16
+    95% Conf Interval: (3.1995, 3.3796) 
+ Population Mean
+   Parameter Estimate:  3.3859
+   Estimated Variance:  0.0043371
+              p-value:  <2e-16
+    95% Conf Interval: (3.2568, 3.515) 
+> 
+> rafin.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) tmleAb(
++   Y=log10(ad$ifatpftitre[ad$vname=="Rafin Marke" & ad$wetseason==x]+1),
++   W=data.frame(Age=ad$ageyrs[ad$vname=="Rafin Marke" & ad$wetseason==x]),
++   id=ad$id[ad$vname=="Rafin Marke" & ad$wetseason==x],
++   SL.library=SL.library)[c("psi","se","lb","ub","p")]
++ )
+ Population Mean
+   Parameter Estimate:  3.3026
+   Estimated Variance:  0.0031928
+              p-value:  <2e-16
+    95% Conf Interval: (3.1918, 3.4133) 
+ Population Mean
+   Parameter Estimate:  2.6727
+   Estimated Variance:  0.010161
+              p-value:  <2e-16
+    95% Conf Interval: (2.4751, 2.8703) 
+ Population Mean
+   Parameter Estimate:  1.6749
+   Estimated Variance:  0.012576
+              p-value:  <2e-16
+    95% Conf Interval: (1.4551, 1.8947) 
+ Population Mean
+   Parameter Estimate:  2.5026
+   Estimated Variance:  0.015052
+              p-value:  <2e-16
+    95% Conf Interval: (2.2621, 2.7431) 
+ Population Mean
+   Parameter Estimate:  2.2584
+   Estimated Variance:  0.016591
+              p-value:  <2e-16
+    95% Conf Interval: (2.0059, 2.5108) 
+> 
+> nasak.tmle <- sapply(c(1971,1972,1973,1974,1975),function(x) tmleAb(
++   Y=log10(ad$ifatpftitre[ad$vname=="Nasakar" & ad$wetseason==x]+1),
++   W=data.frame(Age=ad$ageyrs[ad$vname=="Nasakar" & ad$wetseason==x]),
++   id=ad$id[ad$vname=="Nasakar" & ad$wetseason==x],
++   SL.library=SL.library)[c("psi","se","lb","ub","p")]
++ )
+ Population Mean
+   Parameter Estimate:  3.4111
+   Estimated Variance:  0.0014016
+              p-value:  <2e-16
+    95% Conf Interval: (3.3378, 3.4845) 
+ Population Mean
+   Parameter Estimate:  3.0592
+   Estimated Variance:  0.0035201
+              p-value:  <2e-16
+    95% Conf Interval: (2.9429, 3.1755) 
+ Population Mean
+   Parameter Estimate:  1.861
+   Estimated Variance:  0.012498
+              p-value:  <2e-16
+    95% Conf Interval: (1.6418, 2.0801) 
+ Population Mean
+   Parameter Estimate:  2.3353
+   Estimated Variance:  0.016935
+              p-value:  <2e-16
+    95% Conf Interval: (2.0803, 2.5904) 
+ Population Mean
+   Parameter Estimate:  2.5548
+   Estimated Variance:  0.017457
+              p-value:  <2e-16
+    95% Conf Interval: (2.2958, 2.8137) 
+> 
+> #-------------------------------
+> # summarize the means + 95% CIs
+> #-------------------------------
+> ajura.mus <- matrix(unlist(ajura.tmle[c(1,3,4),]),nrow=3,ncol=3,byrow=T)
+> rafin.mus <- matrix(unlist(rafin.tmle[c(1,3,4),]),nrow=5,ncol=3,byrow=T)
+> nasak.mus <- matrix(unlist(nasak.tmle[c(1,3,4),]),nrow=5,ncol=3,byrow=T)
+> colnames(ajura.mus) <- colnames(rafin.mus) <- colnames(nasak.mus) <- c("mu","lb","ub")
+> all.mus <- rbind(ajura.mus,rep(NA,3),rep(NA,3),rafin.mus,nasak.mus)
+> dmus <- data.frame(
++ 		vname=rep(c("Ajura","Rafin Marke","Nasakar"),c(5,5,5)),
++ 		wetseason=rep(1971:1975,3),
++ 		all.mus
++ )
+> 
+> #-------------------------------
+> # merge the means to the EIR data
+> #-------------------------------
+> md <- merge(deir,dmus,by=c("vname","wetseason"))
+> md <- subset(md,!is.na(eir))
+> 
+> # calculate log_10 eir.  add 1 to eir=0
+> md$log10eir <- log10(md$eir)
+> md$log10eir[md$eir==0] <- log10(1)
+> 
+> #-------------------------------
+> # calculate spearman's rank 
+> # correlation test statistic
+> #-------------------------------
+> 
+> sp.rho <- cor.test(md$log10eir,md$mu,method="spearman")
+Warning message:
+In cor.test.default(md$log10eir, md$mu, method = "spearman") :
+  Cannot compute exact p-value with ties
+> sp.rho
+
+	Spearman's rank correlation rho
+
+data:  md$log10eir and md$mu
+S = 92.627, p-value = 0.003441
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.7455303 
+
+> rho.text <- substitute(paste("Spearman's ",rho," = ",rho.txt ),list(rho.txt=sprintf("%1.2f",sp.rho$estimate)))
+> 
+> #-------------------------------
+> # plot the values
+> #-------------------------------
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFAPf-EIR.pdf",width=6,height=6)
+> op <- par(mar=c(5,5,3,2)+0.1)
+> # cols <- c(brewer.pal(8,"Dark2")[c(8,4)],brewer.pal(8,"Set1")[2])
+> cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+> cols <- c(cbPalette[c(7,6,1)])
+> 
+> # lo <- layout(mat=matrix(1:3,nrow=1,ncol=3))
+> # plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
+> # plot(1,type="n",bty="n",xlab="",ylab="",xaxt="n",yaxt="n")
+> 
+> 
+> i.cols <- rep(cbPalette[6],8)
+> ytics <- seq(1,4,by=1)
+> xtics <- seq(0,2,by=1)
+> plot(1,1,type="n",bty="n",
++ 	xaxt="n",xlab="",xlim=c(0,2.2),
++ 	yaxt="n",ylab="",ylim=range(ytics),
++ 	las=1
++ 	)
+> 	axis(1,at=xtics,labels=c(1,10,100),cex.axis=1.25)
+> 	axis(2,at=ytics,labels=c(
++ 		expression(10^1),
++ 		expression(10^2),
++ 		expression(10^3),
++ 		expression(10^4)),
++ 		las=1,cex.axis=1.25
++ 	)
+>   mtext("d",adj=1,line=0.5,at=-0.4,font=2,cex=2)
+> 	mtext("Wet season village geometric mean",side=2,line=4,cex=1.25)
+>   mtext(expression(paste(italic('P. falciparum')," IFA antibody titre, ", italic(E(Y[x])) )) ,side=2,line=2.5,cex=1.25)
+> 	mtext("Entomological Inoculation Rate\n(cumulative wet season infectious bites per person)",side=1,line=3.5,cex=1.25)
+> 	text(2,1,rho.text,adj=1,cex=1.25)
+> 	
+> 	# Ajura
+> 	points(md$log10eir[md$vname=="Ajura"],md$mu[md$vname=="Ajura"], pch=16,cex=2,col=cols[1])
+> 
+> 	# Rafin Marke
+> 	points(md$log10eir[md$vname=="Rafin Marke"],md$mu[md$vname=="Rafin Marke"], pch=16, cex=2,col=cols[2])
+> 
+> 	# Nasakar, exclude 1972 b/c it is out of the scale
+> 	points(md$log10eir[md$vname=="Nasakar" & md$wetseason!=1972],md$mu[md$vname=="Nasakar" & md$wetseason!=1972], pch=16,cex=2,col=cols[3])
+> 
+> 	# circle pre-intervention measures
+> 	points(md$log10eir[md$wetseason==1971],md$mu[md$wetseason==1971],cex=2)
+> 	
+> 	# label the villages
+> 	ajura.x <- md$log10eir[md$vname=="Ajura" & md$wetseason==1971]
+> 	ajura.y <- md$mu[md$vname=="Ajura" & md$wetseason==1971]
+> 	segments(x0=ajura.x,y0=ajura.y+0.1,y1=ajura.y+0.2,col="gray40")
+> 	text(ajura.x,ajura.y+0.2,"Ajura (control)",col=cols[1],pos=3,cex=1)
+> 	
+> 	rafin.x <- md$log10eir[md$vname=="Rafin Marke" & md$wetseason==1971]
+> 	rafin.y <- md$mu[md$vname=="Rafin Marke" & md$wetseason==1971]
+> 	segments(x0=rafin.x-0.07,x1=rafin.x-0.3,y0=rafin.y+0.07,y1=rafin.y+0.25,col="gray40")
+> 	text(rafin.x-0.3,rafin.y+0.3,"Rafin Marke",col=cols[2],pos=2,cex=1)
+> 	
+> 	nasak.x <- md$log10eir[md$vname=="Nasakar" & md$wetseason==1971]
+> 	nasak.y <- md$mu[md$vname=="Nasakar" & md$wetseason==1971]
+>   segments(x0= nasak.x,y0= nasak.y +0.1,y1= nasak.y +0.4,col="gray40") 
+>   text(nasak.x, nasak.y +0.4,"Nasakar",col=cols[3],pos=3,cex=1)
+> 	
+> par(op)
+> dev.off()
+null device 
+          1 
+> 
+> 
+> 
+> 
+> #-------------------------------
+> # save the output
+> #-------------------------------
+> rm(d)
+> save.image("~/dropbox/articles/antibody-curves/results/raw/garki-eir-comparison.RData")
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 39.794   0.449  41.378 
