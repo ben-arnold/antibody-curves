@@ -119,7 +119,7 @@ uhden(d.usa$salb,d.hai$salb,"f",main=expression(paste(italic('Salmonella sp.'), 
 uhden(d.usa$norogi,d.hai$norogi,"g",main="Norovirus GI.4")
 
 # norogii
-uhden(d.usa$norogi,d.hai$norogi,"h",main="Norovirus GII.4 NO")
+uhden(d.usa$norogii,d.hai$norogii,"h",main="Norovirus GII.4 NO")
 
 
 dev.off()
