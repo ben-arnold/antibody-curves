@@ -74,10 +74,10 @@ plot(mauke75$Age,mauke75$pY,type="n",
 	lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
 	
 	# Axis labels
-	mtext(expression(paste(italic('Wuchereria bancrofti')," Wb123 (light units)")),side=2,line=3,cex=1.25)
+	mtext(expression(paste(italic('W. bancrofti'),"  Wb123 (light units)")),side=2,line=3,cex=1.5)
 	mtext("Age, years",side=1,line=3,cex=1.5)
 	mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
-	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
+	mtext(expression(paste("Age-dependent mean, ",italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
 	
 	# Group labels
 	mtext("1975",side=4,line=0.5,adj=0,at=5.1,col=cols[1],cex=1.25,las=1)
@@ -130,7 +130,7 @@ mtext("Age category, years",side=1,line=3,cex=1.5)
 
 # Y label
 mtext("b",line=1,at=-0.3,adj=0,font=2,cex=2)
-mtext(expression(paste(italic(E),"(",italic(Y[x]),") stratified by child age")),line=1,cex=1.5)
+mtext(expression(paste("Mean, ",italic(E),"(",italic(Y[x]),"), stratified by child age")),line=1,cex=1.5)
 # mtext(c("1975","1992"),at=c(1,2),col=cols[1:2],side=3,line=-0.5)
 
 # add in geometric means
