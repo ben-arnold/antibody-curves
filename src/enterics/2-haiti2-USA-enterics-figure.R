@@ -62,8 +62,8 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	
 	# header
 	mtext(letter,side=3,line=1.25,font=2,at=-0.7,cex=1.75)
-	mtext(main,cex=1.25,line=1.5)
-	mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=-0.5)
+	mtext(main,cex=1.25,line=1.5,at=0,adj=0)
+	mtext(expression(paste("Age-dependent mean, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=-0.5,at=0,adj=0)
 	
 	# axes
 	if (xlabel==TRUE) mtext("Age, years",side=1,line=3,cex=1.5)
@@ -102,7 +102,7 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 	# Ediff  : Adjusted mean difference for Haiti-USA, returned from SLAb.tmle()
 	
 	# plot parameters and empty plot
-	op <- par(mar=c(5,0,4,0)+0.1)
+	op <- par(mar=c(5,0,4,0.5)+0.1)
 	# cols1 <- brewer.pal(8,"Set1")[c(3)]
 	# cols2 <- brewer.pal(11,"Spectral")[c(11)]
 	# cols <- c(cols1,cols2)
@@ -126,7 +126,7 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 		# ), las=1,cex.axis=1.5
 	# )
 	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=1,line=1)
-	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=3,line=-0.5)
+	mtext(expression(paste("Mean, ",italic(E),"(",italic(Y[x]),")")),side=3,line=-0.5)
 	
 	# plot data
 	arrows(x0=0.5,y0=EY0$lb, y1=EY0$ub,lwd=1,col=cols[1],length=0.05,angle=90,code=3)
@@ -163,7 +163,7 @@ SLAb.plotEYx(EYx.usa.etec,EYx.haiti.etec,diff.etec)
 SLAb.plotEYax(usa.salb,haiti.salb,expression(paste(italic('Salmonella sp.'), " LPS Group B")),"f",xlabel=T)
 SLAb.plotEYx(EYx.usa.salb,EYx.haiti.salb,diff.salb) 
 
-SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus GI.4","g",ylabel=T,xlabel=T)
+SLAb.plotEYax(usa.norogi,haiti.norogi,"Norovirus GI.4","g",xlabel=T)
 SLAb.plotEYx(EYx.usa.norogi,EYx.haiti.norogi,diff.norogi) 
 
 SLAb.plotEYax(usa.norogii,haiti.norogii,"Norovirus GII.4 NO","h",xlabel=T)
