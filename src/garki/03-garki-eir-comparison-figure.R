@@ -210,7 +210,7 @@ mtext("c",adj=1,line=0.5,at=-0.4,font=2,cex=2)
 mtext(expression(paste("Wet season village ",italic('P. falciparum'))),side=2,line=4,cex=1.25)
 mtext("IFA seroprevalence (%)",side=2,line=2.5,cex=1.25)
 mtext("Entomological Inoculation Rate\n(cumulative wet season infectious bites per person)",side=1,line=4,cex=1.25)
-text(2,0.7,rho.text,adj=1,cex=1.25)
+text(2,0.7,p_rho.text,adj=1,cex=1.25)
 
 # Ajura
 points(pmd$log10eir[pmd$vname=="Ajura"],pmd$mu[pmd$vname=="Ajura"], pch=16,cex=2,col=cols[1])
