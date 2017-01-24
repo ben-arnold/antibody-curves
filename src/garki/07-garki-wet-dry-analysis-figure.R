@@ -90,7 +90,7 @@ plot(p.c1$Age,p.c1$pY,type="n",lwd=2,
 mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 mtext("a",adj=1,line=4,at=-1.5,font=2,cex=1.75)
 mtext("Control villages\n1971-72 wet and dry seasons",adj=0,line=3,at=0,cex=1)
-mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
+mtext(expression(paste("Age-dependent mean, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0,at=0,adj=00)
 mtext("Age, years",side=1,line=2.5)
 axis(2,at=1:4,labels=c(
   expression(10^1),
@@ -115,7 +115,7 @@ plot(p.c3$Age,p.c3$pY,type="n",lwd=2,
 # mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
 # mtext("e",adj=1,line=3,at=-1,font=2,cex=1.75)
 mtext("Control villages\n1972-73 wet and dry seasons",adj=0,line=3,at=0,cex=1)
-mtext(expression(paste(italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
+mtext(expression(paste("Age-dependent mean, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0,at=0,adj=0)
 mtext("Age, years",side=1,line=2.5)
 axis(2,at=1:4,labels=c(
   expression(10^1),
@@ -155,11 +155,11 @@ axis(2,at=1:4,labels=c(
 # panel title info
 mtext("b",adj=1,line=4,at=0.3,font=2,cex=1.75)
 mtext("Control villages",side=3,line=4.5,adj=0)
-mtext(expression(paste(italic(E),"(",italic(Y[x]),"), stratified by child age and survey")),side=3,line=2.5,adj=0)
+mtext(expression(paste("Mean, ",italic(E),"(",italic(Y[x]),"), stratified by child age and survey")),side=3,line=2.5,adj=0)
 
 # age group labels
-mtext(c("<5","5 to 10"),side=1,line=1,at=1:2,cex=1.25)
-mtext("Age category, years",side=1,line=2.75,cex=1.25)
+mtext(c("<5 years","5 to 10 years"),side=1,line=1,at=1:2,cex=1.25)
+mtext("Age category",side=1,line=2.75,cex=1.25)
 
 # children ages 0-4
 arrows(x0=xs.0to4,y0=unlist(mu.0to4[3,1:5]), y1=unlist(mu.0to4[4,1:5]),lwd=1,col=cols,length=0.05,angle=90,code=3)

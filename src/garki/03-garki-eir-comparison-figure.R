@@ -82,7 +82,7 @@ lo <- layout(mat=matrix(1:4,nrow=2,ncol=2,byrow=TRUE))
 
 op <- par(mar=c(6,6,3,1)+0.1)
 
-cols <- c(cgrey,cteal,cmagent)
+cols <- c(cgrey,cteal,corange)
 ytics <- seq(1,4,by=1)
 xtics <- seq(0,2,by=1)
 plot(1,1,type="n",bty="n",
