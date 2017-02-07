@@ -1,0 +1,432 @@
+
+R version 3.3.1 (2016-06-21) -- "Bug in Your Hair"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> 
+> #-------------------------------------------
+> # FigS1-1-mauke-Wb123-seroprev.R
+> #
+> # estimate age-specific antibody curves
+> # after reducing the quantitative Wb123
+> # antibody response to a binary pos/neg
+> # measurement. the analysis parallels the 
+> # main analysis using the quantitative response
+> # (see 1-mauke-Wb123-analysis.R)
+> #
+> #-------------------------------------------
+> 
+> #-------------------------------------------
+> # input files:
+> #   mauke1975-public.csv
+> #   mauke1992-public.csv
+> #
+> # output files:
+> #   mauke-Wb123-binary.RData
+> #   mauke-Wb123-binary.pdf
+> #-------------------------------------------
+> 
+> 
+> 
+> #-------------------------------------------
+> # preamble
+> #-------------------------------------------
+> 
+> rm(list=ls())
+> library(tmle)
+Loading required package: SuperLearner
+Loading required package: nnls
+Super Learner
+Version: 2.0-21
+Package created on 2016-11-11
+
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(SuperLearner)
+> library(tmleAb)
+Welcome to the tmleAb package
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.2.0)
+
+Periodically check for the latest development version using 
+devtools::install_github('ben-arnold/tmleAb')  
+
+This software is based on work funded by the National Institute of Allergy and Infectius Diseases grant K01-AI119180
+
+
+> 
+> #-------------------------------------------
+> # load the Mauke data from 1974(1975) and 1992
+> #-------------------------------------------
+> 
+> data("mauke_wb123")
+Warning message:
+In data("mauke_wb123") : data set ‘mauke_wb123’ not found
+> d  <- mauke_wb123
+> 
+> # add 0.5 years to age to remove bias (on average) due to rounding to year
+> d$ager <- d$age+0.5
+> 
+> # create age categories for stratified analyses
+> # 5 year age categories (1-20 y)
+> d$agecat <- cut(d$ager,breaks=c(0,5,10,15,20),labels=c("1-5","6-10","11-15","16-20"))
+> 
+> # identify the pre- vs. post-MDA measurements
+> d$mda <- ifelse(d$year=="1992",1,0)
+> 
+> # make an unique individual id variable
+> d$id <- ifelse(!is.na(d$id75),d$id75,d$id92)
+> 
+> # subset to common variables
+> common.vars <- c("id","ager","agecat","wb123","wb123pos","year","mda")
+> d <- subset(d,select=common.vars)
+> 
+> # recode the dichotomous Wb123 variable to 0/1
+> d$wb123p <- ifelse(d$wb123pos=="Positive",1,0)
+> 
+> # add a variable "n" <- 1 for fitting the reversible catalytic model, below
+> d$n <- 1
+> 
+> 
+> # subset to each year as well, for convenience
+> d75 <- subset(d,year=="1975")
+> d92 <- subset(d,year=="1992")
+> 
+> 
+> #--------------------------------------
+> # All Ages
+> #--------------------------------------
+> SL.library <- c("SL.mean","SL.glm","SL.gam","SL.loess")
+> 
+> 
+> 
+> # SuperLearner fits of antibody levels
+> set.seed(12345)
+> mauke75 <- agecurveAb(Y=d75$wb123p,Age=d75$ager,id=d75$id,SL.library=SL.library,gamdf=2:3)
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk      Coef
+SL.mean_All    0.1178304 0.0000000
+SL.glm_All     0.1086053 0.0000000
+SL.gam.df2_All 0.1025487 0.5577865
+SL.loess_All   0.1028208 0.4422135
+> set.seed(12345)
+> mauke92 <- agecurveAb(Y=d92$wb123p,Age=d92$ager,id=d92$id,SL.library=SL.library,gamdf=2:3)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk      Coef
+SL.mean_All    0.2398341 0.0000000
+SL.glm_All     0.2121402 0.0000000
+SL.gam.df2_All 0.2068472 0.7939107
+SL.loess_All   0.2076358 0.2060893
+> 
+> # estimate group means
+> EYx.mauke75 <- tmleAb(Y=d75$wb123p,W=d75$ager,id=d75$id,SL.library=SL.library)
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.8645
+   Estimated Variance:  0.00031832
+              p-value:  <2e-16
+    95% Conf Interval: (0.82953, 0.89947) 
+> EYx.mauke92 <- tmleAb(Y=d92$wb123p,W=d92$ager,id=d92$id,SL.library=SL.library)
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.60398
+   Estimated Variance:  0.00048737
+              p-value:  <2e-16
+    95% Conf Interval: (0.56071, 0.64725) 
+> 
+> # estimate difference in means
+> set.seed(12345)
+> diff.mauke  <- tmleAb(Y=d$wb123p,W=d$ager,id=d$id,X=d$mda,SL.library=SL.library)
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Additive Effect
+   Parameter Estimate:  -0.27018
+   Estimated Variance:  0.00078506
+              p-value:  <2e-16
+    95% Conf Interval: (-0.32509, -0.21526) 
+> 
+> 
+> #--------------------------------------
+> # Estimate means and differences between
+> # time points in
+> # 5 year age bands from ages 1-20
+> #--------------------------------------
+> agegrps <-c("1-5","6-10","11-15","16-20") 
+> EYx.mauke75kids <- sapply(agegrps, function(x) 
++   tmleAb(Y=d75$wb123p[d75$agecat==x],W=d75$ager[d75$agecat==x],id=d75$id[d75$agecat==x], SL.library=SL.library) 
++ )
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.62222
+   Estimated Variance:  0.0053423
+              p-value:  <2e-16
+    95% Conf Interval: (0.47896, 0.76548) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.71698
+   Estimated Variance:  0.0039023
+              p-value:  <2e-16
+    95% Conf Interval: (0.59454, 0.83942) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.78846
+   Estimated Variance:  0.0032704
+              p-value:  <2e-16
+    95% Conf Interval: (0.67637, 0.90055) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.93103
+   Estimated Variance:  0.0022932
+              p-value:  <2e-16
+    95% Conf Interval: (0.83718, 1.0249) 
+> EYx.mauke92kids <- sapply(agegrps, function(x) 
++   tmleAb(Y=d92$wb123p[d92$agecat==x],W=d92$ager[d92$agecat==x],id=d92$id[d92$agecat==x], SL.library=SL.library) 
++ )
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.26923
+   Estimated Variance:  0.0078698
+              p-value:  0.0024063
+    95% Conf Interval: (0.095355, 0.44311) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.37647
+   Estimated Variance:  0.0027945
+              p-value:  1.0669e-12
+    95% Conf Interval: (0.27286, 0.48008) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.44578
+   Estimated Variance:  0.0030129
+              p-value:  4.6098e-16
+    95% Conf Interval: (0.3382, 0.55337) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Population Mean
+   Parameter Estimate:  0.51111
+   Estimated Variance:  0.0028405
+              p-value:  <2e-16
+    95% Conf Interval: (0.40665, 0.61557) 
+> diff.maukekids <- sapply(agegrps, function(x) 
++   tmleAb(Y=d$wb123p[d$agecat==x], W=d$ager[d$agecat==x], id=d$id[d$agecat==x], X=d$mda[d$agecat==x], SL.library=SL.library) 
++ )
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Additive Effect
+   Parameter Estimate:  -0.32899
+   Estimated Variance:  0.013553
+              p-value:  0.0047135
+    95% Conf Interval: (-0.55717, -0.10081) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Additive Effect
+   Parameter Estimate:  -0.32748
+   Estimated Variance:  0.0061435
+              p-value:  2.9402e-05
+    95% Conf Interval: (-0.4811, -0.17385) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Additive Effect
+   Parameter Estimate:  -0.33627
+   Estimated Variance:  0.0063009
+              p-value:  2.2723e-05
+    95% Conf Interval: (-0.49185, -0.18069) 
+
+-----------------------------------------
+The design matrix you supplied is not a matrix or a data.frame
+Assuming that it is a single variable
+-----------------------------------------
+ Additive Effect
+   Parameter Estimate:  -0.41724
+   Estimated Variance:  0.0052995
+              p-value:  9.9586e-09
+    95% Conf Interval: (-0.55992, -0.27455) 
+> 
+> 
+> 
+> #-------------------------------------- 
+> # save results
+> #-------------------------------------- 
+> save.image("~/dropbox/articles/antibody-curves/results/raw/mauke-Wb123-seroprev.RData")
+> 
+> #--------------------------------------
+> # make figure
+> #--------------------------------------
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/mauke-Wb123-seroprev.pdf",width=12,height=6)
+> 
+> cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+> cols <- cbPalette[c(7,6)]
+> 
+> lo <- layout(mat=matrix(1:2,nrow=1,ncol=2,byrow=TRUE))
+> 
+> 
+> # Panel a, age dependent curves
+> op <- par(mar=c(5,5,3,4)+0.1)
+> ytics <- seq(0,1,by=0.1)
+> plot(mauke92$Age,mauke92$pY,type="n",
++      xlab="",xaxt="n",xlim=c(0,70),
++      ylab="",yaxt="n",ylim=range(ytics),
++      main="",
++      las=1,bty="n"
++ )
+> axis(1,at=seq(0,70,by=10),cex.axis=1.5)
+> axis(2,at=ytics,labels=seq(0,100,by=10), las=1,cex.axis=1.5)
+> 
+> lines(mauke75$Age,mauke75$pY,col=cols[1],lwd=2)
+> lines(mauke92$Age,mauke92$pY,col=cols[2],lwd=2)
+> 
+> # set.seed(623) # jitter ages (but not actual fits) to better display the data in the rug
+> # rug.low <- ifelse(mauke75$Y[mauke75$Age<=70.5]==0,0,mauke75$Y[mauke75$Age<=70.5]+0.02)
+> # rug.hgh <- ifelse(mauke75$Y[mauke75$Age<=70.5]==1,1,mauke75$Y[mauke75$Age<=70.5]+0.02)
+> # segments(x0=jitter(mauke75$Age[mauke75$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col=cols[1])
+> # 
+> # set.seed(623) # jitter ages (but not actual fits) to better display the data in the rug
+> # rug.low <- ifelse(mauke92$Y[mauke92$Age<=70.5]==0,0,mauke92$Y[mauke92$Age<=70.5]+0.02)
+> # rug.hgh <- ifelse(mauke92$Y[mauke92$Age<=70.5]==1,1,mauke92$Y[mauke92$Age<=70.5]+0.02)
+> # segments(x0=jitter(mauke92$Age[mauke92$Age<=70.5],1.5),y0=rug.low,y1=rug.hgh,col=cols[2])
+> 
+> # Axis labels
+> mtext(expression(paste(italic('W. bancrofti')," Wb123 seroprevalence (%)")),side=2,line=3,cex=1.25)
+> mtext("Age, years",side=1,line=3,cex=1.5)
+> mtext("a",line=1,at=-10,adj=0,font=2,cex=2)
+> mtext(expression(paste("Seroprevalence by age, ", italic(E),"(",italic(Y[a][","][x]),")")),line=1,cex=1.5)
+> 
+> # Group labels
+> mtext("1975",side=4,line=0.5,adj=0,at=0.92,col=cols[1],cex=1.25,las=1)
+> mtext("1992",side=4,line=0.5,adj=0,at=0.82,col=cols[2],cex=1.25,las=1)
+> 
+> par(op)
+> 
+> 
+> # Panel B age category E(Y_x) plot
+> op <- par(mar=c(5,5,3,0)+0.1)
+> 
+> plot(1:4,1:4,type="n",
++      ylab="",yaxt="n",ylim=range(ytics),
++      xlab="",xaxt="n",xlim=c(0.5,4.5),
++      bty="n"
++ )
+> axis(2,at=ytics,labels=seq(0,100,by=10), las=1,cex.axis=1.5)
+> # labels and line segments
+> mtext(levels(d$agecat),side=1,line=1,at=1:4,cex=1.5)
+> mtext("Age category, years",side=1,line=3,cex=1.5)
+> 
+> # Y label
+> mtext("b",line=1,at=-0.07,adj=0,font=2,cex=2)
+> mtext(expression(paste("Seroprevalence by age category, ",italic(E),"(",italic(Y[x]),")")),line=1,cex=1.5)
+> # mtext(c("1975","1992"),at=c(1,2),col=cols[1:2],side=3,line=-0.5)
+> 
+> # add in seroprevalence estimates
+> arrows(x0=c(1:4), y0=unlist(EYx.mauke75kids[3,]), y1=unlist(EYx.mauke75kids[4,]), col=cols[1],lwd=2,length=0.05,angle=90,code=3)
+> points(c(1:4),unlist(EYx.mauke75kids[1,]),pch=16,cex=1.75,bg="white",col=cols[1],lwd=2)
+> 
+> arrows(x0=c(1:4), y0=unlist(EYx.mauke92kids[3,]), y1=unlist(EYx.mauke92kids[4,]), col=cols[2],lwd=2,length=0.05,angle=90,code=3)
+> points(c(1:4),unlist(EYx.mauke92kids[1,]),pch=21,cex=1.75,bg="white",col=cols[2],lwd=2)
+> 
+> # label data series
+> text(4,EYx.mauke75kids[1,4],"1975",col=cols[1],pos=4)
+> text(4,EYx.mauke92kids[1,4],"1992",col=cols[2],pos=4)
+> 
+> par(op)
+> 
+> 
+> dev.off()
+null device 
+          1 
+> 
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 22.576   0.249  23.285 

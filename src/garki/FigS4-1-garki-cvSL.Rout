@@ -1,0 +1,661 @@
+
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # FigS4-1-garki-cvSL.R
+> #
+> # Compute the cross-validated
+> # risk for the super leaner
+> # and its constituent algorithms
+> #
+> # do calculations for surveys
+> # 3-5 (intervention period)
+> # in the intervention villages
+> #
+> #-------------------------------
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> rm(list=ls())
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-19
+Package created on 2016-02-02
+
+> library(tmleAb)
+Welcome to the tmleAb package
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.2)
+
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
+(we have plans for some useful additions)
+
+
+> 
+> # load general plotting functions
+> library(ggplot2)
+> library(r2weight)
+> library(RColorBrewer)
+> source("~/slabcurves/src/ab_plot_cvSL.R")
+> source("~/slabcurves/src/ab_plot_cvR2.R")
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> # d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+> 
+> d <- garki_sero
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> 
+> # add 2 control village names
+> d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
+> d$vname[d$village==552] <- "Nabanawa"
+> d$vname[d$village==553] <- "Ajura"
+> d$vname <- factor(d$vname)
+> 
+> # set sex to factor
+> d$sex <- as.factor(d$sex)
+> 
+> # for age exactly equal to 0, set it equal to 0.001
+> # to prevent the Yman 2016 model from blowing up
+> # (model is undefined at age=0)
+> d$ageyrs[d$ageyrs<=0] <- 0.001
+> 
+> # subset to ages 0-20
+> d <- subset(d,ageyrs<=20)
+> 
+> 
+> #-------------------------------
+> # Serological survey timing:
+> # 1-2 : pre-intervention
+> # 3-5 : intervention period
+> # 6-8 : post-intervention
+> #-------------------------------
+> 
+> # subset the data by group and intervention period for convenience
+> # restrict to non-missing obs wrt Pf titres and age
+> dc <- d[d$tr=="Control" & (d$serosvy>=3 & d$serosvy<=5),]
+>   dc <- subset(dc,!is.na(dc$ageyrs) & !is.na(dc$ifatpftitre))
+> dt <- d[d$tr=="Intervention" & (d$serosvy>=3 & d$serosvy<=5),]
+>   dt <- subset(dt,!is.na(dt$ageyrs) & !is.na(dt$ifatpftitre))
+> 
+>   
+> #-------------------------------
+> # Control Villages
+> #-------------------------------
+> 
+> # fit cross-validated SL
+> # with a full library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
+>   
+> # fit the cross-validated super learner
+> # with just Age as the predictor
+> set.seed(62522)
+> CVcfit <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+Loading required package: randomForest
+randomForest 4.6-12
+Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object is masked from ‘package:ggplot2’:
+
+    margin
+
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+Loading required package: polspline
+>   
+> # fit the cross-validated super learner
+> # accounting for other covariates
+> Wc <- dc[,c("sex","wetseason","vname")]
+> set.seed(62522)
+> CVcfitm <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs,Wc),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+>   
+> # fit cross-validated SL
+> # with a restricted library
+> # used in the primary analysis
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+>   
+> # fit the cross-validated super learner
+> # with just Age as the predictor
+> set.seed(62522)
+> CVcfitr <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+>   
+> # fit the cross-validated super learner
+> # accounting for other covariates
+> set.seed(62522)
+> CVcfitrm <- cvSLAb(Y=log10(dc$ifatpftitre+1),X=data.frame(Age=dc$ageyrs,Wc),id=dc$id,family=gaussian(),V=10,SL.library=SL.library)
+> 
+> #-------------------------------
+> # Intervention Villages
+> #-------------------------------
+> 
+> # fit cross-validated SL
+> # with a full library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
+> 
+> # fit the cross-validated super learner
+> # with just Age as the predictor
+> set.seed(62522)
+> CVtfit <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+> 
+> # fit the cross-validated super learner
+> # accounting for other covariates
+> Wt <- dt[,c("sex","wetseason","vname")]
+> set.seed(62522)
+> CVtfitm <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs,Wt),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+> 
+> # fit cross-validated SL
+> # with a restricted library
+> # used in the primary analysis
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+> 
+> # fit the cross-validated super learner
+> # with just Age as the predictor
+> set.seed(62522)
+> CVtfitr <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+> 
+> # fit the cross-validated super learner
+> # accounting for other covariates
+> set.seed(62522)
+> CVtfitrm <- cvSLAb(Y=log10(dt$ifatpftitre+1),X=data.frame(Age=dt$ageyrs,Wt),id=dt$id,family=gaussian(),V=10,SL.library=SL.library)
+> 
+> #------------------------------
+> # print results to log
+> #------------------------------
+> 
+> # control villages, age only
+> summary(CVcfit)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min     Max
+            Super Learner 0.48935 0.035915 0.30433 0.67912
+              Discrete SL 0.50771 0.037807 0.29444 0.70311
+              SL.mean_All 0.75735 0.069392 0.32192 1.21810
+               SL.glm_All 0.63462 0.053330 0.36388 0.99214
+          SL.Yman2016_All 0.69864 0.060446 0.33299 1.03294
+          SL.gam.df10_All 0.50452 0.037475 0.28282 0.67960
+             SL.loess_All 0.52992 0.041525 0.27723 0.73058
+ SL.randomForest.ns40_All 0.49716 0.036967 0.32936 0.70311
+          SL.polymars_All 0.48317 0.034237 0.29444 0.66305
+> 
+> # control villages, multivariate
+> summary(CVcfitm)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min     Max
+            Super Learner 0.43227 0.033652 0.27912 0.57951
+              Discrete SL 0.43535 0.034598 0.28311 0.58626
+              SL.mean_All 0.75613 0.069376 0.34616 1.11315
+               SL.glm_All 0.58664 0.049005 0.37451 0.81418
+          SL.Yman2016_All 0.68605 0.059842 0.36669 1.02766
+          SL.gam.df10_All 0.46086 0.034773 0.32467 0.58680
+             SL.loess_All 0.52380 0.041391 0.35236 0.69881
+ SL.randomForest.ns20_All 0.43535 0.034598 0.28311 0.58626
+          SL.polymars_All 0.44418 0.032643 0.28406 0.59119
+> 
+> 
+> # restricted libraries
+> 
+> # control villages, age only
+> summary(CVcfitr)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+       Algorithm     Ave       se     Min     Max
+   Super Learner 0.50166 0.037755 0.28028 0.70972
+     Discrete SL 0.50157 0.037739 0.28028 0.70972
+     SL.mean_All 0.75477 0.069623 0.37703 1.15108
+      SL.glm_All 0.63365 0.053673 0.35462 0.90977
+ SL.Yman2016_All 0.68643 0.060366 0.35813 0.99658
+ SL.gam.df10_All 0.50157 0.037739 0.28028 0.70972
+    SL.loess_All 0.52628 0.041843 0.28609 0.76091
+> 
+> # control villages, multivariate
+> summary(CVcfitrm)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+       Algorithm     Ave       se     Min     Max
+   Super Learner 0.46054 0.035312 0.26801 0.69193
+     Discrete SL 0.46001 0.035203 0.26801 0.69193
+     SL.mean_All 0.75477 0.069623 0.37703 1.15108
+      SL.glm_All 0.58481 0.049347 0.34764 0.87122
+ SL.Yman2016_All 0.68643 0.060366 0.35813 0.99658
+ SL.gam.df10_All 0.46001 0.035203 0.26801 0.69193
+    SL.loess_All 0.52628 0.041843 0.28609 0.76091
+> 
+> 
+> # intervention villages, age only
+> summary(CVtfit)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min     Max
+            Super Learner 0.59032 0.026122 0.40194 0.75290
+              Discrete SL 0.60290 0.027318 0.43287 0.76970
+              SL.mean_All 1.30129 0.042979 0.96434 1.68270
+               SL.glm_All 0.84819 0.026663 0.65820 1.06719
+          SL.Yman2016_All 1.22436 0.071291 0.95679 1.58045
+          SL.gam.df10_All 0.61063 0.025997 0.42679 0.79327
+             SL.loess_All 0.70501 0.025694 0.54037 0.84032
+ SL.randomForest.ns35_All 0.59644 0.028047 0.39762 0.76970
+          SL.polymars_All 0.59871 0.026650 0.43287 0.75526
+> 
+> # intervention villages, multivariate
+> summary(CVtfitm)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+                Algorithm     Ave       se     Min     Max
+            Super Learner 0.58282 0.025337 0.48474 0.72527
+              Discrete SL 0.59065 0.025417 0.48620 0.72233
+              SL.mean_All 1.30311 0.042925 1.03346 1.49530
+               SL.glm_All 0.83553 0.026599 0.69841 0.92059
+          SL.Yman2016_All 1.21991 0.071067 0.99291 1.47336
+          SL.gam.df10_All 0.59867 0.025286 0.51030 0.72233
+             SL.loess_All 0.70208 0.025401 0.58426 0.81699
+ SL.randomForest.ns15_All 0.68472 0.025224 0.60616 0.77223
+          SL.polymars_All 0.59185 0.026647 0.48620 0.76608
+> 
+> 
+> # restricted libraries
+> 
+> # intervention villages, age only
+> summary(CVtfitr)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+       Algorithm     Ave       se     Min     Max
+   Super Learner 0.60951 0.025831 0.52557 0.75225
+     Discrete SL 0.60951 0.025831 0.52557 0.75225
+     SL.mean_All 1.29982 0.042848 1.05658 1.46697
+      SL.glm_All 0.84443 0.026518 0.66557 0.94002
+ SL.Yman2016_All 1.21416 0.071242 0.82384 1.54483
+ SL.gam.df10_All 0.60951 0.025831 0.52557 0.75225
+    SL.loess_All 0.70227 0.025504 0.58225 0.82794
+> 
+> # intervention villages, multivariate
+> summary(CVtfitrm)
+
+Call:  
+SuperLearner::CV.SuperLearner(Y = fitd$Y, X = fitX, V = V, family = family,  
+    SL.library = SL.library, id = fitd$id, control = list(saveFitLibrary = TRUE)) 
+
+
+Risk is based on: Mean Squared Error
+
+All risk estimates are based on V =  10 
+
+       Algorithm     Ave       se     Min     Max
+   Super Learner 0.59527 0.025206 0.50894 0.72716
+     Discrete SL 0.59527 0.025206 0.50894 0.72716
+     SL.mean_All 1.29982 0.042848 1.05658 1.46697
+      SL.glm_All 0.82923 0.026293 0.70947 0.92149
+ SL.Yman2016_All 1.21416 0.071242 0.82384 1.54483
+ SL.gam.df10_All 0.59527 0.025206 0.50894 0.72716
+    SL.loess_All 0.70227 0.025504 0.58225 0.82794
+> 
+> 
+> 
+> #-------------------------------
+> # plot the CV Risk estimates
+> #-------------------------------
+> cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+> cols <- cbPalette[c(1:4,6:8)]
+> cols <- c(cols,brewer.pal(8,"Dark2")[3])
+> 
+> # pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvSL-age.pdf")
+> # ab_plot_cvSL(CVtfit,ylab="10-fold Cross-validated MSE",title="P. falciparum, high transmission",col=cols)
+> # dev.off()
+> # 
+> # pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvSL-mv.pdf")
+> # ab_plot_cvSL(CVtfitm,ylab="10-fold Cross-validated MSE",title="P. falciparum, Garki Project (multivariate)",col=cols)
+> # dev.off()
+> 
+> #-------------------------------
+> # plot the CV R2 estimates
+> #-------------------------------
+> pWc <- design_matrix(Wc)
+> Xc <- data.frame(Age=dc$ageyrs)
+> Xcm <- data.frame(Age=dc$ageyrs,pWc)
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvR2-age-control.pdf")
+> ab_plot_cvR2(CVcfit,X=Xc,ylab="10-fold Cross-validated R-squared",title=expression(paste(italic('P. falciparum'),", Garki Project Control Villages")),col=cols,ylim=c(0,0.6))
+  cvr2$Algorithm     r2  lower  upper
+1  Super Learner 0.3539 0.2941 0.4086
+2    Simple Mean 0.0000 0.0000 0.0000
+3            GLM 0.1621 0.1318 0.1912
+4       Yman2016 0.0775 0.0118 0.1389
+5            GAM 0.3338 0.2857 0.3788
+6          LOESS 0.3003 0.2521 0.3454
+7  Random Forest 0.3436 0.2668 0.4123
+8           MARS 0.3620 0.3174 0.4037
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvR2-mv-control.pdf")
+> ab_plot_cvR2(CVcfitm,X=Xcm,ylab="10-fold Cross-validated R-squared",title=expression(paste(italic('P. falciparum'),", Garki Project Control Villages (multivariate)")),col=cols,ylim=c(0,0.6))
+  cvr2$Algorithm     r2   lower  upper
+1  Super Learner 0.4283  0.3445 0.5014
+2    Simple Mean 0.0000  0.0000 0.0000
+3            GLM 0.2241  0.1707 0.2742
+4       Yman2016 0.0927 -0.0285 0.1996
+5            GAM 0.3905  0.3235 0.4509
+6          LOESS 0.3073  0.2474 0.3624
+7  Random Forest 0.4242  0.3399 0.4978
+8           MARS 0.4126  0.3190 0.4933
+> dev.off()
+null device 
+          1 
+> 
+> pWt <- design_matrix(Wt)
+> Xt <- data.frame(Age=dt$ageyrs)
+> Xtm <- data.frame(Age=dt$ageyrs,pWt)
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvR2-age-int.pdf")
+> ab_plot_cvR2(CVtfit,X=Xt,ylab="10-fold Cross-validated R-squared",title=expression(paste(italic('P. falciparum'),", Garki Project Intervention Villages")),col=cols,ylim=c(0,0.6))
+  cvr2$Algorithm     r2   lower  upper
+1  Super Learner 0.5464  0.5113 0.5789
+2    Simple Mean 0.0000  0.0000 0.0000
+3            GLM 0.3482  0.3182 0.3769
+4       Yman2016 0.0591 -0.0530 0.1593
+5            GAM 0.5308  0.4868 0.5710
+6          LOESS 0.4582  0.4191 0.4947
+7  Random Forest 0.5417  0.4917 0.5867
+8           MARS 0.5399  0.5047 0.5726
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvR2-int-mv.pdf")
+> ab_plot_cvR2(CVtfitm,X=Xtm,ylab="10-fold Cross-validated R-squared",title=expression(paste(italic('P. falciparum'),", Garki Project Intervention Villages (multivariate)")),col=cols,ylim=c(0,0.6))
+  cvr2$Algorithm     r2   lower  upper
+1  Super Learner 0.5527  0.5172 0.5857
+2    Simple Mean 0.0000  0.0000 0.0000
+3            GLM 0.3588  0.3262 0.3898
+4       Yman2016 0.0638 -0.0692 0.1803
+5            GAM 0.5406  0.5052 0.5734
+6          LOESS 0.4612  0.4248 0.4953
+7  Random Forest 0.4745  0.4530 0.4952
+8           MARS 0.5458  0.5072 0.5814
+> dev.off()
+null device 
+          1 
+> 
+> #-------------------------------
+> # plot the CV R2 estimates
+> # restricted library
+> # intervention only (not used)
+> #-------------------------------
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvR2-ager-int.pdf")
+> ab_plot_cvR2(CVtfitr,X=Xt,ylab="10-fold Cross-validated R-squared",title="P. falciparum, Garki Project",col=cols[1:6],ylim=c(0,0.6))
+  cvr2$Algorithm     r2   lower  upper
+1  Super Learner 0.5311  0.4884 0.5702
+2    Simple Mean 0.0000  0.0000 0.0000
+3            GLM 0.3504  0.3130 0.3856
+4       Yman2016 0.0659 -0.0551 0.1730
+5            GAM 0.5311  0.4884 0.5702
+6          LOESS 0.4597  0.4164 0.4998
+> dev.off()
+null device 
+          1 
+> 
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvR2-mvr-int.pdf")
+> ab_plot_cvR2(CVtfitrm,X=Xtm,ylab="10-fold Cross-validated R-squared",title="P. falciparum, Garki Project (multivariate)",col=cols[1:6],ylim=c(0,0.6))
+  cvr2$Algorithm     r2   lower  upper
+1  Super Learner 0.5420  0.5004 0.5802
+2    Simple Mean 0.0000  0.0000 0.0000
+3            GLM 0.3620  0.3233 0.3986
+4       Yman2016 0.0659 -0.0551 0.1730
+5            GAM 0.5420  0.5004 0.5802
+6          LOESS 0.4597  0.4164 0.4998
+> dev.off()
+null device 
+          1 
+> 
+> 
+> #-------------------------------
+> # plot the age-antibody curves
+> # for the full SL and the 
+> # restricted SL library to
+> # compare EYxa
+> # Control
+> #-------------------------------
+> 
+> # full library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
+> set.seed(62522)
+> SLcfull <- agecurveAb(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                           CV-Risk       Coef
+SL.mean_All              0.7523777 0.00000000
+SL.glm_All               0.6301191 0.00000000
+SL.Yman2016_All          0.6863269 0.01286807
+SL.gam.df10_All          0.5007893 0.00000000
+SL.loess_All             0.5258870 0.00000000
+SL.randomForest.ns40_All 0.4971384 0.21661560
+SL.polymars_All          0.4795801 0.77051632
+> 
+> # restricted library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+> set.seed(62522)
+> SLcres <- agecurveAb(Y=log10(dc$ifatpftitre+1),Age=dc$ageyrs,id=dc$id,SL.library=SL.library)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     0.7566991    0
+SL.glm_All      0.6345153    0
+SL.Yman2016_All 0.6890986    0
+SL.gam.df10_All 0.5018117    1
+SL.loess_All    0.5270152    0
+> 
+> 
+> # plot age-dependent antibody curves and means for two SL libraries
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvSLcurves-control.pdf",width=5,height=5)
+> 
+> ytics <- seq(0,4,by=1)
+> xtics <- seq(0,20,by=5)
+> 
+> op <- par(mar=c(4,5,4,0)+0.1,xpd=T)
+> plot(SLcfull$Age,SLcfull$Y,col=alpha("black",alpha=0.4),pch=16,cex=0.2,
++      ylim=c(0,4),ylab="",yaxt="n",
++      xlim=c(0,max(xtics)+1),xlab="",xaxt="n",
++      bty="n",las=1
++ )
+> mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
+> # mtext("b",adj=1,line=2,at=-3,font=2,cex=1.75)
+> # mtext("Intervention Period",adj=0,line=3,at=0,cex=1.5)
+> mtext(expression(paste(italic('P. falciparum'),", Garki Project Control Villages")),side=3,line=2)
+> mtext("Super learner ensemble prediction",side=3,line=0.5)
+> mtext("Age, years",side=1,line=2.5)
+> axis(2,at=0:4,labels=c(
++   expression(10^0),
++   expression(10^1),
++   expression(10^2),
++   expression(10^3),
++   expression(10^4)
++ ), las=1,cex.axis=1.25
++ )
+> # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
+> axis(1,at=xtics,cex.axis=1.5)
+> lines(SLcfull$Age,SLcfull$pY,col=cols[1],lwd=1)
+> lines(SLcres$Age,SLcres$pY,col=cols[2],lwd=1)
+> 
+> legend(x=20,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
+> par(op)
+> 
+> dev.off()
+null device 
+          1 
+> 
+> 
+> #-------------------------------
+> # plot the age-antibody curves
+> # for the full SL and the 
+> # restricted SL library to
+> # compare EYxa
+> # Intervention
+> #-------------------------------
+> 
+> # full library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess","SL.randomForest","SL.polymars")
+> set.seed(62522)
+> SLfull <- agecurveAb(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                           CV-Risk      Coef
+SL.mean_All              1.3018857 0.0000000
+SL.glm_All               0.8477748 0.0000000
+SL.Yman2016_All          1.2229395 0.0000000
+SL.gam.df10_All          0.6121251 0.1156897
+SL.loess_All             0.7055206 0.0000000
+SL.randomForest.ns35_All 0.5980080 0.4786799
+SL.polymars_All          0.6004254 0.4056304
+> 
+> # restricted library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+> set.seed(62522)
+> SLres <- agecurveAb(Y=log10(dt$ifatpftitre+1),Age=dt$ageyrs,id=dt$id,SL.library=SL.library)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     1.2999302    0
+SL.glm_All      0.8451180    0
+SL.Yman2016_All 1.2189959    0
+SL.gam.df10_All 0.6092416    1
+SL.loess_All    0.7024045    0
+> 
+> 
+> # plot age-dependent antibody curves and means for two SL libraries
+> pdf("~/dropbox/articles/antibody-curves/results/figs/garki-cvSLcurves-int.pdf",width=5,height=5)
+> 
+> ytics <- seq(0,4,by=1)
+> xtics <- seq(0,20,by=5)
+> 
+> op <- par(mar=c(4,5,4,0)+0.1,xpd=T)
+> plot(SLfull$Age,SLfull$Y,col=alpha("black",alpha=0.4),pch=16,cex=0.2,
++      ylim=c(0,4),ylab="",yaxt="n",
++      xlim=c(0,max(xtics)+1),xlab="",xaxt="n",
++      bty="n",las=1
++ )
+> mtext(expression(paste(italic('P. falciparum')," IFA antibody titre")),side=2,line=3)
+> # mtext("d",adj=1,line=2,at=-3,font=2,cex=1.75)
+> # mtext("Intervention Period",adj=0,line=3,at=0,cex=1.5)
+> mtext(expression(paste(italic('P. falciparum'),", Garki Project Intervention Villages")),side=3,line=2)
+> mtext("Super learner ensemble prediction",side=3,line=0.5)
+> mtext("Age, years",side=1,line=2.5)
+> axis(2,at=0:4,labels=c(
++   expression(10^0),
++   expression(10^1),
++   expression(10^2),
++   expression(10^3),
++   expression(10^4)
++ ), las=1,cex.axis=1.25
++ )
+> # segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
+> axis(1,at=xtics,cex.axis=1.5)
+> lines(SLfull$Age,SLfull$pY,col=cols[1],lwd=1)
+> lines(SLres$Age,SLres$pY,col=cols[2],lwd=1)
+> 
+> legend(x=20,y=0,xjust=1,yjust=0,legend=c("Full library","Restricted library"),lty=c(1,1), lwd=c(2,2),col=cols[1:2],cex=0.8,bty="n")
+> par(op)
+> 
+> dev.off()
+null device 
+          1 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+758.561  11.039 790.047 

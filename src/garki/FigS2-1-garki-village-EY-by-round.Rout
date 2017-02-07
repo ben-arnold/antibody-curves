@@ -1,0 +1,1132 @@
+
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> #-------------------------------
+> # FigS2-1-garki-village-EY-by-round.R
+> #
+> # Calculate age-specific antibody
+> # curves and age-adjusted mean
+> # Pf IFA antibody titres by
+> # village and survey round
+> #
+> #-------------------------------
+> 
+> 
+> 
+> #-------------------------------
+> # preamble
+> #-------------------------------
+> 
+> rm(list=ls())
+> library(SuperLearner)
+Loading required package: nnls
+Super Learner
+Version: 2.0-19
+Package created on 2016-02-02
+
+> library(tmle)
+Welcome to the tmle package, version 1.2.0-2
+
+Use tmleNews() to see details on changes and bug fixes
+
+Attaching package: ‘tmle’
+
+The following object is masked from ‘package:SuperLearner’:
+
+    SL.glm.interaction
+
+> library(tmleAb)
+Welcome to the tmleAb package
+Targeted maximum likelihood estimation for antibody measurements.
+(Version 0.1.2)
+
+Periodically check for the most current version (github.com/ben-arnold/tmleAb) 
+(we have plans for some useful additions)
+
+
+> 
+> 
+> #-------------------------------
+> # load the serology dataset
+> #-------------------------------
+> # d <- read.csv("~/dropbox/articles/antibody-curves/data/garki/final/garki-sero.csv")
+> d <- garki_sero
+> 
+> d$mdate <- as.Date(d$mdate,"%d %b %Y")
+> 
+> # drop observations without outcome or age measurements
+> d <- subset(d,!is.na(d$ifatpftitre) & !is.na(d$ageyrs))
+> 
+> # add 2 control village names
+> d$vname <- factor(d$vname,levels=c(levels(d$vname),"Nabanawa","Ajura"))
+> d$vname[d$village==552] <- "Nabanawa"
+> d$vname[d$village==553] <- "Ajura"
+> d$vname <- factor(d$vname)
+> 
+> # subset to ages 0-20
+> d <- subset(d,ageyrs<=20)
+> 
+> #-------------------------------
+> # Estimate antibody curves
+> # by village and survey round
+> # group 2 control villages into
+> # the same curve for visual
+> # presentation
+> #-------------------------------
+> 
+> 
+> # SL library
+> SL.library <- c("SL.mean","SL.glm","SL.Yman2016","SL.gam","SL.loess")
+> 
+> set.seed(5463452)
+> 
+> 
+> # small wrapper function to call
+> # agecurveAb() by village
+> # and by survey round
+> SLAb.wrap <- function(svy,vil,d) {
++   # svy : survey round
++   # vil : village number
++   # d   : dataset
++   return( agecurveAb(Y=log10(d$ifatpftitre[d$village==vil & d$serosvy==svy]+1),Age=d$ageyrs[d$village==vil & d$serosvy==svy],id=d$id[d$village==vil & d$serosvy==svy],SL.library=SL.library) )
++ }
+> 
+> # Control Villages 
+> # Nabanawa + Ajura
+> # (not using wrapper fn above because need to combine across svy rounds)
+> c12.EYxa <- agecurveAb(
++   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2]+1),
++   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2],
++   id=d$id[d$tr=="Control" & d$serosvy>=1 & d$serosvy<=2],
++   SL.library=SL.library
++   )
+Loading required package: gam
+Loading required package: splines
+Loading required package: foreach
+Loaded gam 1.12
+
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     0.3358305 0.031339189
+SL.glm_All      0.2949853 0.002908454
+SL.Yman2016_All 0.3028164 0.000000000
+SL.gam.df5_All  0.2582245 0.000000000
+SL.loess_All    0.2567488 0.965752357
+Warning message:
+In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
+> c345.EYxa <- agecurveAb(
++   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5]+1),
++   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5],
++   id=d$id[d$tr=="Control" & d$serosvy>=3 & d$serosvy<=5],
++   SL.library=SL.library
++ )
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     0.7528519    0
+SL.glm_All      0.6277593    0
+SL.Yman2016_All 0.6764378    0
+SL.gam.df10_All 0.4956114    1
+SL.loess_All    0.5203423    0
+> c678.EYxa <- agecurveAb(
++   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8]+1),
++   Age=d$ageyrs[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8],
++   id=d$id[d$tr=="Control" & d$serosvy>=6 & d$serosvy<=8],
++   SL.library=SL.library
++ )
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     0.5807535 0.006013051
+SL.glm_All      0.4854871 0.015699223
+SL.Yman2016_All 0.5160688 0.000000000
+SL.gam.df10_All 0.3905170 0.862697503
+SL.loess_All    0.3947061 0.115590223
+> 
+> # village cluster 5
+> # Kawari
+> v153.EYxa <- sapply(1:8,SLAb.wrap,vil=153,d=d,simplify=FALSE)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.2276686 0.3786436
+SL.glm_All      0.2351996 0.0000000
+SL.Yman2016_All 0.2233022 0.6213564
+SL.gam.df4_All  0.2370473 0.0000000
+SL.loess_All    0.2402121 0.0000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.6824444 0.02586649
+SL.glm_All      0.6044291 0.06954208
+SL.Yman2016_All 0.4782128 0.27305801
+SL.gam.df7_All  0.4896486 0.00000000
+SL.loess_All    0.4554861 0.63153342
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.8466684 0.00000000
+SL.glm_All      0.6279031 0.03094292
+SL.Yman2016_All 0.8824365 0.00000000
+SL.gam.df3_All  0.4520142 0.76785005
+SL.loess_All    0.4635885 0.20120703
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     1.4297354    0
+SL.glm_All      0.9565680    0
+SL.Yman2016_All 1.6970170    0
+SL.gam.df8_All  0.4766964    1
+SL.loess_All    0.6708371    0
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.3269136 0.01295124
+SL.glm_All      0.6987193 0.10203724
+SL.Yman2016_All 0.7848233 0.03125893
+SL.gam.df10_All 0.4733015 0.82849676
+SL.loess_All    0.5430346 0.02525583
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     1.4570155 0.070618291
+SL.glm_All      0.8464594 0.002992262
+SL.Yman2016_All 1.3617693 0.000000000
+SL.gam.df8_All  0.5272620 0.926389447
+SL.loess_All    0.5851737 0.000000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.0727022 0.1120648
+SL.glm_All      0.8995040 0.3319907
+SL.Yman2016_All 1.3140541 0.0000000
+SL.gam.df8_All  0.9046617 0.2876634
+SL.loess_All    0.8831115 0.2682812
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.6715366 0.13264142
+SL.glm_All      0.5632357 0.36858122
+SL.Yman2016_All 0.5807346 0.03855715
+SL.gam.df3_All  0.5407849 0.00000000
+SL.loess_All    0.5679045 0.46022022
+There were 32 warnings (use warnings() to see them)
+> 
+> # Rafin Marke
+> v154.EYxa <- sapply(1:8,SLAb.wrap,vil=154,d=d,simplify=FALSE)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.3632303 0.09614791
+SL.glm_All      0.3474924 0.33945629
+SL.Yman2016_All 0.3460860 0.32582689
+SL.gam.df6_All  0.3555462 0.00000000
+SL.loess_All    0.3446055 0.23856890
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.7515217 0.03790054
+SL.glm_All      0.6170789 0.00000000
+SL.Yman2016_All 1.0711117 0.00000000
+SL.gam.df9_All  0.5054728 0.96209946
+SL.loess_All    0.5356800 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.0670599 0.03856438
+SL.glm_All      0.7068232 0.07878110
+SL.Yman2016_All 0.9156804 0.00000000
+SL.gam.df9_All  0.5436103 0.88265452
+SL.loess_All    0.5686544 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.4425651 0.01529159
+SL.glm_All      0.8500319 0.09290399
+SL.Yman2016_All 0.9949470 0.00000000
+SL.gam.df4_All  0.7141062 0.00000000
+SL.loess_All    0.7145144 0.89180442
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.1922953 0.0000000
+SL.glm_All      0.6624174 0.1194189
+SL.Yman2016_All 1.1773840 0.0000000
+SL.gam.df9_All  0.4553910 0.8805811
+SL.loess_All    0.4850519 0.0000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.5048190 0.0000000
+SL.glm_All      0.7605751 0.0000000
+SL.Yman2016_All 1.3477694 0.0000000
+SL.gam.df10_All 0.5112096 0.6907744
+SL.loess_All    0.5219037 0.3092256
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk       Coef
+SL.mean_All     1.812905 0.03552032
+SL.glm_All      1.360547 0.27167191
+SL.Yman2016_All 1.575063 0.00000000
+SL.gam.df7_All  1.312339 0.60837407
+SL.loess_All    1.316676 0.08443371
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk      Coef
+SL.mean_All     1.390161 0.0181477
+SL.glm_All      1.083208 0.4043116
+SL.Yman2016_All 1.907662 0.0000000
+SL.gam.df10_All 1.049761 0.5775407
+SL.loess_All    1.086911 0.0000000
+There were 37 warnings (use warnings() to see them)
+> 
+> # Kukar Maikiva
+> v155.EYxa <- sapply(1:8,SLAb.wrap,vil=155,d=d,simplify=FALSE)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.4879551 0.12347372
+SL.glm_All      0.4939247 0.00000000
+SL.Yman2016_All 0.4485648 0.55123612
+SL.gam.df3_All  0.4523756 0.26701045
+SL.loess_All    0.4538334 0.05827971
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     0.6774297    0
+SL.glm_All      0.5606114    0
+SL.Yman2016_All 0.6442291    0
+SL.gam.df10_All 0.4020097    1
+SL.loess_All    0.4652014    0
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     0.9918424    0
+SL.glm_All      0.6834650    0
+SL.Yman2016_All 1.0662677    0
+SL.gam.df10_All 0.4907580    1
+SL.loess_All    0.6434325    0
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     1.4037730    0
+SL.glm_All      0.7349621    0
+SL.Yman2016_All 0.9644620    0
+SL.gam.df9_All  0.5267753    1
+SL.loess_All    0.5901032    0
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     1.2698796 0.007734947
+SL.glm_All      0.6873029 0.099876531
+SL.Yman2016_All 0.8401833 0.000000000
+SL.gam.df10_All 0.5627749 0.860133894
+SL.loess_All    0.5925201 0.032254628
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.3157391 0.00000000
+SL.glm_All      0.6473255 0.02332946
+SL.Yman2016_All 1.0754792 0.00000000
+SL.gam.df8_All  0.5229314 0.74182657
+SL.loess_All    0.5289631 0.23484398
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk       Coef
+SL.mean_All     1.850946 0.01778040
+SL.glm_All      1.214795 0.04529541
+SL.Yman2016_All 1.128430 0.00000000
+SL.gam.df5_All  1.036554 0.93692419
+SL.loess_All    1.050031 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.4838463 0.02936415
+SL.glm_All      1.0052499 0.06673757
+SL.Yman2016_All 1.0024642 0.00000000
+SL.gam.df10_All 0.8652112 0.90389828
+SL.loess_All    0.9370319 0.00000000
+> 
+> # village cluster 7
+> # Kargo Kudu
+> v213.EYxa <- sapply(1:8,SLAb.wrap,vil=213,d=d,simplify=FALSE)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.1483212 0.08845705
+SL.glm_All      0.1418551 0.78739507
+SL.Yman2016_All 0.1499611 0.00000000
+SL.gam.df2_All  0.1431625 0.00000000
+SL.loess_All    0.1464018 0.12414789
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.2337811 0.1412982
+SL.glm_All      0.2029953 0.1345672
+SL.Yman2016_All 0.2004991 0.3869853
+SL.gam.df4_All  0.2030701 0.3371492
+SL.loess_All    0.2262992 0.0000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.0770025 0.0000000
+SL.glm_All      0.7394338 0.0000000
+SL.Yman2016_All 0.3935307 0.2087832
+SL.gam.df4_All  0.3488097 0.0000000
+SL.loess_All    0.3413307 0.7912168
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     1.1718952    0
+SL.glm_All      0.6346111    0
+SL.Yman2016_All 1.0878105    0
+SL.gam.df10_All 0.2449211    1
+SL.loess_All    0.5391660    0
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     1.1163637 0.002156276
+SL.glm_All      0.6222612 0.000000000
+SL.Yman2016_All 0.9909304 0.000000000
+SL.gam.df9_All  0.3348060 0.997843724
+SL.loess_All    0.4448022 0.000000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.3587567 0.00000000
+SL.glm_All      0.5009151 0.02307078
+SL.Yman2016_All 0.3207711 0.00000000
+SL.gam.df4_All  0.2808087 0.97692922
+SL.loess_All    0.2859449 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk Coef
+SL.mean_All     1.1272480    0
+SL.glm_All      0.7883897    0
+SL.Yman2016_All 1.0871729    0
+SL.gam.df3_All  0.6308778    1
+SL.loess_All    0.6586913    0
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning messages:
+1: In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
+2: In dnorm(logAb, mean = log(Aa), sd = sigma) : NaNs produced
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+In addition: Warning message:
+In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.2243585 0.0000000
+SL.glm_All      0.1912085 0.3177737
+SL.Yman2016_All        NA 0.0000000
+SL.gam.df3_All  0.1420567 0.0000000
+SL.loess_All    0.1414261 0.6822263
+Warning messages:
+1: In FUN(X[[i]], ...) : Error in algorithm SL.Yman2016  on full data 
+  The Algorithm will be removed from the Super Learner (i.e. given weight 0) 
+
+2: In SuperLearner::SuperLearner(Y = fitd$Y, X = X, id = fitd$id, SL.library = SL.library,  :
+  coefficients already 0 for all failed algorithm(s)
+> 
+> # Nasakar
+> v218.EYxa <- sapply(1:8,SLAb.wrap,vil=218,d=d,simplify=FALSE)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.1616216 0.45279681
+SL.glm_All      0.1692009 0.00000000
+SL.Yman2016_All 0.1692850 0.05139879
+SL.gam.df10_All 0.1615703 0.49580441
+SL.loess_All    0.1690052 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     0.2319683 0.0000000
+SL.glm_All      0.2172278 0.1182949
+SL.Yman2016_All 0.2337835 0.0000000
+SL.gam.df10_All 0.1698387 0.4630848
+SL.loess_All    0.1686417 0.4186202
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     0.6357181 0.005809648
+SL.glm_All      0.4265881 0.012544098
+SL.Yman2016_All 0.5871020 0.000000000
+SL.gam.df9_All  0.3218746 0.268476325
+SL.loess_All    0.3162880 0.713169929
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.0015415 0.02761372
+SL.glm_All      0.8358181 0.00000000
+SL.Yman2016_All 1.0020509 0.00000000
+SL.gam.df8_All  0.6199205 0.97238628
+SL.loess_All    0.6548091 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.1722204 0.0000000
+SL.glm_All      0.7826512 0.0000000
+SL.Yman2016_All 1.1510170 0.0000000
+SL.gam.df8_All  0.5829183 0.4605453
+SL.loess_All    0.5701836 0.5394547
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.2340522 0.02340397
+SL.glm_All      0.6588592 0.02931561
+SL.Yman2016_All 0.8552413 0.00000000
+SL.gam.df8_All  0.4647341 0.86354338
+SL.loess_All    0.4895726 0.08373704
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk      Coef
+SL.mean_All     1.866482 0.0000000
+SL.glm_All      1.250934 0.1815468
+SL.Yman2016_All 1.626280 0.0000000
+SL.gam.df5_All  1.106739 0.8184532
+SL.loess_All    1.112193 0.0000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk        Coef
+SL.mean_All     1.2737964 0.009257524
+SL.glm_All      0.9527867 0.000000000
+SL.Yman2016_All 0.8092624 0.000000000
+SL.gam.df5_All  0.6969297 0.990742476
+SL.loess_All    0.7076816 0.000000000
+Warning messages:
+1: In log(Aa) : NaNs produced
+2: In log(Aa) : NaNs produced
+3: In log(Aa) : NaNs produced
+4: In log(Aa) : NaNs produced
+5: In log(Aa) : NaNs produced
+6: In log(Aa) : NaNs produced
+7: In log(Aa) : NaNs produced
+8: In log(Aa) : NaNs produced
+9: In log(Aa) : NaNs produced
+> 
+> # Bakan Sabara
+> v220.EYxa <- sapply(1:8,SLAb.wrap,vil=220,d=d,simplify=FALSE)
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.1720302 0.74536165
+SL.glm_All      0.1777500 0.15951209
+SL.Yman2016_All 0.1943763 0.09512626
+SL.gam.df2_All  0.1889482 0.00000000
+SL.loess_All    0.2074735 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                   CV-Risk       Coef
+SL.mean_All     0.21591171 0.09291772
+SL.glm_All      0.14910139 0.02773744
+SL.Yman2016_All 0.62145899 0.00000000
+SL.gam.df4_All  0.09601879 0.87934484
+SL.loess_All    0.10236805 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     0.6768124 0.05771558
+SL.glm_All      0.3966574 0.00000000
+SL.Yman2016_All 0.6311547 0.00000000
+SL.gam.df2_All  0.3464132 0.94228442
+SL.loess_All    0.3616621 0.00000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.4124008 0.0000000
+SL.glm_All      0.8743227 0.2906336
+SL.Yman2016_All 1.4125770 0.0000000
+SL.gam.df8_All  0.7246414 0.7093664
+SL.loess_All    0.7734889 0.0000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk       Coef
+SL.mean_All     1.6718501 0.00000000
+SL.glm_All      0.9740115 0.45984678
+SL.Yman2016_All 3.0442480 0.00000000
+SL.gam.df4_All  0.7707760 0.08829826
+SL.loess_All    0.9709676 0.45185496
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                  CV-Risk      Coef
+SL.mean_All     1.5630716 0.0000000
+SL.glm_All      0.4091691 0.2645119
+SL.Yman2016_All 1.6862368 0.0000000
+SL.gam.df6_All  0.3093646 0.7354881
+SL.loess_All    0.3517030 0.0000000
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk Coef
+SL.mean_All     1.964628    0
+SL.glm_All      1.396666    0
+SL.Yman2016_All 1.043779    1
+SL.gam.df4_All  1.162758    0
+SL.loess_All    1.201537    0
+
+Summary of SuperLearner cross validated risk and 
+weights for algorithms included in the library:
+
+                 CV-Risk      Coef
+SL.mean_All     1.643668 0.0000000
+SL.glm_All      1.499109 0.5521515
+SL.Yman2016_All 1.406810 0.0000000
+SL.gam.df2_All  1.243800 0.0000000
+SL.loess_All    1.908871 0.4478485
+There were 50 or more warnings (use warnings() to see the first 50)
+> 
+> 
+> 
+> #-------------------------------
+> # Estimate mean IFA P. falciparm
+> # titre by village and survey round
+> #-------------------------------
+> 
+> #-------------------------------
+> # Serological survey timing:
+> # 1-2 : pre-intervention
+> # 3-5 : intervention period
+> # 6-8 : post-intervention
+> #-------------------------------
+> 
+> 
+> ## Control Villages (no measurement in round 6)
+> # Nabanawa + Ajura
+> 
+> v552 <-  sapply(c(1:5,7:8),function(x) tmleAb(
++   Y=log10(d$ifatpftitre[d$tr=="Control" & d$serosvy==x]+1),
++   W=data.frame(Age=d$ageyrs[d$tr=="Control" & d$serosvy==x]),
++   id=d$id[d$tr=="Control" & d$serosvy==x],
++   SL.library=SL.library
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.2068
+   Estimated Variance:  0.0013173
+              p-value:  <2e-16
+    95% Conf Interval: (3.1356, 3.2779) 
+ Population Mean
+   Parameter Estimate:  3.0684
+   Estimated Variance:  0.0014501
+              p-value:  <2e-16
+    95% Conf Interval: (2.9938, 3.143) 
+ Population Mean
+   Parameter Estimate:  3.1047
+   Estimated Variance:  0.0021665
+              p-value:  <2e-16
+    95% Conf Interval: (3.0135, 3.1959) 
+ Population Mean
+   Parameter Estimate:  2.7871
+   Estimated Variance:  0.0040448
+              p-value:  <2e-16
+    95% Conf Interval: (2.6625, 2.9118) 
+ Population Mean
+   Parameter Estimate:  3.2218
+   Estimated Variance:  0.0026335
+              p-value:  <2e-16
+    95% Conf Interval: (3.1212, 3.3224) 
+ Population Mean
+   Parameter Estimate:  3.1193
+   Estimated Variance:  0.00218
+              p-value:  <2e-16
+    95% Conf Interval: (3.0278, 3.2108) 
+ Population Mean
+   Parameter Estimate:  2.8336
+   Estimated Variance:  0.0043164
+              p-value:  <2e-16
+    95% Conf Interval: (2.7049, 2.9624) 
+> 	# add NA column for survey round 6
+> 	v552 <- cbind(v552[,1:5],rep(NA,5),v552[,6:7])
+Warning message:
+In cbind(v552[, 1:5], rep(NA, 5), v552[, 6:7]) :
+  number of rows of result is not a multiple of vector length (arg 2)
+> 
+> 
+> 
+> ### Spraying (Propoxur) + MDA
+> 
+> # village cluster 5
+> # Kawari
+> v153 <- sapply(c(1:8),function(x) tmleAb(
++     Y=log10(d$ifatpftitre[d$village==153 & d$serosvy==x]+1),
++     W=data.frame(Age=d$ageyrs[d$village==153 & d$serosvy==x]),
++     id=d$id[d$village==153 & d$serosvy==x],
++     SL.library=SL.library
++     )
++   )
+ Population Mean
+   Parameter Estimate:  3.372
+   Estimated Variance:  0.0040015
+              p-value:  <2e-16
+    95% Conf Interval: (3.248, 3.496) 
+ Population Mean
+   Parameter Estimate:  3.1927
+   Estimated Variance:  0.014253
+              p-value:  <2e-16
+    95% Conf Interval: (2.9587, 3.4267) 
+ Population Mean
+   Parameter Estimate:  2.514
+   Estimated Variance:  0.016419
+              p-value:  <2e-16
+    95% Conf Interval: (2.2628, 2.7651) 
+ Population Mean
+   Parameter Estimate:  2.2142
+   Estimated Variance:  0.026311
+              p-value:  <2e-16
+    95% Conf Interval: (1.8963, 2.5322) 
+ Population Mean
+   Parameter Estimate:  1.6994
+   Estimated Variance:  0.02399
+              p-value:  <2e-16
+    95% Conf Interval: (1.3959, 2.003) 
+ Population Mean
+   Parameter Estimate:  1.473
+   Estimated Variance:  0.026988
+              p-value:  <2e-16
+    95% Conf Interval: (1.151, 1.795) 
+ Population Mean
+   Parameter Estimate:  2.7513
+   Estimated Variance:  0.017229
+              p-value:  <2e-16
+    95% Conf Interval: (2.4941, 3.0086) 
+ Population Mean
+   Parameter Estimate:  2.6633
+   Estimated Variance:  0.017542
+              p-value:  <2e-16
+    95% Conf Interval: (2.4037, 2.9229) 
+> # Rafin Marke
+> v154 <- sapply(c(1:8),function(x) tmleAb(
++   Y=log10(d$ifatpftitre[d$village==154 & d$serosvy==x]+1),
++   W=data.frame(Age=d$ageyrs[d$village==154 & d$serosvy==x]),
++   id=d$id[d$village==154 & d$serosvy==x],
++   SL.library=SL.library
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.2713
+   Estimated Variance:  0.0048087
+              p-value:  <2e-16
+    95% Conf Interval: (3.1354, 3.4072) 
+ Population Mean
+   Parameter Estimate:  3.0625
+   Estimated Variance:  0.011956
+              p-value:  <2e-16
+    95% Conf Interval: (2.8482, 3.2768) 
+ Population Mean
+   Parameter Estimate:  2.3759
+   Estimated Variance:  0.015287
+              p-value:  <2e-16
+    95% Conf Interval: (2.1336, 2.6183) 
+ Population Mean
+   Parameter Estimate:  1.8849
+   Estimated Variance:  0.019921
+              p-value:  <2e-16
+    95% Conf Interval: (1.6083, 2.1615) 
+ Population Mean
+   Parameter Estimate:  1.391
+   Estimated Variance:  0.014727
+              p-value:  <2e-16
+    95% Conf Interval: (1.1532, 1.6289) 
+ Population Mean
+   Parameter Estimate:  1.2868
+   Estimated Variance:  0.017131
+              p-value:  <2e-16
+    95% Conf Interval: (1.0303, 1.5433) 
+ Population Mean
+   Parameter Estimate:  2.3054
+   Estimated Variance:  0.020706
+              p-value:  <2e-16
+    95% Conf Interval: (2.0234, 2.5875) 
+ Population Mean
+   Parameter Estimate:  2.0923
+   Estimated Variance:  0.021512
+              p-value:  <2e-16
+    95% Conf Interval: (1.8048, 2.3797) 
+> # Kukar Maikiva
+> v155 <- sapply(c(1:8),function(x) tmleAb(
++   Y=log10(d$ifatpftitre[d$village==155 & d$serosvy==x]+1),
++   W=data.frame(Age=d$ageyrs[d$village==155 & d$serosvy==x]),
++   id=d$id[d$village==155 & d$serosvy==x],
++   SL.library=SL.library
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.2727
+   Estimated Variance:  0.0047103
+              p-value:  <2e-16
+    95% Conf Interval: (3.1382, 3.4073) 
+ Population Mean
+   Parameter Estimate:  3.1013
+   Estimated Variance:  0.0066257
+              p-value:  <2e-16
+    95% Conf Interval: (2.9417, 3.2608) 
+ Population Mean
+   Parameter Estimate:  2.421
+   Estimated Variance:  0.008142
+              p-value:  <2e-16
+    95% Conf Interval: (2.2442, 2.5979) 
+ Population Mean
+   Parameter Estimate:  1.9033
+   Estimated Variance:  0.0117
+              p-value:  <2e-16
+    95% Conf Interval: (1.6913, 2.1153) 
+ Population Mean
+   Parameter Estimate:  1.6254
+   Estimated Variance:  0.010503
+              p-value:  <2e-16
+    95% Conf Interval: (1.4245, 1.8263) 
+ Population Mean
+   Parameter Estimate:  1.3605
+   Estimated Variance:  0.010896
+              p-value:  <2e-16
+    95% Conf Interval: (1.1559, 1.5651) 
+ Population Mean
+   Parameter Estimate:  2.2083
+   Estimated Variance:  0.016185
+              p-value:  <2e-16
+    95% Conf Interval: (1.959, 2.4576) 
+ Population Mean
+   Parameter Estimate:  2.2011
+   Estimated Variance:  0.01659
+              p-value:  <2e-16
+    95% Conf Interval: (1.9487, 2.4536) 
+> 
+> # village cluster 7
+> # Kargo Kudu
+> v213 <- sapply(c(1:8),function(x) tmleAb(
++   Y=log10(d$ifatpftitre[d$village==213 & d$serosvy==x]+1),
++   W=data.frame(Age=d$ageyrs[d$village==213 & d$serosvy==x]),
++   id=d$id[d$village==213 & d$serosvy==x],
++   SL.library=SL.library
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.3688
+   Estimated Variance:  0.0020987
+              p-value:  <2e-16
+    95% Conf Interval: (3.2791, 3.4586) 
+ Population Mean
+   Parameter Estimate:  3.1837
+   Estimated Variance:  0.0043417
+              p-value:  <2e-16
+    95% Conf Interval: (3.0545, 3.3128) 
+ Population Mean
+   Parameter Estimate:  2.6531
+   Estimated Variance:  0.020476
+              p-value:  <2e-16
+    95% Conf Interval: (2.3727, 2.9336) 
+ Population Mean
+   Parameter Estimate:  2.13
+   Estimated Variance:  0.019938
+              p-value:  <2e-16
+    95% Conf Interval: (1.8532, 2.4068) 
+ Population Mean
+   Parameter Estimate:  1.7722
+   Estimated Variance:  0.014447
+              p-value:  <2e-16
+    95% Conf Interval: (1.5367, 2.0078) 
+ Population Mean
+   Parameter Estimate:  1.504
+   Estimated Variance:  0.020847
+              p-value:  <2e-16
+    95% Conf Interval: (1.221, 1.787) 
+ Population Mean
+   Parameter Estimate:  2.4213
+   Estimated Variance:  0.015541
+              p-value:  <2e-16
+    95% Conf Interval: (2.177, 2.6657) 
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+Error in optim(c(0.1, 0.01, 1), fn = LL, Age = Age, logAb = logAb) : 
+  function cannot be evaluated at initial parameters
+ Population Mean
+   Parameter Estimate:  2.9526
+   Estimated Variance:  0.0059786
+              p-value:  <2e-16
+    95% Conf Interval: (2.8011, 3.1041) 
+> # Nasakar
+> v218 <- sapply(c(1:8),function(x) tmleAb(
++   Y=log10(d$ifatpftitre[d$village==218 & d$serosvy==x]+1),
++   W=data.frame(Age=d$ageyrs[d$village==218 & d$serosvy==x]),
++   id=d$id[d$village==218 & d$serosvy==x],
++   SL.library=SL.library
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.3802
+   Estimated Variance:  0.0018674
+              p-value:  <2e-16
+    95% Conf Interval: (3.2955, 3.4649) 
+ Population Mean
+   Parameter Estimate:  3.2589
+   Estimated Variance:  0.002919
+              p-value:  <2e-16
+    95% Conf Interval: (3.153, 3.3648) 
+ Population Mean
+   Parameter Estimate:  2.6999
+   Estimated Variance:  0.0073489
+              p-value:  <2e-16
+    95% Conf Interval: (2.5319, 2.8679) 
+ Population Mean
+   Parameter Estimate:  2.1686
+   Estimated Variance:  0.012887
+              p-value:  <2e-16
+    95% Conf Interval: (1.9461, 2.3911) 
+ Population Mean
+   Parameter Estimate:  1.5534
+   Estimated Variance:  0.014398
+              p-value:  <2e-16
+    95% Conf Interval: (1.3183, 1.7886) 
+ Population Mean
+   Parameter Estimate:  1.4052
+   Estimated Variance:  0.015852
+              p-value:  <2e-16
+    95% Conf Interval: (1.1584, 1.652) 
+ Population Mean
+   Parameter Estimate:  2.0886
+   Estimated Variance:  0.02349
+              p-value:  <2e-16
+    95% Conf Interval: (1.7882, 2.389) 
+ Population Mean
+   Parameter Estimate:  2.3559
+   Estimated Variance:  0.026464
+              p-value:  <2e-16
+    95% Conf Interval: (2.037, 2.6747) 
+> # Bakan Sabara
+> v220 <- sapply(c(1:8),function(x) tmleAb(
++   Y=log10(d$ifatpftitre[d$village==220 & d$serosvy==x]+1),
++   W=data.frame(Age=d$ageyrs[d$village==220 & d$serosvy==x]),
++   id=d$id[d$village==220 & d$serosvy==x],
++   SL.library=SL.library
++   )
++ )
+ Population Mean
+   Parameter Estimate:  3.3632
+   Estimated Variance:  0.0060476
+              p-value:  <2e-16
+    95% Conf Interval: (3.2107, 3.5156) 
+ Population Mean
+   Parameter Estimate:  3.235
+   Estimated Variance:  0.011267
+              p-value:  <2e-16
+    95% Conf Interval: (3.027, 3.4431) 
+ Population Mean
+   Parameter Estimate:  2.563
+   Estimated Variance:  0.024284
+              p-value:  <2e-16
+    95% Conf Interval: (2.2575, 2.8684) 
+ Population Mean
+   Parameter Estimate:  1.9346
+   Estimated Variance:  0.038234
+              p-value:  <2e-16
+    95% Conf Interval: (1.5514, 2.3179) 
+ Population Mean
+   Parameter Estimate:  1.0333
+   Estimated Variance:  0.050257
+              p-value:  4.0381e-06
+    95% Conf Interval: (0.59395, 1.4727) 
+ Population Mean
+   Parameter Estimate:  1.0582
+   Estimated Variance:  0.056785
+              p-value:  8.959e-06
+    95% Conf Interval: (0.59118, 1.5253) 
+ Population Mean
+   Parameter Estimate:  1.9956
+   Estimated Variance:  0.058358
+              p-value:  <2e-16
+    95% Conf Interval: (1.5221, 2.4691) 
+ Population Mean
+   Parameter Estimate:  2.1643
+   Estimated Variance:  0.079938
+              p-value:  1.9322e-14
+    95% Conf Interval: (1.6102, 2.7185) 
+> 
+> #-------------------------------
+> # save the analysis output
+> #-------------------------------
+> rm(d)
+> save.image("~/dropbox/articles/antibody-curves/results/raw/garki-village-EY-by-round.RData")
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+135.557   1.379 145.357 
