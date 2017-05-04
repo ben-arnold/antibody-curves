@@ -72,7 +72,7 @@ plot(p.c12$Age,p.c12$pY,type="l",lwd=2,col=c.cols,
 	mtext("Pre-Intervention Period",adj=0,line=3,at=0,cex=1.5)
 	mtext(expression(paste("Age-dependent seroprevalence, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 	mtext("Age, years",side=1,line=2.5,cex=1.25)
-	axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.25)
+	axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.5)
 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 	axis(1,at=xtics,cex.axis=1.5)
 	lines(p.tr1$Age,p.tr1$pY,col=i.cols[1])
@@ -81,10 +81,10 @@ plot(p.c12$Age,p.c12$pY,type="l",lwd=2,col=c.cols,
 	# legend
 	# legend("bottomright",legend=c("Control surveys 1-2","Intervention survey 1","Intervention survey 2"),col=c(c.cols[1],i.cols[1:2]),lty=1,bty="n")
 	
-	text(20,0.95,"Control",cex=1,adj=1,font=2,col=c.cols)
-	text(4,0.9,"Intervention\n(survey 1, 2)",cex=1,adj=0,font=1,col=i.cols[2])
-	text(0.8,0.96,"1",cex=0.75,col=i.cols[1])
-	text(2,0.93,"2",cex=0.75,col=i.cols[2])
+	text(20,0.95,"Control",cex=1.25,adj=1,font=2,col=c.cols)
+	text(4,0.9,"Intervention\n(survey 1, 2)",cex=1.25,adj=0,font=1,col=i.cols[2])
+	text(0.8,0.96,"1",cex=1.25,col=i.cols[1])
+	text(2,0.9,"2",cex=1.25,col=i.cols[2])
 	
 	
 # Pre-intervention  mean estimates
@@ -122,7 +122,7 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	mtext("Active Intervention Period",adj=0,line=3,at=0,cex=1.5)
 	mtext(expression(paste("Age-dependent seroprevalence, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 	mtext("Age, years",side=1,line=2.5,cex=1.25)
-	axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.25)
+	axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.5)
 	
 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 	axis(1,at=xtics,cex.axis=1.5)
@@ -132,11 +132,11 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	
 	# legend
 	# legend("bottomright",legend=c("Control surveys 3-5","Intervention survey 3","Intervention survey 4","Intervention survey 5"),col=c(c.cols[1],i.cols[3:5]),lty=1,bty="n")
-	text(-0.2,1,"Control",cex=1,adj=0,font=2,col=c.cols)
-	text(5,0.65,"Intervention\n(survey 3, 4, 5)",cex=1,adj=0,font=1,col=i.cols[3])
-	text(1,0.7,"3",cex=0.75,col=i.cols[3])
-	text(1.7,0.6,"4",cex=0.75,col=i.cols[4])
-	text(3,0.4,"5",cex=0.75,col=i.cols[5],adj=0)
+	text(-0.7,1.01,"Control",cex=1.25,adj=0,font=2,col=c.cols)
+	text(5,0.65,"Intervention\n(survey 3, 4, 5)",cex=1.25,adj=0,font=1,col=i.cols[3])
+	text(1,0.68,"3",cex=1.25,col=i.cols[3])
+	text(1.7,0.6,"4",cex=1.25,col=i.cols[4])
+	text(3,0.4,"5",cex=1.25,col=i.cols[5],adj=0)
 	
 	
 # Active intervention  mean estimates
@@ -175,7 +175,7 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 	mtext("Post Intervention Period",adj=0,line=3,at=0,cex=1.5)
 	mtext(expression(paste("Age-dependent seroprevalence, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=0)
 	mtext("Age, years",side=1,line=2.5,cex=1.25)
-	axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.25)
+	axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.5)
 	
 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 	axis(1,at=xtics,cex.axis=1.5)
@@ -185,11 +185,11 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 	
 	# legend
 	# legend("bottomright",legend=c("Control surveys 7-8","Intervention survey 8","Intervention survey 7","Intervention survey 6"),col=c(c.cols[1],i.cols[8:6]),lty=1,bty="n")
-	text(-0.2,1,"Control",cex=1,adj=0,font=2,col=c.cols)
-	text(5,0.65,"Intervention\n(survey 6, 7, 8)",cex=1,adj=0,font=1,col=i.cols[8])
-	text(1.1,0.7,"8",cex=0.75,col=i.cols[8])
-	text(1.1,0.6,"7",cex=0.75,col=i.cols[7])
-	text(2,0.4,"6",cex=0.75,col=i.cols[6],adj=0)
+	text(-0.7,1.01,"Control",cex=1.25,adj=0,font=2,col=c.cols)
+	text(5,0.65,"Intervention\n(survey 6, 7, 8)",cex=1.25,adj=0,font=1,col=i.cols[8])
+	text(1.2,0.72,"8",cex=1.25,col=i.cols[8])
+	text(1.1,0.58,"7",cex=1.25,col=i.cols[7])
+	text(2,0.4,"6",cex=1.25,col=i.cols[6],adj=0)
 	
 	
 

@@ -66,17 +66,17 @@ plot(p.c12$Age,p.c12$pY,type="l",lwd=2,col=c.cols,
 	  expression(10^2),
 	  expression(10^3),
 	  expression(10^4)
-	), las=1,cex.axis=1.5
+	), las=1,cex.axis=1.75
 	)
 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 	axis(1,at=xtics,cex.axis=1.5)
 	lines(p.tr1$Age,p.tr1$pY,col=i.cols[1])
 	lines(p.tr2$Age,p.tr2$pY,col=i.cols[2])
 	
-	text(20,3.1,"Control",cex=1,adj=1,font=2,col=c.cols)
-	text(4,2.6,"Intervention\n(survey 1, 2)",cex=1,adj=0,font=1,col=i.cols[2])
-	text(1,3.3,"1",cex=0.75,col=i.cols[1])
-	text(2,2.5,"2",cex=0.75,col=i.cols[2])
+	text(20,3.1,"Control",cex=1.25,adj=1,font=2,col=c.cols)
+	text(4,2.6,"Intervention\n(survey 1, 2)",cex=1.25,adj=0,font=1,col=i.cols[2])
+	text(1,3.3,"1",cex=1.25,col=i.cols[1])
+	text(2,2.5,"2",cex=1.25,col=i.cols[2])
 	
 # Pre-intervention  mean estimates
 op <- par(mar=c(4,0,7,4)+0.1)
@@ -125,7 +125,7 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	  expression(10^2),
 	  expression(10^3),
 	  expression(10^4)
-	), las=1,cex.axis=1.5
+	), las=1,cex.axis=1.75
 	)
 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 	axis(1,at=xtics,cex.axis=1.5)
@@ -133,11 +133,11 @@ plot(p.c345$Age,p.c345$pY,type="l",lwd=2,col=c.cols,
 	lines(p.tr4$Age,p.tr4$pY,col=i.cols[4])
 	lines(p.tr5$Age,p.tr5$pY,col=i.cols[5])
 	
-	text(20,3.6,"Control",cex=1,adj=1,font=2,col=c.cols)
-	text(20,2.3,"Intervention\n(survey 3, 4, 5)",cex=1,adj=1,font=1,col=i.cols[3])
-	text(7,2.9,"3",cex=0.75,col=i.cols[3])
-	text(9,2.65,"4",cex=0.75,col=i.cols[4])
-	text(10.5,2.3,"5",cex=0.75,col=i.cols[5],adj=0)
+	text(20,3.6,"Control",cex=1.25,adj=1,font=2,col=c.cols)
+	text(20,2.3,"Intervention\n(survey 3, 4, 5)",cex=1.25,adj=1,font=1,col=i.cols[3])
+	text(7,2.85,"3",cex=1.25,col=i.cols[3])
+	text(9,2.6,"4",cex=1.25,col=i.cols[4])
+	text(10.5,2.3,"5",cex=1.25,col=i.cols[5],adj=0)
 	
 # Active intervention  mean estimates
 op <- par(mar=c(4,0,7,4)+0.1)
@@ -187,7 +187,7 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 		expression(10^2),
 		expression(10^3),
 		expression(10^4)
-		), las=1,cex.axis=1.5
+		), las=1,cex.axis=1.75
 	)
 	# segments(x0=min(xtics),x1=max(xtics),y0=ytics,lty=2,col="gray70")
 	axis(1,at=xtics,cex.axis=1.5)
@@ -195,11 +195,11 @@ plot(p.c78$Age,p.c78$pY,type="l",lwd=2,col=c.cols,
 	lines(p.tr7$Age,p.tr7$pY,col=i.cols[7])
 	lines(p.tr8$Age,p.tr8$pY,col=i.cols[8])
 	
-	text(20,3.7,"Control",cex=1,adj=1,font=2,col=c.cols)
-	text(20,2.3,"Intervention\n(survey 6, 7, 8)",cex=1,adj=1,font=1,col=i.cols[8])
-	text(5,1.2,"6",cex=0.75,col=i.cols[6])
-	text(4,2.0,"7",cex=0.75,col=i.cols[7])
-	text(3,2.8,"8",cex=0.75,col=i.cols[8],adj=0)
+	text(20,3.7,"Control",cex=1.25,adj=1,font=2,col=c.cols)
+	text(20,2.3,"Intervention\n(survey 6, 7, 8)",cex=1.25,adj=1,font=1,col=i.cols[8])
+	text(5,1.2,"6",cex=1.25,col=i.cols[6])
+	text(4,2.0,"7",cex=1.25,col=i.cols[7])
+	text(3,2.8,"8",cex=1.25,col=i.cols[8],adj=0)
 
 # Post-intervention  mean estimates
 op <- par(mar=c(4,0,7,4)+0.1)

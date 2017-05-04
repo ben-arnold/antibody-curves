@@ -16,9 +16,6 @@ rm(list=ls())
 library(RColorBrewer)
 library(scales)
 
-# load general plotting functions
-source("~/slabcurves/src/ab_plot_cvSL.R")
-source("~/slabcurves/src/ab_plot_cvR2.R")
 
 #--------------------------------------
 # input files:
@@ -51,7 +48,7 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 	# ylabel: logical. print a label for the Y-axis
 	
 	# plotting parameters and empty plot
-	op <- par(mar=c(5,6,4,0)+0.1)
+	op <- par(mar=c(5,6,5,0)+0.1)
 	xtics <- seq(0,6,by=1)
 	# cols1 <- brewer.pal(8,"Set1")[c(3)]
 	# cols2 <- brewer.pal(11,"Spectral")[c(11)]
@@ -68,14 +65,14 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 		)
 	
 	# header
-	mtext(letter,side=3,line=1.25,font=2,at=-0.7,cex=1.75)
-	mtext(main,cex=1.25,line=1.5,at=0,adj=0)
-	mtext(expression(paste("Age-dependent mean, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=-0.5,at=0,adj=0)
+	mtext(letter,side=3,line=2,font=2,at=-0.7,cex=1.75)
+	mtext(main,cex=1.5,line=2,at=0,adj=0)
+	mtext(expression(paste("Age-dependent mean, ",italic(E),"(",italic(Y[a][","][x]),")")),side=3,line=-0.5,at=0,adj=0,cex=1.25)
 	
 	# axes
-	if (xlabel==TRUE) mtext("Age, years",side=1,line=3,cex=1.5)
-	if (ylabel==TRUE) mtext("Luminex response (MFI-background)",side=2,line=3.5,cex=1.25)
-	axis(1,at=xtics,cex.axis=1.5)
+	if (xlabel==TRUE) mtext("Age, years",side=1,line=3.75,cex=1.5)
+	if (ylabel==TRUE) mtext("Luminex response (MFI-background)",side=2,line=4,cex=1.25)
+	axis(1,at=xtics,cex.axis=2)
 	axis(2,at=0:5,labels=c(
 		# expression(10^-1),
 		expression(10^0),
@@ -84,7 +81,7 @@ SLAb.plotEYax <- function(SLfit0,SLfit1,main,letter,xlabel=FALSE,ylabel=FALSE) {
 		expression(10^3),
 		expression(10^4),
 		expression(10^5)
-		), las=1,cex.axis=1.5
+		), las=1,cex.axis=2
 	)
 	
 	# plot data (points and fitted lines)
@@ -132,8 +129,8 @@ SLAb.plotEYx <- function(EY0,EY1,Ediff) {
 		# expression(10^5)
 		# ), las=1,cex.axis=1.5
 	# )
-	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=1,line=1)
-	mtext(expression(paste("Mean, ",italic(E),"(",italic(Y[x]),")")),side=3,line=-0.5)
+	mtext(expression(paste(italic(E),"(",italic(Y[x]),")")),side=1,line=1,cex=1.25)
+	# mtext(expression(paste("Mean, ",italic(E),"(",italic(Y[x]),")")),side=3,line=-0.5,cex=1.25)
 	
 	# plot data
 	arrows(x0=0.5,y0=EY0$lb, y1=EY0$ub,lwd=1,col=cols[1],length=0.05,angle=90,code=3)

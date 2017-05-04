@@ -80,7 +80,7 @@ pdf("~/dropbox/articles/antibody-curves/results/figs/garki-IFAPf-EIR.pdf",width=
 
 lo <- layout(mat=matrix(1:4,nrow=2,ncol=2,byrow=TRUE))
 
-op <- par(mar=c(6,6,3,1)+0.1)
+op <- par(mar=c(6,6,3,1)+0.1,xpd=TRUE)
 
 cols <- c(cgrey,cteal,corange)
 ytics <- seq(1,4,by=1)
@@ -90,13 +90,13 @@ plot(1,1,type="n",bty="n",
      yaxt="n",ylab="",ylim=range(ytics),
      las=1
 )
-axis(1,at=xtics,labels=c(1,10,100),cex.axis=1.25)
+axis(1,at=xtics,labels=c(1,10,100),cex.axis=1.5)
 axis(2,at=ytics,labels=c(
   expression(10^1),
   expression(10^2),
   expression(10^3),
   expression(10^4)),
-  las=1,cex.axis=1.25
+  las=1,cex.axis=1.5
 )
 mtext("a",adj=1,line=0.5,at=-0.4,font=2,cex=2)
 mtext(expression(paste("Wet season village ",italic('P. falciparum'))),side=2,line=4,cex=1.25)
@@ -104,7 +104,7 @@ mtext(expression(paste("mean IFA antibody titer, ", italic(E(Y[x])) )) ,side=2,l
 # mtext("Entomological Inoculation Rate\n(cumulative wet season infectious bites per person)",side=1,line=3.5,cex=1.25)
 
 # add correlation
-text(2,1.25,q_rho.text,adj=1,cex=1.25)
+text(2,1.25,q_rho.text,adj=1,cex=1.5)
 
 # Ajura
 points(qmd$log10eir[qmd$vname=="Ajura"],qmd$mu[qmd$vname=="Ajura"], pch=16,cex=2,col=cols[1])
@@ -124,17 +124,17 @@ points(qmd$log10eir[qmd$wetseason==1971],qmd$mu[qmd$wetseason==1971],cex=2)
 ajura.x <- qmd$log10eir[qmd$vname=="Ajura" & qmd$wetseason==1971]
 ajura.y <- qmd$mu[qmd$vname=="Ajura" & qmd$wetseason==1971]
 segments(x0=ajura.x,y0=ajura.y+0.1,y1=ajura.y+0.2,col="gray40")
-text(ajura.x,ajura.y+0.2,"Ajura (control)",col=cols[1],pos=3,cex=1)
+text(ajura.x,ajura.y+0.2,"Ajura (control)",col=cols[1],pos=3,cex=1.25)
 
 rafin.x <- qmd$log10eir[qmd$vname=="Rafin Marke" & qmd$wetseason==1971]
 rafin.y <- qmd$mu[qmd$vname=="Rafin Marke" & qmd$wetseason==1971]
 segments(x0=rafin.x-0.07,x1=rafin.x-0.3,y0=rafin.y+0.07,y1=rafin.y+0.25,col="gray40")
-text(rafin.x-0.3,rafin.y+0.3,"Rafin Marke",col=cols[2],pos=2,cex=1)
+text(rafin.x-0.3,rafin.y+0.3,"Rafin Marke",col=cols[2],pos=2,cex=1.25)
 
 nasak.x <- qmd$log10eir[qmd$vname=="Nasakar" & qmd$wetseason==1971]
 nasak.y <- qmd$mu[qmd$vname=="Nasakar" & qmd$wetseason==1971]
 segments(x0= nasak.x,y0= nasak.y +0.1,y1= nasak.y +0.4,col="gray40")
-text(nasak.x, nasak.y +0.4,"Nasakar",col=cols[3],pos=3,cex=1)
+text(nasak.x, nasak.y +0.4,"Nasakar",col=cols[3],pos=3,cex=1.25)
 
 #-------------------------------
 # quantitative vs. seroprevalence panel
@@ -147,13 +147,13 @@ plot(1,1,type="n",bty="n",
      yaxt="n",ylab="",ylim=range(ytics),
      las=1
 )
-axis(1,at=xtics,labels=sprintf("%1.0f",xtics*100),cex.axis=1.25)
+axis(1,at=xtics,labels=sprintf("%1.0f",xtics*100),cex.axis=1.5)
 axis(2,at=ytics,labels=c(
   expression(10^1),
   expression(10^2),
   expression(10^3),
   expression(10^4)),
-  las=1,cex.axis=1.25
+  las=1,cex.axis=1.5
 )
 mtext("b",adj=1,line=0.5,at=0.65,font=2,cex=2)
 # mtext("Wet season village geometric mean",side=2,line=4,cex=1.25)
@@ -161,7 +161,7 @@ mtext("b",adj=1,line=0.5,at=0.65,font=2,cex=2)
 mtext(expression(paste(italic('P. falciparum')," IFA seroprevalence (%)")),side=1,line=3.5,cex=1.25)
 
 # add correlation
-text(1,1.25,pq_rho.text,adj=1,cex=1.25)
+text(1,1.25,pq_rho.text,adj=1,cex=1.5)
 
 # Ajura
 points(pmd$mu[pmd$vname=="Ajura"],qmd$mu[qmd$vname=="Ajura"], pch=16,cex=2,col=cols[1])
@@ -204,15 +204,15 @@ plot(1,1,type="n",bty="n",
      yaxt="n",ylab="",ylim=range(ytics),
      las=1
 )
-axis(1,at=xtics,labels=c(1,10,100),cex.axis=1.25)
-axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1)
+axis(1,at=xtics,labels=c(1,10,100),cex.axis=1.5)
+axis(2,at=ytics,labels=sprintf("%1.0f",ytics*100),las=1,cex.axis=1.5)
 mtext("c",adj=1,line=0.5,at=-0.4,font=2,cex=2)
 mtext(expression(paste("Wet season village ",italic('P. falciparum'))),side=2,line=4,cex=1.25)
-mtext("IFA seroprevalence (%)",side=2,line=2.5,cex=1.25)
+mtext("IFA seroprevalence (%)",side=2,line=2.75,cex=1.25)
 mtext("Entomological Inoculation Rate\n(cumulative wet season infectious bites per person)",side=1,line=4,cex=1.25)
 
 # add correlation
-text(2,0.72,p_rho.text,adj=1,cex=1.25)
+text(2,0.72,p_rho.text,adj=1,cex=1.5)
 
 # Ajura
 points(pmd$log10eir[pmd$vname=="Ajura"],pmd$mu[pmd$vname=="Ajura"], pch=16,cex=2,col=cols[1])
