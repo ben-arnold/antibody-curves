@@ -1,7 +1,5 @@
 # antibody-curves
 
-This is a repo for data analysis scripts associated with the article 
-
 This repository includes scripts required to conduct all of the analyses for the article entitled:
 
 _Measuring changes in transmission of neglected tropical diseases, malaria, and enteric pathogens from quantitative antibody levels_
